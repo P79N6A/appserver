@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.attention.UserAttentionDto">
+	<resultMap type="com.idcq.appserver.dto.attention.UserAttentionDto" id="userAttentionMap">
+		<result column="attention_id" property="attentionId"  />
+    	<result column="user_id" property="userId" />
+    	<result column="shop_id" property="shopId" />
+    	<result column="create_time" property="createTime" />
+    	
+	    <result column="shop_name" property="shopName" />
+	    <result column="file_url" property="shopLogoUrl" />
+	    
+	    <result column="star_level_grade" property="starLevelGrade" />
+	    <result column="service_grade" property="serviceGrade"  />
+	    <result column="env_grade" property="envGrade"  />
+	    <result column="start_btime" property="startBTime"  />
+	    <result column="stop_btime" property="stopBTime" />
+	    <result column="address" property="address" />
+	    <result column="telephone" property="telephone" />
+	    <result column="shop_infrastructure" property="shopInfrastructure" />
+	    <result column="longitude" property="longitude" />
+	    <result column="latitude" property="latitude"  />
+	    <result column="red_packet_flag" property="redPacketFlag" />
+	    <result column="coupon_flag" property="couponFlag"  />
+	    <result column="cash_coupon_flag" property="cashCouponFlag"  />
+	    <result column="timed_discount_flag" property="timedDiscountFlag"  />
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+   	 	a.attention_id, 
+   	 	a.user_id, 
+   	 	a.shop_id, 
+   	 	a.create_time,
+   	 	b.shop_name,
+   	 	b.star_level_grade,
+   	 	b.env_grade,
+   	 	b.start_btime,
+   	 	b.stop_btime,
+   	 	b.address,
+   	 	b.telephone,
+   	 	b.shop_infrastructure,
+   	 	b.longitude,
+   	 	b.latitude,
+   	 	c.file_url,
+   	 	d.red_packet_flag,
+   	 	d.coupon_flag,
+   	 	d.cash_coupon_flag,
+   	 	d.timed_discount_flag
+  	</sql>
+  	
+    <select id="getUserAttentionList" parameterType="java.util.Map"  resultMap="userAttentionMap">
+    	select 
+    	<include refid="Base_Column_List" />
+    	from 1dcq_user_attention a
+    	inner join 1dcq_shop b 
+		on a.shop_id = b.shop_id
+		left join 1dcq_attachment c
+		on b.shop_logo_id = c.attachement_id
+		left join 1dcq_shop_marketing d
+		on a.shop_id=d.shop_id
+    	where a.user_id = #{userId} 
+    	limit #{n},#{m}
+    </select>
+    <select id="getUserAttentionTotal" parameterType="java.util.Map" resultType="int">
+    	select count(1) 
+    	from 1dcq_user_attention a
+    	inner join 1dcq_shop b 
+		on a.shop_id = b.shop_id
+		left join 1dcq_attachment c
+		on b.shop_logo_id = c.attachement_id
+		left join 1dcq_shop_marketing d
+		on a.shop_id=d.shop_id
+    	where user_id=#{userId}
+    </select>
+    
+    <insert id="addUserAttention" parameterType="com.idcq.appserver.dto.attention.UserAttentionDto" >
+    	insert into 1dcq_user_attention (user_id, shop_id, create_time)
+    	values (#{userId}, #{shopId},#{createTime})
+  	</insert>
+    <select id="getCountByUserIdAndShopId" parameterType="java.util.Map" resultType="int">
+    	select count(1) 
+    	from 1dcq_user_attention 
+    	where user_id=#{userId} and shop_id=#{shopId}
+    </select>
+    <delete id="cancelUserAttention" parameterType="java.util.Map">
+    	delete from 1dcq_user_attention
+    	where user_id=#{userId} and shop_id=#{shopId}
+    </delete>
+    
+</mapper> 
+   

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shop.HeartbeatLogDto" >
+  
+  <!-- 心跳返回结果 -->
+  <resultMap id="heartbeatResultMap" type="com.idcq.appserver.dto.shop.HeartbeatLogDto"  >
+  	<result column="shop_id" property="shopId" />
+  	<result column="system_type" property="systemType" />
+  	<result column="previous_time" property="previousTime" />
+  	<result column="last_time" property="lastTime" />
+  </resultMap> 
+ 
+    <!-- 查询心跳 -->
+    <select id="getHeartbeat"  parameterType="java.util.Map" resultMap="heartbeatResultMap">
+		SELECT  
+			shop_id,
+		    system_type,
+		    previous_time,
+		    last_time
+		FROM
+		     1dcq_heartbeat_log hl
+		WHERE 
+			 hl.shop_id = #{shopId}
+		AND 
+		     hl.system_type = #{systemType}
+		limit 1
+    </select>
+       <!-- 更新心跳 -->
+   <update id="updateHeartbeat" parameterType="com.idcq.appserver.dto.shop.HeartbeatLogDto">
+   		UPDATE
+   			1dcq_heartbeat_log
+   		SET
+   			shop_id = #{shopId},
+		    system_type = #{systemType},
+		    previous_time = #{previousTime},
+		    last_time = #{lastTime}
+   		WHERE
+   			shop_id = #{shopId}
+   		AND
+   			system_type = #{systemType}
+   </update>
+   <!--  插入心跳日志 -->
+ <insert id="insertHeartbeat" parameterType="com.idcq.appserver.dto.shop.HeartbeatLogDto"  >
+       INSERT IGNORE INTO
+   			1dcq_heartbeat_log
+   			(
+				shop_id,
+			    system_type,
+			    previous_time,
+			    last_time
+   			)
+   		VALUES
+   			(
+   				#{shopId},
+   				#{systemType},
+   				#{previousTime},
+   				#{lastTime}
+   			)
+   </insert>
+</mapper>

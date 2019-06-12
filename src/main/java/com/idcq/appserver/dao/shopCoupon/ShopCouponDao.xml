@@ -1,0 +1,735 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shopCoupon.ShopCouponDto" >
+  	<resultMap id="shopCouponResultMap" type="com.idcq.appserver.dto.shopCoupon.ShopCouponDto" >
+		 <id column="shop_coupon_id" property="shopCouponId" jdbcType="INTEGER" />
+    	 <result column="coupon_status" property="couponStatus" jdbcType="TINYINT" />
+    	  <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    	 <result column="coupon_name" property="couponName" jdbcType="VARCHAR" />
+    	 <result column="coupon_type" property="couponType" jdbcType="INTEGER" />
+    	 <result column="coupon_amount" property="couponAmount" jdbcType="DOUBLE" />
+    	 <result column="coupon_used_condition" property="couponUsedCondition" jdbcType="INTEGER" />
+    	 <result column="max_num_per_order" property="maxNumPerOrder" jdbcType="INTEGER" />
+    	 <result column="max_num_per_person" property="maxNumPerPerson" jdbcType="INTEGER" />
+    	 <result column="is_shared" property="isShared" jdbcType="TINYINT" />
+         <result column="is_used_together" property="isUsedTogether" jdbcType="TINYINT" />
+         <result column="total_num" property="totalNum" jdbcType="INTEGER" />
+         <result column="get_total_num" property="getTotalNum" jdbcType="INTEGER" />
+         <result column="used_total_num" property="usedTotalNum" jdbcType="INTEGER" />
+         <result column="issue_from_date" property="issueFromDate" jdbcType="TIMESTAMP" />
+         <result column="issue_to_date" property="issueToDate" jdbcType="TIMESTAMP" />
+         <result column="begin_date" property="beginDate" jdbcType="TIMESTAMP" />
+         <result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
+         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+         <result column="coupon_remark" property="couponRemark" jdbcType="VARCHAR" />
+         <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+  	</resultMap>
+  	
+  	<insert id="addShopCoupon" parameterType="com.idcq.appserver.dto.shopCoupon.ShopCouponDto" useGeneratedKeys="true" keyProperty="shopCouponId" >
+   		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="shopCouponId">
+           SELECT LAST_INSERT_ID() AS shopCouponId
+  		</selectKey>
+	    insert into 1dcq_shop_coupon
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="shopId != null" >
+	        shop_id,
+	      </if>
+	      <if test="couponStatus != null" >
+	        coupon_status,
+	      </if>
+	      <if test="couponName != null" >
+	        coupon_name,
+	      </if>
+	      <if test="couponType != null" >
+	        coupon_type,
+	      </if>
+	      <if test="couponAmount != null" >
+	        coupon_amount,
+	      </if>
+	      <if test="couponUsedCondition != null" >
+	        coupon_used_condition,
+	      </if>
+	       <if test="maxNumPerOrder != null" >
+	        max_num_per_order,
+	      </if>
+	       <if test="maxNumPerPerson != null" >
+	        max_num_per_person,
+	      </if>
+	       <if test="isShared != null" >
+	        is_shared,
+	      </if>
+	       <if test="isUsedTogether != null" >
+	        is_used_together,
+	      </if>
+	       <if test="totalNum != null" >
+	        total_num,
+	      </if>
+	       <if test="getTotalNum != null" >
+	        get_total_num,
+	      </if>
+	       <if test="usedTotalNum != null" >
+	        used_total_num,
+	      </if>
+	       <if test="issueFromDate != null" >
+	        issue_from_date,
+	      </if>
+	       <if test="issueToDate != null" >
+	        issue_to_date,
+	      </if>
+	       <if test="isDelete != null" >
+	        is_delete,
+	      </if>
+	       <if test="endDate != null" >
+	        end_date,
+	      </if>
+	       <if test="beginDate != null" >
+	        begin_date,
+	      </if>
+	       <if test="couponRemark != null" >
+	        coupon_remark,
+	      </if>
+	      create_time
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="shopId != null" >
+	        #{shopId},
+	      </if>
+	      <if test="couponStatus != null" >
+	         #{couponStatus},
+	      </if>
+	      <if test="couponName != null" >
+	         #{couponName},
+	      </if>
+	      <if test="couponType != null" >
+	        #{couponType},
+	      </if>
+	      <if test="couponAmount != null" >
+	         #{couponAmount},
+	      </if>
+	      <if test="couponUsedCondition != null" >
+	         #{couponUsedCondition},
+	      </if>
+	       <if test="maxNumPerOrder != null" >
+	         #{maxNumPerOrder},
+	      </if>
+	       <if test="maxNumPerPerson != null" >
+	         #{maxNumPerPerson},
+	      </if>
+	       <if test="isShared != null" >
+	         #{isShared},
+	      </if>
+	       <if test="isUsedTogether != null" >
+	         #{isUsedTogether},
+	      </if>
+	       <if test="totalNum != null" >
+	         #{totalNum},
+	      </if>
+	       <if test="getTotalNum != null" >
+	         #{getTotalNum},
+	      </if>
+	       <if test="usedTotalNum != null" >
+	         #{usedTotalNum},
+	      </if>
+	       <if test="issueFromDate != null" >
+	         #{issueFromDate},
+	      </if>
+	       <if test="issueToDate != null" >
+	         #{issueToDate},
+	      </if>
+	       <if test="isDelete != null" >
+	         #{isDelete},
+	      </if>
+	       <if test="endDate != null" >
+	         #{endDate},
+	      </if>
+	       <if test="beginDate != null" >
+	         #{beginDate},
+	      </if>
+	       <if test="couponRemark != null" >
+	         #{couponRemark},
+	      </if>
+	      now()
+	    </trim>
+	  </insert> 
+	  
+	   <update id="updateShopCoupon" parameterType="com.idcq.appserver.dto.shopCoupon.ShopCouponDto">
+	  	update 1dcq_shop_coupon
+	  	<set>
+	  		<if test="shopId != null" >
+	        shop_id = #{shopId},
+	      </if>
+	      <if test="couponStatus != null" >
+	        coupon_status = #{couponStatus},
+	      </if>
+	      <if test="couponName != null" >
+	        coupon_name = #{couponName},
+	      </if>
+	      <if test="couponType != null" >
+	        coupon_type = #{couponType},
+	      </if>
+	      <if test="couponAmount != null" >
+	        coupon_amount = #{couponAmount},
+	      </if>
+	      <if test="couponUsedCondition != null" >
+	        coupon_used_condition =#{couponUsedCondition},
+	      </if>
+	       <if test="maxNumPerOrder != null" >
+	        max_num_per_order = #{maxNumPerOrder},
+	      </if>
+	       <if test="maxNumPerPerson != null" >
+	        max_num_per_person = #{maxNumPerPerson},
+	      </if>
+	       <if test="isShared != null" >
+	        is_shared = #{isShared},
+	      </if>
+	       <if test="isUsedTogether != null" >
+	        is_used_together = #{isUsedTogether},
+	      </if>
+	       <if test="totalNum != null" >
+	        total_num = #{totalNum},
+	      </if>
+	       <if test="getTotalNum != null" >
+	        get_total_num = #{getTotalNum} ,
+	      </if>
+	       <if test="usedTotalNum != null" >
+	        used_total_num = #{usedTotalNum},
+	      </if>
+	       <if test="issueFromDate != null" >
+	        issue_from_date = #{issueFromDate},
+	      </if>
+	       <if test="issueToDate != null" >
+	        issue_to_date = #{issueToDate},
+	      </if>
+	       <if test="isDelete != null" >
+	        is_delete = #{isDelete},
+	      </if>
+	       <if test="endDate != null" >
+	        end_date = #{endDate},
+	      </if>
+	       <if test="beginDate != null" >
+	        begin_date = #{beginDate},
+	      </if>
+	       <if test="couponRemark != null" >
+	        coupon_remark = #{couponRemark},
+	      </if>
+		  	create_time = now() 
+	  	</set>
+	  	where shop_coupon_id = #{shopCouponId}
+	</update>
+	
+	<select id="getShopCouponList" parameterType="com.idcq.appserver.dto.shopCoupon.ShopCouponDto" resultType="java.util.Map">
+	    select 
+	    	DISTINCT(sc.shop_coupon_id) as shopCouponId,
+	    	s.shop_name as shopName,
+			sc.shop_id as shopId,
+			sc.coupon_name as couponName,
+			sc.coupon_amount as couponAmount,
+			sc.total_num as totalNum,
+			sc.begin_date as beginDate,
+			sc.end_date as endDate,
+			sc.coupon_type as couponType,
+			sc.coupon_used_condition as couponUsedCondition,
+			sc.max_num_per_order as maxNumPerOrder,
+			sc.max_num_per_person as maxNumPerPerson,
+			sc.is_used_together as isUsedTogether,
+			sc.is_shared as isShared,
+			sc.get_total_num as userGetCouponNum,
+			sc.used_total_num as usedCouponNum,
+			sc.coupon_status as couponStatus,
+			sc.coupon_remark as couponRemark
+			<if test="userId !=null or mobile != null or userShopCouponIds != null  or userShopCouponStatus != null">
+				,usc.user_shop_coupon_id as userShopCouponId,
+				usc.coupon_status as userShopCouponStatus
+			</if>
+	    from 1dcq_shop_coupon sc
+	    inner join 1dcq_shop s
+	    on s.shop_id = sc.shop_id
+	    <if test="userId !=null or mobile != null or userShopCouponIds != null  or userShopCouponStatus != null">
+	    	left join 1dcq_user_shop_coupon usc on usc.shop_coupon_id = sc.shop_coupon_id  and sc.shop_id = usc.shop_id
+	    </if>
+	    <where>
+	    	<if test="shopId != null">
+	    		and sc.shop_id = #{shopId} 
+	    	</if>
+	    	<if test="userId != null">
+	    		and usc.user_id = #{userId} 
+	    	</if>
+	    	<if test="mobile != null">
+	    		and usc.mobile = #{mobile}
+	    	</if>
+	    	<if test="couponStatus != null and couponStatus!=3 ">
+	    		and sc.coupon_status = #{couponStatus}  
+	    	</if>
+	    	<if test="couponStatus !=null and couponStatus == 3 ">
+	    		and sc.coupon_status in (0,2) 
+	    	</if>
+	    	<if test="beginDate != null">
+	    		<![CDATA[and Date(sc.begin_date) >= #{beginDate}]]>
+	    	</if>
+	    	<if test="endDate != null">
+	    		<![CDATA[and Date(sc.end_date) <= #{endDate}]]>
+	    	</if>
+	    	<if test="couponName != null">
+	    		and sc.coupon_name = #{couponName} 
+	    	</if>
+	    	<if test="couponAmount != null">
+	    		and sc.coupon_amount = #{couponAmount} 
+	    	</if>
+	    	<if test="totalNum != null">
+	    		and sc.total_num = #{totalNum}
+	    	</if>
+	    	<if test="couponUsedCondition != null">
+	    		and sc.coupon_used_condition = #{couponUsedCondition}
+	    	</if>
+	    	<if test="maxNumPerOrder != null">
+	    		and sc.max_num_per_order = #{maxNumPerOrder}
+	    	</if>
+	    	<if test="isUsedTogether != null">
+	    		and sc.is_used_together = #{isUsedTogether}
+	    	</if>
+	    	<if test="isShared != null">
+	    		and sc.is_shared = #{isShared}
+	    	</if>
+	    	<if test="maxNumPerPerson != null">
+	    		and sc.max_num_per_person = #{maxNumPerPerson}
+	    	</if>
+	    	<if test="isDelete != null">
+	    		<if test="userId ==null and mobile == null and userShopCouponIds == null">
+	    			and sc.is_delete = #{isDelete}
+	    		</if>
+	    	</if>
+	    	<if test="goodsCategoryIds != null">
+	    		and sc.shop_coupon_id in 
+	    		(select DISTINCT(s.shop_coupon_id) 
+	    		 from 1dcq_shop_coupon_available_goods s 
+	    		 where s.coupon_apply_type = 1
+	    		 and s.coupon_apply_id 
+	    		 in
+	    		 <foreach item="goodsCategoryId" index="id" collection="goodsCategoryIdsList" open="("
+					separator="," close=")">
+						#{goodsCategoryId}
+				</foreach>
+	    		 )
+	    	</if>
+	    	<if test="userShopCouponIds != null">
+	    		and usc.user_shop_coupon_id
+	    		<if test="usedFlag != null and usedFlag == 0 ">
+	    			not
+	    		</if>
+	    		in
+	    		<foreach item="userShopCouponId" index="id" collection="userShopCouponIdsList" open="("
+					separator="," close=")">
+						#{userShopCouponId}
+				</foreach>
+	    	</if>
+	    	<if test="userShopCouponStatus != null">
+	    		and usc.coupon_status IN (#{userShopCouponStatus})
+<!-- 			    <foreach collection="userShopCouponIdsList" index="index" item="item" open="(" separator="," close=")">   -->
+<!-- 		            #{item}    -->
+<!-- 		        </foreach> -->
+	    	</if>
+	    </where>
+	    <if test="orderBy == null">
+	    	 order by sc.create_time
+	    </if>
+	   <if test="orderBy != null">
+	   		<if test="userId !=null or mobile != null or userShopCouponIds != null or userShopCouponStatus != null">
+		   		<!-- 领取优惠券时间 -->
+			   	<if test="orderBy == 1">
+			   		order by usc.get_coupon_time
+			   	</if>
+			   	<!-- 有效期截止日期 -->
+			   	<if test="orderBy == 2">
+			   		order by usc.end_date
+			   	</if>
+		   	</if>
+		   	<if test="userId==null and mobile==null and userShopCouponIds==null and userShopCouponStatus==null">
+		   		order by sc.create_time
+		   	</if>
+	   </if>
+	   <if test="orderByMode != null and orderByMode == 0">
+	   		desc
+	   </if>
+	   <if test="orderByMode == null or orderByMode != 0">
+	   		asc
+	   </if>
+	    <if test="pageNo != null ">
+	    	limit #{pageNo},#{pageSize}
+	    </if>
+	</select>
+	
+	<select id="getShopCouponListCount" parameterType="com.idcq.appserver.dto.shopCoupon.ShopCouponDto" resultType="java.lang.Integer">
+   	    select count(1) from (
+	    select 
+	    	DISTINCT(sc.shop_coupon_id) as shopCouponId,
+	    	s.shop_name as shopName,
+			sc.shop_id as shopId,
+			sc.coupon_name as couponName,
+			sc.coupon_amount as couponAmount,
+			sc.total_num as totalNum,
+			sc.begin_date as beginDate,
+			sc.end_date as endDate,
+			sc.coupon_type as couponType,
+			sc.coupon_used_condition as couponUsedCondition,
+			sc.max_num_per_order as maxNumPerOrder,
+			sc.max_num_per_person as maxNumPerPerson,
+			sc.is_used_together as isUsedTogether,
+			sc.is_shared as isShared,
+			sc.get_total_num as userGetCouponNum,
+			sc.used_total_num as usedCouponNum,
+			sc.coupon_status as couponStatus,
+			sc.coupon_remark as couponRemark
+			<if test="userId !=null or mobile != null or userShopCouponIds != null  or userShopCouponStatus != null">
+				,usc.user_shop_coupon_id as userShopCouponId,
+				usc.coupon_status as userShopCouponStatus
+			</if>
+	    from 1dcq_shop_coupon sc
+	    inner join 1dcq_shop s
+	    on s.shop_id = sc.shop_id
+	    <if test="userId !=null or mobile != null or userShopCouponIds != null  or userShopCouponStatus != null">
+	   	 	left join 1dcq_user_shop_coupon usc on usc.shop_coupon_id = sc.shop_coupon_id  and sc.shop_id = usc.shop_id
+	    </if>
+	    <where>
+	    	<if test="shopId != null">
+	    		and sc.shop_id = #{shopId} 
+	    	</if>
+	    	<if test="userId != null">
+	    		and usc.user_id = #{userId} 
+	    	</if>
+	    	<if test="mobile != null">
+	    		and usc.mobile = #{mobile}
+	    	</if>
+	    	<if test="couponStatus != null and couponStatus!=3 ">
+	    		and sc.coupon_status = #{couponStatus}  
+	    	</if>
+	    	<if test="couponStatus !=null and couponStatus == 3 ">
+	    		and sc.coupon_status in (0,2) 
+	    	</if>
+	    	<if test="beginDate != null">
+	    		<![CDATA[and Date(sc.begin_date) >= #{beginDate}]]>
+	    	</if>
+	    	<if test="endDate != null">
+	    		<![CDATA[and Date(sc.end_date) <= #{endDate}]]>
+	    	</if>
+	    	<if test="couponName != null">
+	    		and sc.coupon_name = #{couponName} 
+	    	</if>
+	    	<if test="couponAmount != null">
+	    		and sc.coupon_amount = #{couponAmount} 
+	    	</if>
+	    	<if test="totalNum != null">
+	    		and sc.total_num = #{totalNum}
+	    	</if>
+	    	<if test="couponUsedCondition != null">
+	    		and sc.coupon_used_condition = #{couponUsedCondition}
+	    	</if>
+	    	<if test="maxNumPerOrder != null">
+	    		and sc.max_num_per_order = #{maxNumPerOrder}
+	    	</if>
+	    	<if test="isUsedTogether != null">
+	    		and sc.is_used_together = #{isUsedTogether}
+	    	</if>
+	    	<if test="isShared != null">
+	    		and sc.is_shared = #{isShared}
+	    	</if>
+	    	<if test="maxNumPerPerson != null">
+	    		and sc.max_num_per_person = #{maxNumPerPerson}
+	    	</if>
+	    	<if test="isDelete != null">
+	    		<if test="userId ==null and mobile == null and userShopCouponIds == null">
+	    			and sc.is_delete = #{isDelete}
+	    		</if>
+	    	</if>
+	    	<if test="goodsCategoryIds != null">
+	    		and sc.shop_coupon_id in 
+	    		(select DISTINCT(s.shop_coupon_id) 
+	    		 from 1dcq_shop_coupon_available_goods s 
+	    		 where s.coupon_apply_type = 1
+	    		 and s.coupon_apply_id 
+	    		 in
+	    		 <foreach item="goodsCategoryId" index="id" collection="goodsCategoryIdsList" open="("
+					separator="," close=")">
+						#{goodsCategoryId}
+				</foreach>
+	    		 )
+	    	</if>
+	    	<if test="userShopCouponIds != null">
+	    		and usc.user_shop_coupon_id
+	    		<if test="usedFlag != null and usedFlag == 0 ">
+	    			not
+	    		</if>
+	    		in
+	    		<foreach item="userShopCouponId" index="id" collection="userShopCouponIdsList" open="("
+					separator="," close=")">
+						#{userShopCouponId}
+				</foreach>
+	    	</if>
+	    	<if test="userShopCouponStatus != null">
+	    		and usc.coupon_status IN 
+<!-- 			    <foreach collection="userShopCouponIdsList" index="index" item="item" open="(" separator="," close=")">   -->
+		           ( #{userShopCouponStatus})
+<!-- 		        </foreach> -->
+	    	</if>
+	    </where>) t
+	</select>
+	<select id="getShopCouponById" parameterType="com.idcq.appserver.dto.shopCoupon.ShopCouponDto" resultMap="shopCouponResultMap">
+		    select 
+				shop_coupon_id,
+				shop_id,
+				coupon_status,
+				coupon_name,
+				coupon_type,
+				coupon_amount,
+				coupon_used_condition,
+				max_num_per_order,
+				max_num_per_person,
+				is_shared,
+				is_used_together,
+				total_num,
+				get_total_num,
+				used_total_num,
+				issue_from_date,
+				issue_to_date,
+				begin_date,
+				end_date,
+				create_time, 
+				coupon_remark,
+				is_delete
+		    from 1dcq_shop_coupon sc
+		 WHERE
+		 	sc.shop_coupon_id = #{shopCouponId}
+		</select>	
+	<select id="shopCouponDetail" parameterType="com.idcq.appserver.dto.shopCoupon.ShopCouponDto" resultType="java.util.Map">
+	    select 
+			sc.shop_id as shopId,
+			sc.shop_coupon_id as shopCouponId,
+			sc.coupon_name as couponName,
+			sc.coupon_amount as couponAmount,
+			sc.total_num as totalNum,
+			sc.begin_date as beginDate,
+			sc.end_date as endDate,
+			sc.coupon_type as couponType,
+			sc.coupon_used_condition as couponUsedCondition,
+			sc.max_num_per_order as maxNumPerOrder,
+			sc.max_num_per_person as maxNumPerPerson,
+			sc.is_used_together as isUsedTogether,
+			sc.is_shared as isShared,
+			sc.get_total_num as userGetCouponNum,
+			sc.used_total_num as usedCouponNum,
+			sc.coupon_status as couponStatus,
+			sc.coupon_remark as couponRemark,
+			usc.coupon_status  as userShopCouponStatus
+	    from 1dcq_shop_coupon sc
+	    left join 1dcq_user_shop_coupon usc
+	    on usc.shop_coupon_id = sc.shop_coupon_id
+	    <where>
+	    	<if test="shopId != null">
+	    		and sc.shop_id = #{shopId} 
+	    	</if>
+	    	<if test="shopCouponId != null">
+	    		and sc.shop_coupon_id = #{shopCouponId}
+	    	</if>
+	    	<if test="isDelete != null">
+	    		and sc.is_delete = #{isDelete}
+	    	</if>
+	    	<if test="userShopCouponId != null">
+	    		and usc.user_shop_coupon_id = #{userShopCouponId}
+	    	</if>
+	    	<if test="goodsCategoryIds != null">
+	    		and sc.shop_coupon_id in 
+	    		(select DISTINCT(s.shop_coupon_id)  
+	    		 from 1dcq_shop_coupon_available_goods s 
+	    		 where s.coupon_apply_type = 1 
+	    		 and s.coupon_apply_id 
+	    		 in
+	    		 <foreach item="goodsCategoryId" index="id" collection="goodsCategoryIdsList" open="("
+					separator="," close=")">
+						#{goodsCategoryId}
+				</foreach>
+	    		 )
+	    	</if>
+	    </where>
+	 LIMIT 1
+	</select>
+
+	<select id="getCouponReceiveDetail" parameterType="java.util.Map" resultType="java.util.Map">
+	    select 
+			total_num as totalNum,
+			get_total_num as getTotalNum,
+			used_total_num as usedTotalNum,
+			sc.shop_coupon_id as shopCouponId,
+			sc.coupon_name as couponName,
+			usc.user_id as userId,
+			usc.mobile,
+			usc.order_id as orderId,
+			usc.get_coupon_time as getCouponTime,
+			usc.used_coupon_time as usedCouponTime
+	    from 1dcq_shop_coupon sc
+	    	left join 1dcq_user_shop_coupon usc on usc.shop_coupon_id = sc.shop_coupon_id  and sc.shop_id = usc.shop_id
+	    <where>
+	    	<if test="shopId != null">
+	    		and sc.shop_id = #{shopId} 
+	    	</if>
+	    	<if test="shopCouponId != null">
+	    		and sc.shop_coupon_id = #{shopCouponId} 
+	    	</if>
+	    	<if test="couponStatus != null ">
+	    		and usc.coupon_status = #{couponStatus} 
+	    	</if>
+	    </where>
+	    order by 
+	    	sc.create_time desc
+	    limit 
+	    	#{pageNo},#{pageSize}
+	</select>
+	
+	<update id="operateShopCoupon" parameterType="java.util.Map">
+	  	update 1dcq_shop_coupon sc
+	  	<set>
+	  		<if test="isDelete == 0">
+	  			<if test="couponStatus != null">
+	  				sc.coupon_status = #{couponStatus},
+	  			</if>
+	  		</if>
+	  		<if test="isDelete == 1 ">
+	  			sc.is_delete = #{isDelete},
+	  		</if>
+	  	</set>
+	  	where sc.is_delete = 0 
+	  	<if test="shopCouponIds != null">
+    		and sc.shop_coupon_id in
+	    	<foreach item="shopCouponId" index="id" collection="shopCouponIds" open="("
+				separator="," close=")">
+				#{shopCouponId}
+			</foreach>
+    	</if>
+    	<if test="shopId != null">
+    		and sc.shop_id  = #{shopId} 
+    	</if>
+    	<if test="isDelete == 0">
+	  			<if test="couponStatus == 1">
+	  				<![CDATA[and Date(sc.end_date) >= #{newDate}]]>
+	  			</if>
+	  		</if>
+	</update>
+	
+	<select id="getUserHoldShopCouponList" parameterType="com.idcq.appserver.dto.shopCoupon.UserShopCouponDto" resultType="java.util.Map">
+		SELECT
+		 	sc.is_used_together AS isUsedTogether,
+		 	sc.max_num_per_order AS maxNumPerOrder,
+		 	usc.shop_coupon_id AS shopCouponId,
+		 	usc.user_shop_coupon_id AS userShopCouponId,
+		 	sc.coupon_amount AS couponAmount
+		FROM 1dcq_shop_coupon AS sc
+		INNER JOIN 1dcq_user_shop_coupon AS usc
+		ON usc.shop_coupon_id = sc.shop_coupon_id
+		<if test="goodsCategoryId != null">
+	    	INNER JOIN 1dcq_shop_coupon_available_goods AS scag
+	    	ON sc.shop_coupon_id = scag.shop_coupon_id
+	    </if>
+		<where>
+			<!-- sc.is_delete = 0 -->
+			<if test="goodsCategoryId != null">
+	    		and sc.coupon_type = 2 and scag.coupon_apply_type = 1 and scag.coupon_apply_id = #{goodsCategoryId}
+	    	</if>
+	    	<if test="goodsCategoryId == null">
+	    		and sc.coupon_type = 1
+	    	</if>
+			<if test="userShopCouponId != null">
+	    		and usc.user_shop_coupon_id = #{userShopCouponId}
+	    	</if>
+			<if test="shopMemeberId != null">
+	    		and usc.shop_memeber_id = #{shopMemeberId}
+	    	</if>
+	    	<if test="shopId != null">
+	    		and usc.shop_id = #{shopId}
+	    	</if>
+	    	<if test="mobile != null">
+	    		and usc.mobile = #{mobile}
+	    	</if>
+	    	<if test="couponStatus != null">
+	    		and usc.coupon_status = #{couponStatus}
+	    	</if>
+	    	<if test="beginDate != null">
+	    		and usc.begin_date &lt;= #{beginDate}
+	    	</if>
+	    	<if test="endDate != null">
+	    		and usc.end_date &gt;= #{endDate}
+	    	</if>
+	    	<if test="couponUsedCondition != null">
+	    		and sc.coupon_used_condition &lt;= #{couponUsedCondition}
+	    	</if>
+		</where>		
+		ORDER BY sc.coupon_amount DESC , sc.end_date ASC
+	</select>
+	
+	
+	<select id="getUserHoldShopCouponListNotFilter" parameterType="com.idcq.appserver.dto.shopCoupon.UserShopCouponDto" resultType="java.util.Map">
+		SELECT
+		 	sc.is_used_together AS isUsedTogether,
+		 	sc.max_num_per_order AS maxNumPerOrder,
+		 	usc.shop_coupon_id AS shopCouponId,
+		 	usc.user_shop_coupon_id AS userShopCouponId,
+		 	sc.coupon_amount AS couponAmount
+		FROM 1dcq_shop_coupon AS sc
+		INNER JOIN 1dcq_user_shop_coupon AS usc
+		ON usc.shop_coupon_id = sc.shop_coupon_id
+		<if test="goodsCategoryId != null">
+	    	INNER JOIN 1dcq_shop_coupon_available_goods AS scag
+	    	ON sc.shop_coupon_id = scag.shop_coupon_id
+	    </if>
+		<where>
+			<if test="userShopCouponId != null">
+	    		and usc.user_shop_coupon_id = #{userShopCouponId}
+	    	</if>
+		</where>		
+	</select>
+	<select id="getShopCouponListByDtoAndPage" parameterType="java.util.Map" resultMap="shopCouponResultMap">
+		    select 
+				shop_coupon_id,
+				shop_id,
+				coupon_status,
+				coupon_name,
+				coupon_type,
+				coupon_amount,
+				coupon_used_condition,
+				max_num_per_order,
+				max_num_per_person,
+				is_shared,
+				is_used_together,
+				total_num,
+				get_total_num,
+				used_total_num,
+				issue_from_date,
+				issue_to_date,
+				begin_date,
+				end_date,
+				create_time, 
+				coupon_remark,
+				is_delete
+		    from 1dcq_shop_coupon sc
+			 <where>
+			 	<if test="shopCouponDto.endDate != null">
+			 		<![CDATA[and Date(sc.end_date) < #{shopCouponDto.endDate}]]> and coupon_status != 2
+			 	</if>
+			 	<if test="shopCouponDto.isDelete != null">
+			 		and is_delete = #{shopCouponDto.isDelete}
+			 	</if>
+			 </where>
+			 <if test="start!=null and limit!=null">
+		  	 	limit #{start},#{limit}	
+		  	 </if>
+		</select>	
+		
+		<update id="batchUpdateShopCoupon" parameterType="java.util.Map">
+		  	 <foreach collection="shopCouponDtoList" item="item" index="index" open="" close="" separator=";">  
+		        update 1dcq_shop_coupon sc
+		  		   set sc.coupon_status = #{item.couponStatus}
+			  	 where sc.shop_coupon_id = #{item.shopCouponId}
+			  		<if test="item.isDelete != null">
+			  			and sc.is_delete = #{item.isDelete}
+			  		</if>
+				</foreach> 	
+		</update>
+	
+</mapper>

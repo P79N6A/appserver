@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.pay.WithdrawDto" >
+
+  <!-- 用户提现接口 -->
+  <insert id="withdraw" useGeneratedKeys="true" keyProperty="withdrawId" parameterType="com.idcq.appserver.dto.pay.WithdrawDto">  
+	INSERT INTO 1dcq_withdraw(
+		user_id,
+		amount,
+		terminal_Type,
+		user_Name,	   
+		bank_Name,	   
+		card_Number,
+		apply_time,
+		next_withdraw_amount
+	)
+	VALUES(
+		#{userId},   
+		#{amount},   
+		#{terminalType},	   
+		#{userName},	   
+		#{bankName},	   
+		#{cardNumber},
+		now(),
+		#{nextWithdrawAmount}
+	)
+  </insert> 
+  <!-- 查询提现记录 --> 
+  <select id="getWithdrawList" parameterType="java.util.Map"  resultType="java.util.Map">
+    SELECT 
+    	<include refid="Base_Column_List" />
+	FROM 
+		1dcq_withdraw a
+		WHERE a.user_id=#{userId}
+	<![CDATA[
+	AND 
+		date(a.apply_time) <=#{endTime} 
+	AND 
+		date(a.apply_time) >=#{startTime}
+	  ]]>
+		order by a.apply_time desc
+		limit #{n},#{m}  
+  </select> 
+   <!-- 查询商铺提现记录 --> 
+  <select id="getShopWithdrawList" parameterType="java.util.Map"  resultType="java.util.Map">
+    SELECT 
+    	<include refid="Base_Column_List" />
+	FROM 
+		1dcq_shop_withdraw a
+		WHERE a.shop_id=#{userId}
+	<![CDATA[
+	AND 
+		date(a.apply_time) <=#{endTime} 
+	AND 
+		date(a.apply_time) >=#{startTime}
+	  ]]>
+		order by a.apply_time desc
+		limit #{n},#{m}  
+  </select> 
+    <!-- 查询第三方支付列表总记录数 -->
+  <select id="getWithdrawListCount" resultType="int" parameterType="java.util.Map">
+    SELECT 
+    	count(*)
+	FROM 
+		1dcq_withdraw a
+		WHERE a.user_id=#{userId}
+	<![CDATA[
+	AND 
+		date(a.apply_time) <=#{endTime} 
+	AND 
+		date(a.apply_time) >=#{startTime}
+	  ]]>
+</select>	
+	<!-- 商铺提现记录个数 -->
+   <select id="getShopWithdrawListCount" resultType="int" parameterType="java.util.Map">
+    SELECT 
+    	count(*)
+	FROM 
+		1dcq_shop_withdraw a
+		WHERE a.shop_id=#{userId}
+	<![CDATA[
+	AND 
+		date(a.apply_time) <=#{endTime} 
+	AND 
+		date(a.apply_time) >=#{startTime}
+	  ]]>
+</select>	 
+  <sql id="Base_Column_List">
+  	withdraw_id as withdrawId,
+  	amount as amount,
+  	apply_time as applyTime,
+  	cast(withdraw_status as signed) as withdrawStatus,
+  	terminal_type as terminalType,
+  	user_name as userName,
+  	bank_name as bankName,
+  	bank_subbranch_name as bankSubbranchName,
+  	card_number as cardNumber,
+  	transaction_id as transactionId,
+  	handle_mark as handleMark 
+  </sql>
+  
+  	<!-- 更新提现信息 -->
+ 	<update id="updateWithdraw" parameterType="com.idcq.appserver.dto.pay.WithdrawDto">
+	 	update 1dcq_withdraw 
+	 	<set>
+	 		<if test="withdrawStatus != null">
+	 			withdraw_status = #{withdrawStatus}, 
+	 		</if>
+	 		<if test="handleUserId != null">
+	 			handle_user_id = #{handleUserId}, 
+	 		</if>
+	 		<if test="handleTime != null">
+	 			handle_time = #{handleTime}, 
+	 		</if>
+	 		<if test="handleMark != null">
+	 			handle_mark = #{handleMark}, 
+	 		</if>
+	 		<if test="withdrawTime != null">
+	 			withdraw_time = #{withdrawTime}
+	 		</if>
+	 	</set>
+	 	where withdraw_id = #{withdrawId}
+	</update>  
+  
+  
+   <select id="getWithdrawInfoById" resultType="java.util.Map" parameterType="java.lang.Long">
+    SELECT 
+    	a.bank_name as bankName,
+    	a.card_number as cardNo,
+    	a.withdraw_time as withdrawTime
+	FROM 
+		1dcq_withdraw a
+		WHERE a.withdraw_id=#{withdrawId} 
+		limit 1
+ </select>
+  <!-- 后台查询提现记录 --> 
+  <select id="getServiceWithdrawList" parameterType="java.util.Map"  resultType="java.util.Map">
+	SELECT
+		w.withdraw_id as withdrawId,
+		u.user_id as userId,
+		u.mobile,
+		w.amount,
+		w.terminal_type as terminalType,
+		u.username as userName,
+		w.bank_name as bankName,
+		w.card_number as cardNumber,
+		cast(w.withdraw_status AS signed) as withdrawStatus,
+		w.handle_user_id as handleUserId,
+		w.handle_time as handleTime,
+		w.handle_mark as handleMark,
+		w.withdraw_time as withdrawTime,
+		w.withdraw_commission as withdrawCommission
+	FROM
+		1dcq_withdraw w
+	LEFT JOIN
+		 1dcq_user u on w.user_id = u.user_id
+	WHERE
+		1=1
+	<if test="withdrawStatus">
+		AND
+			w.withdraw_status = #{withdrawStatus} 
+	</if>
+	<if test="userId">
+		AND
+			w.user_id = #{userId} 
+	</if>
+	<if test="mobile">
+		AND 
+			w.mobile = #{mobile}
+	</if>
+	LIMIT #{n},#{m}  
+  </select> 
+  <!-- 后台查询提现记录总数 --> 
+  <select id="getServiceWithdrawCount" parameterType="java.util.Map"  resultType="java.lang.Integer">
+	SELECT
+		count(*)
+	FROM
+		1dcq_withdraw w
+	LEFT JOIN
+		 1dcq_user u on w.user_id = u.user_id
+	WHERE
+		1=1
+	<if test="withdrawStatus">
+		AND
+			w.withdraw_status = #{withdrawStatus} 
+	</if>
+	<if test="userId">
+		AND
+			w.user_id = #{userId} 
+	</if>
+	<if test="mobile">
+		AND 
+			w.mobile = #{mobile}
+	</if>
+  </select> 
+	
+	<!-- 根据提现ID查询记录 -->
+   <select id="getWithdrawById" resultType="com.idcq.appserver.dto.pay.WithdrawDto" parameterType="java.lang.Long">
+    SELECT 
+    	a.withdraw_id as withdrawId,
+    	a.user_id as userId,
+    	a.bank_name as bankName,
+    	a.bank_subbranch_name as bankSubbranchName,
+    	a.card_number as cardNumber,
+    	a.amount as amount,
+    	a.apply_time as applyTime,
+    	a.transaction_id as transactionId,
+    	a.withdraw_status as withdrawStatus,
+    	a.handle_user_id  as handleUserId,
+    	a.handle_time as handleTime,
+    	a.handle_mark as handleMark,
+    	a.withdraw_time as withdrawTime,
+    	a.terminal_type as terminalType,
+    	a.user_name as userName,
+    	a.next_withdraw_amount as nextWithdrawAmount
+	FROM 
+		1dcq_withdraw a
+		WHERE a.withdraw_id=#{withdrawId} 
+	</select>
+	
+	<!-- 查询用户提现基准信息 -->
+   <select id="getStandardWithdrawMoney" resultType="java.util.Map" parameterType="java.lang.Long">
+   	 <![CDATA[
+		SELECT 
+					w.apply_time AS withdrawTime,
+					w.amount,
+					w.next_withdraw_amount AS nextWithdrawAmount,
+					w.withdraw_id AS maxId
+		 FROM 1dcq_withdraw w
+		WHERE
+					w.user_id = #{userId}
+				AND w.withdraw_status = 4
+		AND w.withdraw_id <(
+					SELECT
+						MIN(ww.withdraw_id)
+					FROM
+						1dcq_withdraw ww
+					WHERE
+						ww.user_id = #{userId}
+					AND ww.withdraw_status = 0
+		)
+		LIMIT 1
+		]]>
+	</select>
+
+	<select id="getUserWithdrawTotalMoney" resultType="java.util.Map" parameterType="java.util.Map">
+	
+	    SELECT 
+	        sum(w.amount) as withdrawTotalMoney
+	    FROM  
+	    	1dcq_withdraw w 
+	    WHERE 
+	    	w.user_id =  #{userId}
+	    <if test="withdrawStatus != null"> 
+	    	AND w.withdraw_status = #{withdrawStatus}	
+	    </if>
+	    <if test="startTime != null">
+	    	AND w.apply_time > #{startTime}
+	    </if>
+	    <if test="endTime != null">
+		    <![CDATA[
+		    	AND w.apply_time <= #{endTime}
+		    ]]>
+	    </if>
+		
+	</select>
+	
+	<select id="getWithDrawListByIdList" resultType="com.idcq.appserver.dto.pay.WithdrawDto" parameterType="java.util.List">
+		SELECT 
+    	a.withdraw_id as withdrawId,
+    	a.user_id as userId,
+    	a.bank_name as bankName,
+    	a.bank_subbranch_name as bankSubbranchName,
+    	a.card_number as cardNumber,
+    	a.amount as amount,
+    	a.apply_time as applyTime,
+    	a.transaction_id as transactionId,
+    	a.withdraw_status as withdrawStatus,
+    	a.handle_user_id  as handleUserId,
+    	a.handle_time as handleTime,
+    	a.handle_mark as handleMark,
+    	a.withdraw_time as withdrawTime,
+    	a.terminal_type as terminalType,
+    	a.user_name as userName
+	FROM 
+		1dcq_withdraw a
+		WHERE a.withdraw_id in
+		<foreach collection="withDrawList" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
+   
+</mapper>

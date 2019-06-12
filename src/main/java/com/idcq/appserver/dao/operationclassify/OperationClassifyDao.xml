@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.operationclassify.OperationClassifyDto">
+	<resultMap id="BaseResultMap"
+		type="com.idcq.appserver.dto.operationclassify.OperationClassifyDto">
+		<id column="order_id" property="orderId" jdbcType="VARCHAR" />
+		<result column="classify_id" property="classifyId" jdbcType="INTEGER" />
+		<result column="classify_name" property="classifyName"
+			jdbcType="VARCHAR" />
+		<result column="classify_desc" property="classifyDesc"
+			jdbcType="VARCHAR" />
+		<result column="classify_key" property="classifyKey" jdbcType="VARCHAR" />
+		<result column="classify_index" property="classifyIndex"
+			jdbcType="INTEGER" />
+		<result column="classify_status" property="classifyStatus"
+			jdbcType="INTEGER" />
+		<result column="parent_classify_id" property="parentClassifyId"
+			jdbcType="INTEGER" />
+		<result column="classify_logo_id" property="classifyLogoId"
+			jdbcType="INTEGER" />
+		<result column="classify_img_url" property="classifyImgUrl"
+			jdbcType="VARCHAR" />
+		<result column="city_id" property="cityId" jdbcType="INTEGER" />
+		<result column="child_count" property="childCount" jdbcType="INTEGER" />
+	</resultMap>
+
+	<select id="getOperationClassifyCount" resultType="java.lang.Long">
+		select count(*) from 1dcq_operation_classify
+		where 1=1
+		<if test="cityId!=null">
+			and city_id=#{cityId}
+		</if>
+		<if test="cityId==null">
+			and city_id is null
+		</if>
+		<if test="parentClassifyId!=null">
+			and parent_classify_id=#{parentClassifyId}
+		</if>
+		<if test="parentClassifyId==null">
+			and parent_classify_id is null
+		</if>
+	</select>
+
+	<select id="getOperationClassify" resultMap="BaseResultMap">
+		select * from 1dcq_operation_classify
+		where 1=1
+		<if test="cityId!=null">
+			and city_id=#{cityId}
+		</if>
+		<if test="parentClassifyId!=null">
+			and parent_classify_id=#{parentClassifyId}
+		</if>
+		order by classify_index
+		<if test="order == 1"> asc </if>
+		<if test="order == 2"> desc </if>
+		limit #{start},#{limit}
+	</select>
+	<select id="getOperationClassifyNom" resultMap="BaseResultMap"
+		parameterType="java.util.Map">
+		select * from 1dcq_operation_classify
+		where 1=1
+		<if test="cityId!=null">
+			and city_id=#{cityId}
+		</if>
+		<if test="classifyId!=null">
+			and classify_id = #{classifyId}
+		</if>
+		<if test="parentClassifyId!=null">
+			and parent_classify_id=#{parentClassifyId}
+		</if>
+		limit #{start},#{limit}
+	</select>
+
+	<select id="getOperationClassifyCountByCondition" resultType="java.lang.Integer">
+		select
+		count(*)
+		from 1dcq_operation_classify
+		where
+		1=1
+		<if test="cityId!=null">
+			and city_id=#{cityId}
+		</if>
+		<if test="parentClassifyId!=null">
+			and parent_classify_id=#{parentClassifyId}
+		</if>
+
+	</select>
+
+	<select id="queryChildCountByParentList" resultMap="BaseResultMap">
+		select count(*) as child_count,parent_classify_id classify_id from
+		1dcq_operation_classify c where c.parent_classify_id in
+		<foreach collection="list" open="(" close=")" separator=","
+			item="item">
+			#{item}
+		</foreach>
+		group by c.parent_classify_id
+	</select>
+</mapper>

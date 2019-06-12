@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shop.ShopDeviceDto">
+	<select id="getShopRegIdByShopId" parameterType="java.lang.Long" resultType="java.lang.String">
+		select reg_id from 1dcq_shop_device where shop_id = #{shopId} and reg_id is not null limit 1
+	</select>
+	<select id="getShopRegIdsByShopId" parameterType="java.lang.Long" resultType="java.util.Map">
+		select reg_id as regId,device_type as deviceType from 1dcq_shop_device where shop_id = #{shopId} and reg_id is not null group by reg_id
+	</select>
+	<select id="queryShopDeviceBySnid" resultType="java.lang.Integer"
+		parameterType="java.lang.String">
+		select count(1) from 1dcq_shop_device where sn_id = #{snId} limit 1
+	</select>
+	<!-- 获取版本及配置服务器（B服务器）的地址列表 -->
+	<select id="queryAppConfigInfo" resultType="java.util.Map"
+		parameterType="java.util.Map">
+		select c.config_key,c.config_value from 1dcq_app_config c where (c.app_id is
+		null or c.app_id = (
+			select i.app_id from 1dcq_app_info i where
+			i.app_name = #{softwareName} and i.app_platform = #{appPlatform} limit 1
+		)) and config_key = #{configKey}
+	</select>
+	<select id="queryAppInfo" parameterType="java.lang.Long" resultType="java.lang.Integer">
+		select count(1) from 1dcq_app_info where app_id = #{appId}
+	</select>
+	<select id="queryAppVersion" parameterType="java.lang.Long" resultType="java.util.Map">
+		SELECT
+			av.app_id,
+			av.version_id,
+			av.version_type,
+			av.version_desc,
+			cast(av.lastest_flag AS signed) AS lastest_flag,
+			av.download_url,
+			av.md5,
+			av.version_size
+		FROM
+			1dcq_app_version av
+		INNER JOIN 1dcq_app_info ai ON av.app_id = ai.app_id
+		WHERE
+			av.app_id = #{appId}
+		AND av.lastest_flag = 1
+		AND av.version_status = 0
+		ORDER BY
+			av.app_version_id DESC
+		LIMIT 1
+	</select>
+	<select id="querySmsParam" resultType="java.util.Map" parameterType="java.lang.Long">
+		select config_key,config_value from 1dcq_app_config where app_id = #{appId}
+	</select>
+	
+	<select id="getShopInfoByParam" resultType="java.util.Map"
+		parameterType="java.util.Map">
+		select s.shop_id as shopId, s.shop_mode as shopMode, 
+		       s.last_update_time as lastUpdate, a.file_url as shopImg, 
+		       s.principal_id as userId, s.shop_status as shopStatus,
+		       s.percentage as percentage
+	    from 1dcq_shop s 
+	    inner join 1dcq_user u 
+	    on s.principal_id = u.user_id
+	    left join 1dcq_attachment_relation ar
+	    on s.shop_id = ar.biz_id
+	    and ar.biz_type = 1
+	    and ar.pic_type = 1
+	    left join 1dcq_attachment a 
+	    on ar.attachement_id= a.attachement_id
+        where u.mobile = #{mobile}
+        <if test="shopId != null">
+          and s.shop_id = #{shopId}
+        </if>
+	</select>
+	
+	<!-- 根据sn查询商铺信息 -->
+	<select id="getShopInfoBySn" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		select d.shop_id as shopId, d.sn_id as snId, d.device_token as deviceToken
+	    from 1dcq_shop_device d
+        where d.sn_id = #{sn}
+	</select>
+	
+	<!-- 更新商铺设备表的token和regId -->
+	<update id="updateShopDeviceRegBy" parameterType="java.util.Map">
+	  update 1dcq_shop_device 
+		  <set>
+		   last_contact_time = now(),
+		   device_token = #{token},
+		   shop_id = #{shopId},
+	      <if test="regId != null" >
+	        reg_id = #{regId},
+	      </if>
+	    </set>
+	  where sn_id = #{sn}
+	</update>
+	
+	<!-- 更新除登陆那个设备以外的设备的regId为空 -->
+	<update id="updateShopDeviceRegNull" parameterType="java.util.Map">
+	  update 1dcq_shop_device 
+	     set reg_id = #{regId},
+	         device_token = #{token},
+	         shop_id = null
+	  where shop_id = #{shopId}
+	  and device_token is not null
+	</update>
+	
+	<update id="updateShopDeviceShopIdNull" parameterType="java.util.Map">
+	  update 1dcq_shop_device 
+	     set shop_id = null
+	  where shop_id = #{shopId}
+	</update>
+	
+	<!-- 根据userId查询商铺id -->
+	<select id="getShopIdByUserId" resultType="java.lang.Long" parameterType="java.lang.Long">
+		select shop_id from 1dcq_shop s where s.principal_id =#{userId}
+	</select>
+	
+		<!-- 商铺token校验 -->
+	<select id="queryShopTokenExists" resultType="int" parameterType="java.util.Map">
+		select count(1) 
+		from 1dcq_shop_device sd
+		where sd.shop_id =#{shopId} and sd.device_token = #{token}
+	</select>
+	
+	<!-- 商铺token校验 -->
+	<select id="getShopIdByToken" resultType="java.lang.Long" parameterType="java.util.Map">
+		select s.shop_id
+		from 1dcq_shop_device sd
+		inner join 1dcq_shop s 
+		on s.shop_id = sd.shop_id
+		where sd.device_token =#{token} 
+		limit 1
+	</select>
+	
+	<!-- 根据shopId查询商铺部分信息 -->
+	<select id="getUserIdByShopId" resultType="java.lang.Long" parameterType="java.lang.Long">
+		select principal_id from 1dcq_shop s where s.shop_id =#{shopId}
+	</select>
+	<!-- 获取收银机API地址接口 -->
+	<select id="getCRAddress" resultType="java.lang.String" parameterType="java.lang.String">
+		SELECT
+			config_value
+		FROM
+			1dcq_app_config c
+		WHERE
+			c.config_key = #{configKey}
+		LIMIT 1
+	</select>
+	
+	<!-- 根据shopId查询对应的shop logo id -->
+	<select id="getLogoIdByShopId" resultType="java.lang.Long" parameterType="java.lang.Long">
+		select a.attachement_id 
+		from 1dcq_shop s 
+		left join 1dcq_attachment a 
+		on  s.shop_logo_id = a.attachement_id  
+		where s.shop_id =#{shopId}
+	</select>
+	
+	<!-- 根据商品编号及sn_id查询设备是否存在 -->
+	<select id="queryShopDeviceBySnidAndShopId" parameterType="com.idcq.appserver.dto.shop.ShopDeviceDto" resultType="java.lang.Integer">
+		SELECT
+			count(1)
+		FROM
+			1dcq_shop_device s
+		WHERE
+			s.shop_id = #{shopId}
+		AND s.sn_id = #{snId}
+	</select>
+	<!-- 新增设备信息 -->
+	<insert id="insertShopDevice" parameterType="com.idcq.appserver.dto.shop.ShopDeviceDto">
+		INSERT INTO 1dcq_shop_device (
+			shop_id,device_name,device_type,sn_id,create_time,last_contact_time,device_owner_type,device_status
+		)
+		VALUES
+		(
+			#{shopId},#{deviceName},#{deviceType},#{snId},#{createTime},#{lastContactTime},#{deviceOwnerType},#{deviceStatus}
+		)
+	</insert>
+	<!-- 根据sn_id修改设备信息 -->
+	<update id="updateShopDeviceBySnId" parameterType="com.idcq.appserver.dto.shop.ShopDeviceDto">
+		<!-- 
+		UPDATE 1dcq_shop_device
+		SET 
+		 shop_id = #{shopId},
+		 device_name = #{deviceName},
+		 device_type = #{deviceType},
+		 device_owner_type = #{deviceOwnerType},
+		 last_contact_time = #{lastContactTime}
+		WHERE
+			sn_id = #{snId}
+			AND shop_id = #{shopId}
+		 -->
+		update 1dcq_shop_device
+	    <set >
+	      <if test="shopId != null" >
+	        shop_id = #{shopId},
+	      </if>
+	      <if test="deviceName != null" >
+	        device_name = #{deviceName},
+	      </if>
+	      <if test="deviceType != null" >
+	        device_type = #{deviceType},
+	      </if>
+	      <if test="deviceOwnerType != null" >
+	        device_owner_type = #{deviceOwnerType},
+	      </if>
+	      <if test="lastContactTime != null" >
+	        last_contact_time = #{lastContactTime}
+	      </if>
+	    </set>
+	   WHERE
+			sn_id = #{snId}
+<!-- 			AND shop_id = #{shopId} -->
+	</update>
+	<!-- 根据sn_id删除设备信息 -->
+	<delete id="deleteShopDeviceBySnId" parameterType="com.idcq.appserver.dto.shop.ShopDeviceDto">
+		DELETE
+		FROM
+			1dcq_shop_device
+		WHERE
+			sn_id = #{snId}
+<!-- 			AND shop_id = #{shopId} -->
+	</delete>
+	
+	<!-- 获取店铺内路由器的MAC白名单接口 -->
+	<select id="getWifiMacWhitelist" parameterType="java.lang.Long" resultType="java.util.Map">
+	     select sn_id as MAC,
+	            device_name as deviceName,
+	            device_type as deviceType,
+	            device_owner_type as deviceOwnerType
+	       from 1dcq_shop_device
+	       where shop_id = #{shopId}
+	       
+	</select>
+	
+	<!-- 获取店铺管理者拥有店铺列表 -->
+	<select id="getOwnShopList" parameterType="java.util.Map" resultType="java.util.Map">
+	     select 
+	           s.shop_id as shopId,
+	           s.shop_name as shopName,
+	           s.address,
+	           s.shop_mode as shopMode,
+	           s.level_id as levelId,
+	           s.shop_point as shopPoint,
+	           s.shop_status as shopStatus,
+	           l.level_name as levelName
+	       from 1dcq_shop s
+	       left join 1dcq_level l
+	       on s.level_id = l.level_id
+	       where principal_id = #{userId}
+			<choose>
+				<when test="authentication == 100">and shop_status != 2</when>
+				<otherwise>and shop_status = 0</otherwise>
+			</choose>
+	         and chain_stores_type != 1
+	         <if test="shopMode != null">
+	              <choose>
+	           		<when test="shopMode == 'restaurant' || shopMode == 'fastrestaurant'">
+	             		and shop_mode in ('restaurant', 'fastrestaurant')
+	          		 </when>
+	           		<otherwise>
+	           			and shop_mode =  #{shopMode}
+	           		</otherwise>
+	      		 </choose>
+	        </if>
+	      	order by shop_id desc 
+	         
+	</select>
+	
+	
+	<select id="getPasswordByShopId" parameterType="java.lang.Long" resultType="java.lang.String">
+	    SELECT u.password 
+	      FROM 1dcq_user u 
+    INNER JOIN 1dcq_shop s
+	        ON u.user_id = s.principal_id
+	     WHERE s.shop_id = #{shopId}
+	</select>
+	<!-- 查询手机是否在使用 --> 
+	<select id="getShopDeviceIsExist" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select 
+			count(*) 
+		from
+			1dcq_shop_device sd
+		where 
+			sd.device_status > 1
+		<if test="shopId">
+			and sd.shop_id = #{shopId}
+		</if>
+		<if test="deviceType">
+			and sd.device_type = #{deviceType}
+		</if>		
+	</select>
+</mapper>

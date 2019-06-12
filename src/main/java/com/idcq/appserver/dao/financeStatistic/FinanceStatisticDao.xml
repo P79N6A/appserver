@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.financeStatistic.FinanceStatisticDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.financeStatistic.FinanceStatisticDto" >
+  
+<!--     `statistic_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '对账ID',
+  `begin_date` date NOT NULL COMMENT '统计日期开始',
+  `end_date` date NOT NULL COMMENT '统计日期结束',
+  `statistic_result` varchar(500) DEFAULT NULL COMMENT '对账结果-详细',
+  `statistic_time` datetime NOT NULL COMMENT '对账时间',
+  `operator_id` int(10) unsigned NOT NULL COMMENT '对账ID对应1dcq_admin.admin_id',
+  `operator_name` varchar(50) NOT NULL COMMENT '对账人姓名',
+  `statistic_type` tinyint(2) unsigned NOT NULL COMMENT '对账类型：1=入账',
+  `is_pass` tinyint(2) unsigned NOT NULL DEFAULT '0' COMMENT '是否匹配通过：0=否，1=是',
+  `remark` varchar(200) DEFAULT NULL COMMENT '对账备注', -->
+  
+    <id column="statistic_id" property="statisticId" />
+    <result column="begin_date" property="beginDate" />
+    <result column="end_date" property="endDate"  />
+    <result column="statistic_result" property="statisticResult" />
+    <result column="statistic_time" property="statisticTime"  />
+    <result column="operator_id" property="operatorId" />
+    <result column="operator_name" property="operatorName"  />
+    <result column="statistic_type" property="statisticType" />
+    <result column="is_pass" property="isPass" />
+    <result column="remark" property="remark"  />
+    
+  </resultMap>
+  
+  
+  <select id="getFinanceStatistic" resultMap="BaseResultMap" parameterType="com.idcq.appserver.dto.financeStatistic.FinanceStatisticDto" >
+	SELECT
+		fs.statistic_id,
+		fs.begin_date,
+		fs.end_date,
+		fs.operator_id,
+		fs.operator_name,
+		fs.statistic_type,
+		fs.statistic_result,
+		fs.statistic_time,
+		fs.is_pass,
+		fs.remark
+	FROM
+		1dcq_finance_statistic fs
+	WHERE
+		1 = 1
+	<if test="beginDate != null">
+		AND fs.begin_date &gt;= #{beginDate}
+	</if>
+	<if test="endDate != null">
+		AND fs.end_date &lt;= #{endDate}
+	</if>	
+	<if test="operatorId != null">
+		AND fs.operator_id = #{operatorId}
+	</if>
+	<if test="operatorName != null">
+		AND fs.operator_name = #{operatorName}
+	</if>
+	<if test="statisticType != null">
+		AND fs.statistic_type = #{statisticType}
+	</if>
+	<if test="isPass != null">
+		AND fs.is_pass = #{isPass}
+	</if>
+	<if test="beginStatisticTime != null">
+		AND fs.statistic_time &gt;= #{beginStatisticTime}
+	</if>
+	<if test="endStatisticTime != null">
+		AND fs.statistic_time &lt;= #{endStatisticTime}
+	</if>
+	ORDER BY fs.statistic_time DESC
+	<if test="limit != null and pageSize != null">
+		LIMIT #{limit},#{pageSize}
+	</if>
+	
+  </select>
+ 
+  <select id="getFinanceStatisticCount" resultType="java.lang.Integer" parameterType="com.idcq.appserver.dto.financeStatistic.FinanceStatisticDto" >
+	SELECT
+		count(*)
+	FROM
+		1dcq_finance_statistic fs
+	WHERE
+		1 = 1
+	<if test="beginDate != null">
+		AND fs.begin_date &gt;= #{beginDate}
+	</if>
+	<if test="endDate != null">
+		AND fs.end_date &lt;= #{endDate}
+	</if>	
+	<if test="operatorId != null">
+		AND fs.operator_id = #{operatorId}
+	</if>
+	<if test="operatorName != null">
+		AND fs.operator_name = #{operatorName}
+	</if>
+	<if test="statisticType != null">
+		AND fs.statistic_type = #{statisticType}
+	</if>
+	<if test="isPass != null">
+		AND fs.is_pass = #{isPass}
+	</if>
+	<if test="beginStatisticTime != null">
+		AND fs.statistic_time &gt;= #{beginStatisticTime}
+	</if>
+	<if test="endStatisticTime != null">
+		AND fs.statistic_time &lt;= #{endStatisticTime}
+	</if>
+	
+  </select>
+
+
+	<insert id="insertFinanceStatistic" parameterType="com.idcq.appserver.dto.financeStatistic.FinanceStatisticDto" useGeneratedKeys="true" keyProperty="statisticId">
+		INSERT INTO 1dcq_finance_statistic
+		(
+		  begin_date,
+		  end_date,
+		  statistic_result,
+		  statistic_time,
+		  operator_id,
+		  operator_name,
+		  statistic_type,
+		  is_pass,
+		  remark
+		)VALUES (
+		  #{beginDate},
+		  #{endDate},
+		  #{statisticResult},
+		  #{statisticTime},
+		  #{operatorId},
+		  #{operatorName},
+		  #{statisticType},
+		  #{isPass},
+		  #{remark}
+		)
+
+	</insert>
+
+	<insert id="insertfinanceStatisticDetails" parameterType="java.util.List">
+		INSERT INTO
+		1dcq_finance_statistic_detail
+		(
+		  statistic_id,
+		  amount_finance,
+		  amount_online,
+		  amount_differ,
+		  money_source,
+		  is_pass
+		)VALUES
+		<foreach collection="list"  item="item" separator=",">
+			(#{item.statisticId},
+			#{item.amountFinance},
+			#{item.amountOnline},
+			#{item.amountDiffer},
+			#{item.moneySource},
+			#{item.isPass})
+		</foreach>
+	</insert>
+
+	<insert id="insertFinanceStatisticStats" parameterType="java.util.List">
+		INSERT INTO
+		1dcq_finance_statistic_stat
+		(
+			`statistic_date`,
+  			`is_pass`,
+ 			`statistic_id`,
+  			`create_time`
+		)VALUES
+		<foreach collection="list" item="items" separator=",">
+			(#{items.statisticDate},
+			#{items.isPass},
+			#{items.statisticId},
+			#{items.createTime})
+		</foreach>
+		ON DUPLICATE KEY UPDATE
+		is_pass = VALUES (is_pass)
+	</insert>
+  
+  <select id="getFinanceStatisticDetailBystatisticId" resultType="java.util.Map" parameterType="java.lang.Long" >
+	
+	SELECT
+		fsd.money_source as moneySource,
+		fsd.amount_finance as amountFinance,
+		fsd.amount_online as amountOnline,
+		fsd.amount_differ as amountDiffer,
+		fsd.is_pass as isPass
+	FROM
+		1dcq_finance_statistic_detail fsd
+	WHERE
+		fsd.statistic_id = #{statisticId}
+	
+  </select>
+  
+  <select id="getFinanceStat" resultType="java.util.Map" parameterType="java.util.Map" >
+	
+	SELECT
+		fss.statistic_date as statisticDate,
+		cast(fss.is_pass as signed) AS isPass
+	FROM
+		1dcq_finance_statistic_stat fss
+	WHERE
+		1=1  
+	<if test="statisticBeginDate != null">
+		AND fss.statistic_date >= #{statisticBeginDate}
+	</if>
+	<if test="statisticEndDate != null">
+		AND fss.statistic_date &lt;= #{statisticEndDate}
+	</if>
+	
+  </select>
+</mapper>

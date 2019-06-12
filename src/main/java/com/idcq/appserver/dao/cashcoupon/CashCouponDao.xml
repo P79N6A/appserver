@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.cashcoupon.CashCouponDto">
+	<resultMap type="com.idcq.appserver.dto.cashcoupon.CashCouponDto" id="couponMap">
+		<result column="cash_coupon_id" property="cashCouponId" />
+    	<result column="cash_coupon_name" property="cashCouponName" />
+    	<result column="cash_coupon_desc" property="cashCouponDesc"  />
+    	<result column="issuer_shop_id" property="issuerShopId"  />
+    	<result column="shop_id" property="shopId" />
+    	<result column="shop_name" property="shopName" />
+    	<result column="cash_coupon_img_id" property="cashCouponImgId"  />
+    	<result column="cash_coupon_img" property="cashCouponImg"  />
+    	<result column="heat_degree" property="heatDegree" />
+    	<result column="total_number" property="totalNumber" />
+    	<result column="available_number" property="availableNumber" />
+    	<result column="city_id" property="cityId" />
+    	<result column="value" property="value" />
+    	<result column="price" property="price" />
+    	<result column="start_time" property="startTime"  />
+    	<result column="stop_time" property="stopTime" />
+    	<result column="obtain_time" property="obtainTime" />
+    	
+    	<result column="condition_price" property="conditionPrice" />
+    	<result column="issue_from_date" property="issueFromDate" />
+    	<result column="issue_to_date" property="issueToDate" />
+    	<result column="obtain_number_per_day_per_person" property="obtainNumberPerDayPerPerson"  />
+    	<result column="use_number_per_order" property="useNumberPerOrder" />
+    	<result column="use_together_flag" property="useTogetherFlag" />
+    	<result column="cash_coupon_status" property="cashCouponStatus" />
+    	
+    	<result column="obtain_time" property="obtainTime" />
+    	
+    	<result column="used_price" property="usedPrice" />
+    	<result column="end_time" property="endTime" />
+    	<result column="ucc_id" property="uccId" />
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+    	cash_coupon_id, cash_coupon_name, cash_coupon_desc, issuer_shop_id, shop_id, 
+    	heat_degree, total_number, available_number, city_id, value, price, start_time, stop_time,condition_price,
+    	issue_from_date,issue_to_date,obtain_number_per_day_per_person,use_number_per_order,use_together_flag  	
+  	</sql>
+	<sql id="Alias_Column_List" >
+    	a.cash_coupon_id as cash_coupon_id, a.cash_coupon_name as cash_coupon_name, 
+    	a.cash_coupon_desc as cash_coupon_desc, a.issuer_shop_id as issuer_shop_id, 
+    	a.shop_id as shop_id, a.heat_degree as heat_degree, 
+    	a.total_number as total_number, a.available_number as available_number, 
+    	a.city_id as city_id, a.value as value, 
+    	a.price as price, a.start_time as start_time, 
+    	a.stop_time as stop_time,a.condition_price as condition_price,
+    	a.issue_from_date as issue_from_date,a.issue_to_date as issue_to_date,
+    	a.obtain_number_per_day_per_person as obtain_number_per_day_per_person,
+    	a.use_number_per_order as use_number_per_order,a.use_together_flag as use_together_flag,
+    	b.file_url as cash_coupon_img
+  	</sql>
+  	<sql id="Base_Column_List_User" >
+    	a.cash_coupon_id as cash_coupon_id, 
+    	a.cash_coupon_name as cash_coupon_name, a.cash_coupon_desc as cash_coupon_desc, 
+    	a.issuer_shop_id as issuer_shop_id, a.shop_id as shop_id,
+    	a.heat_degree as heat_degree, a.total_number as total_number, 
+    	a.available_number as available_number, a.city_id as city_id, 
+    	a.value as value,  
+    	a.start_time as start_time, a.stop_time as stop_time,
+    	a.condition_price as condition_price,a.issue_from_date as issue_from_date,
+    	a.issue_to_date as issue_to_date,
+    	a.obtain_number_per_day_per_person as obtain_number_per_day_per_person,
+    	a.use_number_per_order as use_number_per_order,a.use_together_flag as use_together_flag,
+    	a.start_time as start_time,a.stop_time as stop_time,
+    	b.obtain_time as obtain_time,
+    	b.end_time as end_time,b.used_price,
+    	b.ucc_id as ucc_id,
+    	b.price as price,
+    	c.shop_name as shop_name,d.file_url as cash_coupon_img
+  	</sql>
+  	
+    <select id="getCashCouponList" parameterType="java.util.Map"  resultMap="couponMap">
+    	select 
+    	<include refid="Alias_Column_List" />
+    	from 
+    	1dcq_cash_coupon a
+    	left join 1dcq_attachment b
+    	on a.cash_coupon_img_id = b.attachement_id
+    	where a.city_id=#{cityId} and a.cash_coupon_status=1
+    	order by a.heat_degree desc
+    	limit #{n},#{m}
+    </select>
+    
+    <select id="getCashCouponListCount" parameterType="java.util.Map" resultType="int">
+    	select count(1) 
+    	from 1dcq_cash_coupon a
+    	where a.city_id=#{cityId} and a.cash_coupon_status=1
+    </select>
+    
+    <select id="getUserCashCouponList" parameterType="java.util.Map" resultMap="couponMap">
+    	select 
+    	<include refid="Base_Column_List_User" />
+		from 1dcq_user_cash_coupon b
+		inner join 1dcq_cash_coupon a
+		on a.cash_coupon_id = b.cash_coupon_id
+		left join 1dcq_shop c on
+		a.shop_id = c.shop_id
+		left join 1dcq_attachment d
+		on a.cash_coupon_img_id = d.attachement_id
+		where b.user_id=#{userId}
+		order by b.ucc_id
+    	limit #{n},#{m}
+    </select>
+    
+    <select id="getUserCashCouponListCount" parameterType="java.util.Map" resultType="int">
+    	select count(1) 
+    	from 1dcq_user_cash_coupon b
+		where b.user_id=#{userId}
+    </select>
+    
+    <select id="getCouponDtoById" parameterType="java.util.Map"  resultMap="couponMap">
+    	select 
+    	<include refid="Base_Column_List" />
+    	from 
+    	1dcq_cash_coupon 
+    	where cash_coupon_id=#{cashCouponId}
+    	and start_time &lt;=#{curDate}
+    	and stop_time>=#{curDate}
+    	and cash_coupon_status=1
+    	
+    </select>
+    
+    <select id="getCouponDtoByIdForGrab" parameterType="java.util.Map"  resultMap="couponMap">
+    	select 
+    	<include refid="Base_Column_List" />
+    	from 
+    	1dcq_cash_coupon 
+    	where cash_coupon_id=#{cashCouponId}
+    	and issue_from_date &lt;=#{curDate}
+    	and issue_to_date>=#{curDate}
+    	and cash_coupon_status=1
+    	
+    </select>
+    
+   	<update id="updateAvaliableNum" parameterType="int" >
+   		update 1dcq_cash_coupon
+   		<set >	
+   			available_number = available_number - 1
+   		</set>
+   		where cash_coupon_id=#{cashCouponId}
+   	</update>  
+   	
+   	 <select id="getShopCouponList" parameterType="java.util.Map"  resultType="java.util.Map">
+    	select cash_coupon_id cashCouponId, cash_coupon_name cashCouponName, cash_coupon_desc cashCouponDesc, issuer_shop_id issuerShopId, shop_id shopId, 
+    	a.file_url cashCouponImg,heat_degree heatDegree,value, price, start_time startTime, stop_time stopTime,total_number totalNumber,available_number availableNumber,
+    	condition_price conditionPrice,issue_from_date issueFromDate,issue_to_date issueToDate,obtain_number_per_day_per_person obtainNumberPerDayPerPerson,
+    	use_number_per_order useNumberPerOrder,case use_together_flag when 0 then 0 else 1 end useTogetherFlag
+    	from 1dcq_cash_coupon c left join 1dcq_attachment a on c.cash_coupon_img_id=a.attachement_id
+    	where cash_coupon_status=1
+    	<if test="queryType == 0">
+	    	and (shop_id=#{shopId} or shop_id is null)
+    	</if>
+    	<if test="queryType == 1">
+	    	and shop_id=#{shopId}
+    	</if>
+    	limit #{n},#{m}
+    </select>
+    
+    <select id="getShopCouponTotal" parameterType="java.util.Map" resultType="int">
+    	select count(1) 
+    	from 1dcq_cash_coupon 
+    	where 1=1
+    	<if test="queryType == 0">
+	    	and (shop_id=#{shopId} or shop_id is null)
+    	</if>
+    	<if test="queryType == 1">
+	    	and shop_id=#{shopId}
+    	</if>
+    </select>
+    
+    <select id="getUserCashCouponCountBy" parameterType="java.util.Map" resultType="int">
+    	select count(1) 
+    	from 1dcq_user_cash_coupon b
+    	inner join 1dcq_cash_coupon c
+    	on c.cash_coupon_id = b.cash_coupon_id
+		where b.user_id=#{userId}
+		and b.coupon_status = #{status}
+		and c.cash_coupon_status = #{useStatus}
+    </select>
+    <!-- 查询代金券余额 -->
+    <select id="getCashCouponAmount" parameterType="java.lang.Long" resultType="java.util.Map">
+		SELECT
+			ifnull(SUM(ucc.price - ucc.used_price),0) as cashCouponAmount
+		FROM
+			1dcq_user_cash_coupon AS ucc
+		WHERE
+			user_id = #{userId}
+    </select>
+    
+    <select id="getCashCouponListByShopId" resultMap="couponMap" parameterType="java.util.Map">
+    	select p.*,at.file_url as cashCouponImg from 1dcq_cash_coupon p left join 1dcq_attachment at on p.cash_coupon_img_id=at.attachement_id where p.shop_id=#{shopId} or p.shop_id is null
+    </select>
+</mapper> 
+   

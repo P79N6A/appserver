@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shop.ShopRsrcDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.shop.ShopRsrcDto" >
+    <id column="resource_id" property="resourceId" jdbcType="INTEGER" />
+    <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    <result column="resource_name" property="resourceName" jdbcType="VARCHAR" />
+    <result column="resource_desc" property="resourceDesc" jdbcType="VARCHAR" />
+    <result column="group_id" property="groupId" jdbcType="INTEGER" />
+    <result column="position_id" property="positionId" jdbcType="INTEGER" />
+    <result column="resource_no" property="resourceNo" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="parent_resource_id" property="parentResourceId" jdbcType="INTEGER" />
+    <result column="resource_type" property="resourceType" jdbcType="VARCHAR" />
+    <result column="resource_status" property="resourceStatus" jdbcType="VARCHAR" />
+    <result column="order_id" property="orderId" jdbcType="VARCHAR" />
+    <result column="used_from_datetime" property="usedFromDateTime" jdbcType="VARCHAR" />
+    <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="groupShopResultMap" type="com.idcq.appserver.dto.shop.ShopRsrcDto" >
+    <id column="resource_id" property="resourceId" jdbcType="INTEGER" />
+    <result column="resource_no" property="resourceNo" jdbcType="VARCHAR" />
+    <result column="resource_name" property="resourceName" jdbcType="VARCHAR" />
+    <result column="resource_type" property="resourceType" jdbcType="VARCHAR" />
+    <result column="resource_status" property="resourceStatus" jdbcType="VARCHAR" />
+    <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+  </resultMap>
+ 
+  <sql id="Base_Column_List" >
+    resource_id, shop_id, resource_name, resource_desc, group_id, position_id, resource_no, 
+    create_time, parent_resource_id, resource_type,resource_status,order_id,used_from_datetime
+  </sql>
+  <select id="getCategoryIdByRsrId" parameterType="java.lang.Long" resultType="java.lang.Long" >
+  	select goods_category_id from 1dcq_shop_resource where resource_id = #{resourceId}
+  </select>
+  <select id="getCategoryIdAndRsrNameByRsrId" parameterType="java.lang.Long" resultType="java.util.Map" >
+  	select goods_category_id as categoryId ,resource_name as resourceName from 1dcq_shop_resource where resource_id = #{resourceId}
+  </select>
+  <select id="queryShopResourceExists" parameterType="java.lang.Long" resultType="java.lang.Integer">
+  	select count(1) from 1dcq_shop_resource where resource_id = #{resourceId} and resource_type = 3
+  </select>
+  <select id="queryResourceExists" parameterType="java.lang.Long" resultType="java.lang.Integer">
+  	select count(1) from 1dcq_shop_resource where resource_id = #{resourceId}
+  </select>
+  <select id="getShopResourceName" parameterType="java.lang.Long" resultType="java.lang.String">
+  	select resource_name from 1dcq_shop_resource where resource_id = #{resourceId} and resource_type = 3
+  </select>
+  <select id="getShopRsrcById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from 1dcq_shop_resource
+    where resource_id = #{resourceId,jdbcType=INTEGER}
+  </select>
+  
+  <update id="useShopResource" parameterType="java.util.Map" >
+  	update 1dcq_shop_resource
+  	set resource_status=1,order_id=#{orderId},used_from_datetime=now()
+  	where resource_id=#{resourceId}
+  </update>
+  
+   <select id="getShopRsrcList" resultType="java.util.Map" parameterType="java.util.Map" >
+    select r.resource_id resourceId,r.resource_no resourceNo,r.resource_name resourceName,p.name positionName,r.resource_status resourceStatus,r.order_id orderId,
+    r.used_from_datetime usedFromDatetime
+    from 1dcq_shop_resource r left join 1dcq_shop_resource_position p on r.position_id=p.position_id
+    where 1=1
+    <if test="shopId != null">
+    	and r.shop_id=#{shopId}
+    </if>
+    <if test="groupId != null">
+    	and group_id=#{groupId}
+    </if>
+  </select>
+  
+  <select id="getShopResourceList"  resultMap="BaseResultMap" parameterType="com.idcq.appserver.dto.shop.ShopRsrcDto" >
+    select r.resource_id resourceId,r.resource_no resourceNo,r.resource_name resourceName,r.resource_status resourceStatus,r.order_id orderId
+    from 1dcq_shop_resource r 
+    where DATE_ADD(used_from_datetime,INTERVAL 3 hour) &lt; NOW()
+   	AND resource_status IN (1,2)
+  </select>
+  
+  <update id="updateShopResource" parameterType="com.idcq.appserver.dto.shop.ShopRsrcDto" >
+    update 1dcq_shop_resource
+    <set>
+      <if test="resourceStatus != null" >
+        used_from_datetime=null,resource_status = #{resourceStatus,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where resource_id = #{resourceId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getShopGroupResourceList" parameterType="java.lang.Long" resultType="java.util.Map">
+		SELECT
+			r.resource_id resourceId,
+			r.resource_no resourceNo,
+			r.resource_name resourceName,
+			r.resource_status resourceStatus,
+			r.resource_type as resourceType,
+			'' as positionName
+		FROM
+			1dcq_shop_resource r
+		WHERE
+			r.shop_id = #{shopId}
+		ORDER BY
+			resource_type
+   </select>
+ <!--  获取商铺资源接口.场地类 -->
+  <select id="getShopCategoryResource" resultType="java.util.Map" parameterType="java.util.Map">
+    SELECT
+	 	sr.resource_id as resourceId,
+	 	sr.resource_name as resourceName,
+	 	sr.goods_category_id as categoryId
+    FROM
+    	1dcq_shop_resource sr
+	where
+	    sr.shop_id = #{shopId}
+	and
+        sr.goods_category_id=#{categoryId}
+  </select>
+  <!-- 插入场地店铺资源
+  	 shopId":888,
+	"categoryId":888,
+	"resourceId":1,
+	"resourceName":"1号场",
+	"operateType":1-->
+  <insert id="insertShopCategoryResource" parameterType="com.idcq.appserver.dto.shop.ShopRsrcDto">
+	insert into
+		1dcq_shop_resource
+	(
+		shop_id,
+		goods_category_id,
+		resource_name,
+		create_time,
+		resource_type,
+		last_update_time
+	)
+	values
+	(
+		#{shopId},
+		#{categoryId},
+		#{resourceName},
+		now(),
+		3,
+		now()
+	)
+  </insert>
+  <!-- 更新商铺资源 -->
+  <update id="updateShopCategoryResource" parameterType="com.idcq.appserver.dto.shop.ShopRsrcDto">
+	UPDATE 
+		1dcq_shop_resource
+	SET 
+		resource_name = #{resourceName},
+		last_update_time = now()
+	WHERE
+		shop_id = #{shopId}
+	AND
+		goods_category_id = #{categoryId}
+	<if test="resourceId!=null">
+		AND resource_id = #{resourceId}
+	</if>
+  </update>
+  <!-- 删除商铺资源 -->
+  <update id="deleteShopCategoryResource" parameterType="com.idcq.appserver.dto.shop.ShopRsrcDto">
+	delete from 
+		1dcq_shop_resource
+	WHERE
+		shop_id = #{shopId}
+	AND
+		goods_category_id = #{categoryId}
+	<if test="resourceId!=null">
+		AND resource_id = #{resourceId}
+	</if>
+  </update>
+  
+  <select id="getSeatNameBySeatIds" resultType="java.lang.String">
+      select resource_name from 1dcq_shop_resource where resource_id in
+      <foreach item="item" index="index" collection="array" open="(" separator="," close=")">  
+         #{item}  
+       </foreach> 
+  </select>
+</mapper>

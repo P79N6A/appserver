@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.cashcard.CashCardBatchDto">
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.cashcard.CashCardBatchDto" >
+    <id column="cash_card_batch_id" property="cashCardBatchId" jdbcType="BIGINT" />
+    <result column="card_name" property="cardName" jdbcType="VARCHAR" />
+    <result column="money" property="money" jdbcType="DOUBLE" />
+    <result column="card_num" property="cardNum" jdbcType="INTEGER" />
+    <result column="total_money" property="totalMoney" jdbcType="DOUBLE" />
+    <result column="card_channel" property="cardChannel" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="begin_time" property="beginTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="batch_no" property="batchNo" jdbcType="VARCHAR" />
+    <result column="build_status" property="buildStatus" jdbcType="TINYINT" />
+    <result column="batch_status" property="batchStatus" jdbcType="TINYINT" />
+    <result column="batch_desc" property="batchDesc" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    cash_card_batch_id, 
+    card_name, 
+    money, 
+    card_num,
+    total_money, 
+    card_channel, 
+    create_time,
+    begin_time,
+    end_time, 
+    batch_no, 
+    build_status, 
+    batch_status, 
+    batch_desc
+  </sql>
+  
+  <select id="getCashCardBatchByBatchId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from 1dcq_cash_card_batch
+    where cash_card_batch_id = #{cashCardBatchId}
+  </select>
+  
+  <select id="getCashCardBatchByBatchNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from 1dcq_cash_card_batch
+    where batch_no = #{batchNo}
+  </select>
+  
+   <update id="updateCashCardBatch" parameterType="com.idcq.appserver.dto.cashcard.CashCardBatchDto">
+  	update 1dcq_cash_card_batch
+  	<set>
+  		<if test="batchNo != null">
+  			batch_no=#{batchNo},
+  		</if>
+  		<if test="buildStatus != null">
+  			build_status=#{buildStatus},
+  		</if>
+  	</set>
+  	where  cash_card_batch_id = #{cashCardBatchId}
+  </update>
+</mapper>

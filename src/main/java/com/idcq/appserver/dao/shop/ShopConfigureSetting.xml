@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.shop.ShopConfigureSettingDto">
+	<resultMap type="com.idcq.appserver.dto.shop.ShopConfigureSettingDto" id="shopConfigureSettingMap">
+		<result property="settingKey" column="setting_key"/>
+		<result property="settingValue" column="setting_value"/>
+	</resultMap>
+	
+	<!-- 根据店铺id和设置类型查询配置信息 -->
+  <select id="queryShopConfigureSetting" parameterType="java.util.Map" resultMap="shopConfigureSettingMap">
+    	select setting_key, setting_value
+		from 1dcq_shop_setting 
+		where shop_id = #{shopId}
+		and setting_type = #{settingType}
+  </select>
+  
+  <!-- 根据店铺id和设置类型删除配置信息 -->
+  <delete id="deleteConfigureSettingBy" parameterType="java.util.Map">
+      delete from 1dcq_shop_setting where shop_id = #{shopId} and setting_type = #{settingType}
+      <if test="settingKey != null">
+      	and setting_key = #{settingKey}
+      </if>
+   </delete> 
+    
+   <insert id="saveConfigureSettingBatch" useGeneratedKeys="true" parameterType="java.util.List">  
+    <selectKey resultType="long" keyProperty="settingId" order="AFTER">  
+        SELECT LAST_INSERT_ID()  
+    </selectKey>  
+    insert into 1dcq_shop_setting (shop_id, setting_key, setting_value, setting_desc, setting_type, create_time, last_update_time)   
+    values  
+    <foreach collection="list" item="item" index="index" separator="," >  
+        (#{item.shopId}, #{item.settingKey}, #{item.settingValue}, #{item.settingDesc}, #{item.settingType}, NOW(), NOW())  
+    </foreach>  
+  </insert>   
+  
+  <select id="getShopConfigureSettingValue" parameterType="java.util.Map" resultType="java.lang.String">
+    	select setting_value
+		from 1dcq_shop_setting 
+		where shop_id = #{shopId}
+		and setting_type = #{settingType}
+		and setting_key = #{settingKey}
+  </select>
+  
+   <update id="updateConfigureSetting" parameterType="java.util.Map" >
+    update 1dcq_shop_setting 
+    <set >
+      <if test="settingType == 1" >
+        setting_value = 1
+      </if>
+      <if test="settingType == 0" >
+        setting_value = 0
+      </if>
+    </set>
+  		where setting_key = #{settingKey} and  shop_id = #{shopId}
+  </update>
+  
+   
+    
+</mapper> 

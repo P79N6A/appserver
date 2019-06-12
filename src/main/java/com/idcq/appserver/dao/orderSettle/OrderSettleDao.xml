@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.order.OrderSettleDto" >
+  <insert id="saveOrderSettle" parameterType="com.idcq.appserver.dto.order.OrderSettleDto" keyProperty="orderId" useGeneratedKeys="true">
+    insert ignore into 1dcq_order_settle
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        order_id,
+      </if>
+      <if test="shop_income_price != null" >
+        shop_income_price,
+      </if>
+      <if test="shop_income_ratio != null" >
+        shop_income_ratio,
+      </if>
+      <if test="platform_total_income_price != null" >
+        platform_total_income_price,
+      </if>
+      <if test="platform_net_income_price != null" >
+        platform_net_income_price,
+      </if>
+      <if test="platform_total_income_ratio != null" >
+        platform_total_income_ratio,
+      </if>
+      <if test="user_share_price != null" >
+        user_share_price,
+      </if>
+      <if test="user_share_ratio != null" >
+        user_share_ratio,
+      </if>
+      <if test="user_name != null" >
+        user_name,
+      </if>
+      <if test="user_ref_share_price != null" >
+        user_ref_share_price,
+      </if>
+      <if test="user_ref_share_ratio != null" >
+        user_ref_share_ratio,
+      </if>
+      <if test="user_ref_share_user_name != null" >
+        user_ref_share_user_name,
+      </if>
+      <if test="user_ref_share_user_id != null" >
+        user_ref_share_user_id,
+      </if>
+      <if test="shop_ref_share_price != null" >
+        shop_ref_share_price,
+      </if>
+      <if test="shop_ref_share_ratio != null" >
+        shop_ref_share_ratio,
+      </if>
+      <if test="shop_ref_share_user_name != null" >
+      	shop_ref_share_user_name,
+      </if>
+      <if test="shop_ref_share_user_id != null" >
+      	shop_ref_share_user_id,
+      </if>
+      <if test="shop_serve_share_price != null" >
+      	shop_serve_share_price,
+      </if>
+      <if test="shop_serve_share_ratio != null" >
+      	shop_serve_share_ratio,
+      </if>
+      <if test="shop_serve_share_user_name != null" >
+      	shop_serve_share_user_name,
+      </if>
+      <if test="shop_serve_share_user_id != null" >
+      	shop_serve_share_user_id,
+      </if>
+      <if test="level1_agent_price != null" >
+      	level1_agent_price,
+      </if>
+      <if test="level1_agent_share_ratio != null" >
+      	level1_agent_share_ratio,
+      </if>
+      <if test="level1_agent_share_user_name != null" >
+      	level1_agent_share_user_name,
+      </if>
+      <if test="level1_agent_share_user_id != null" >
+      	level1_agent_share_user_id,
+      </if>
+      <if test="level2_agent_price != null" >
+      	level2_agent_price,
+      </if>
+      <if test="level2_agent_share_ratio != null" >
+      	level2_agent_share_ratio,
+      </if>
+      <if test="level2_agent_share_user_name != null" >
+      	level2_agent_share_user_name,
+      </if>
+      <if test="level2_agent_share_user_id != null" >
+      	level2_agent_share_user_id,
+      </if>
+      <if test="level3_agent_price != null" >
+      	level3_agent_price,
+      </if>
+      <if test="level3_agent_share_ratio != null" >
+      	level3_agent_share_ratio,
+      </if>
+      <if test="level3_agent_share_user_name != null" >
+      	level3_agent_share_user_name,
+      </if>
+      <if test="level3_agent_share_user_id != null" >
+      	level3_agent_share_user_id,
+      </if>
+      <if test="integration_promotion_price != null" >
+      	integration_promotion_price,
+      </if>
+      <if test="integration_promotion_ratio != null" >
+      	integration_promotion_ratio,
+      </if>
+      <if test="integration_promotion_user_name != null" >
+      	integration_promotion_user_name,
+      </if>
+      <if test="integration_promotion_user_id != null" >
+      	integration_promotion_user_id,
+      </if>
+       <if test="integration_facilitate_price != null" >
+      	integration_facilitate_price,
+      </if>
+      <if test="integration_facilitate_ratio != null" >
+      	integration_facilitate_ratio,
+      </if>
+       <if test="integration_facilitate_user_name != null" >
+      	integration_facilitate_user_name,
+      </if>
+      <if test="integration_facilitate_user_id != null" >
+      	integration_facilitate_user_id,
+      </if>
+        <if test="integration_principal_price != null" >
+      	  integration_principal_price,
+      </if>
+      <if test="integration_principal_ratio != null" >
+      	  integration_principal_ratio,
+      </if>
+      <if test="integration_principal_user_name != null" >
+      	  integration_principal_user_name,
+      </if>
+      <if test="integration_principal_user_id != null">
+      	  integration_principal_user_id,
+      </if>
+      <if test="refer_agent_price != null">
+      	refer_agent_price,
+      </if>
+  	  <if test="refer_agent_ratio != null" >
+      	refer_agent_ratio,
+      </if>
+        <if test="refer_agent_user_name != null" >
+      	refer_agent_user_name,
+      </if>
+        <if test="refer_agent_user_id != null" >
+      	refer_agent_user_id,
+      </if>
+      
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="shop_income_price != null" >
+        #{shop_income_price},
+      </if>
+      <if test="shop_income_ratio != null" >
+        #{shop_income_ratio},
+      </if>
+      <if test="platform_total_income_price != null" >
+        #{platform_total_income_price},
+      </if>
+      <if test="platform_net_income_price != null" >
+        #{platform_net_income_price},
+      </if>
+      <if test="platform_total_income_ratio != null" >
+        #{platform_total_income_ratio},
+      </if>
+      <if test="user_share_price != null" >
+        #{user_share_price},
+      </if>
+      <if test="user_share_ratio != null" >
+        #{user_share_ratio},
+      </if>
+      <if test="user_name != null" >
+        #{user_name},
+      </if>
+      <if test="user_id != null" >
+        #{user_id},
+      </if>
+      <if test="user_ref_share_price != null" >
+        #{user_ref_share_price},
+      </if>
+      <if test="user_ref_share_ratio != null" >
+        #{user_ref_share_ratio},
+      </if>
+      <if test="user_ref_share_user_name != null" >
+        #{user_ref_share_user_name},
+      </if>
+      <if test="user_ref_share_user_id != null" >
+        #{user_ref_share_user_id},
+      </if>
+      <if test="shop_ref_share_price != null" >
+        #{shop_ref_share_price},
+      </if>
+     <if test="shop_ref_share_ratio != null" >
+      	#{shop_ref_share_ratio},
+      </if>
+      <if test="shop_ref_share_user_name != null" >
+      	#{shop_ref_share_user_name},
+      </if>
+      <if test="shop_ref_share_user_id != null" >
+      	#{shop_ref_share_user_id},
+      </if>
+      <if test="shop_serve_share_price != null" >
+      	#{shop_serve_share_price},
+      </if>
+      <if test="shop_serve_share_user_name != null" >
+      	#{shop_serve_share_user_name},
+      </if>
+      <if test="shop_serve_share_user_id != null" >
+      	#{shop_serve_share_user_id},
+      </if>
+      <if test="level1_agent_price != null" >
+      	#{level1_agent_price},
+      </if>
+      <if test="level1_agent_share_ratio != null" >
+      	#{level1_agent_share_ratio},
+      </if>
+      <if test="level1_agent_share_user_name != null" >
+      	#{level1_agent_share_user_name},
+      </if>
+      <if test="level1_agent_share_user_id != null" >
+      	#{level1_agent_share_user_id},
+      </if>
+      <if test="level2_agent_price != null" >
+      	#{level2_agent_price},
+      </if>
+      <if test="level2_agent_share_ratio != null" >
+      	#{level2_agent_share_ratio},
+      </if>
+      <if test="level2_agent_share_user_name != null" >
+      	#{level2_agent_share_user_name},
+      </if>
+      <if test="level2_agent_share_user_id != null" >
+      	#{level2_agent_share_user_id},
+      </if>
+      <if test="level3_agent_price != null" >
+      	#{level3_agent_price},
+      </if>
+      <if test="level3_agent_share_ratio != null" >
+      	#{level3_agent_share_ratio},
+      </if>
+      <if test="level3_agent_share_user_name != null" >
+      	#{level3_agent_share_user_name},
+      </if>
+      <if test="level3_agent_share_user_id != null" >
+      	#{level3_agent_share_user_id},
+      </if>
+      <if test="integration_promotion_price != null" >
+      	#{integration_promotion_price},
+      </if>
+      <if test="integration_promotion_ratio != null" >
+      	#{integration_promotion_ratio},
+      </if>
+      <if test="integration_promotion_user_name != null" >
+      	#{integration_promotion_user_name},
+      </if>
+      <if test="integration_promotion_user_id != null" >
+      	#{integration_promotion_user_id},
+      </if>
+       <if test="integration_facilitate_price != null" >
+        	#{integration_facilitate_price},
+      </if>
+       <if test="integration_facilitate_ratio != null" >
+      	#{integration_facilitate_ratio},
+      </if>
+      <if test="integration_facilitate_user_name != null" >
+      	#{integration_facilitate_user_name},
+      </if>
+       <if test="integration_facilitate_user_id != null" >
+      	#{integration_facilitate_user_id},
+      </if>
+        <if test="integration_principal_price != null" >
+      	#{integration_principal_price},
+      </if>
+       <if test="integration_principal_ratio != null" >
+      	 #{integration_principal_ratio},
+      </if>
+      <if test="integration_principal_user_name != null" >
+           #{integration_principal_user_name},
+      </if>
+      <if test="integration_principal_user_id != null">
+      	  #{integration_principal_user_id},
+      </if>
+      <if test="refer_agent_price != null">
+      	#{refer_agent_price},
+      </if>
+  	  <if test="refer_agent_ratio != null" >
+      	#{refer_agent_ratio},
+      </if>
+       <if test="refer_agent_user_name != null" >
+          #{refer_agent_user_name},
+      </if>
+        <if test="refer_agent_user_id != null" >
+      	#{refer_agent_user_id},
+      </if>
+  
+    </trim>
+  </insert>
+   <!-- 修改订单分账信息 -->
+  <update id="updateOrderSettle" parameterType="java.util.Map">
+  	update 1dcq_order_settle 
+  	<set>  
+  	  <if test="shop_income_price != null" >
+      		shop_income_price = #{shop_income_price}, 
+      </if>
+      <if test="platform_total_income_price != null" >
+      		platform_total_income_price = #{platform_total_income_price},  
+      </if>
+      <if test="platform_net_income_price != null" >
+      		platform_net_income_price = #{platform_net_income_price},  
+      </if>
+       <if test="user_share_price != null" >
+      		user_share_price = #{user_share_price},  
+      </if>
+       <if test="user_ref_share_price != null" >
+      		user_ref_share_price = #{user_ref_share_price},  
+      </if>
+       <if test="user_ref_share_user_name != null" >
+      		user_ref_share_user_name = #{user_ref_share_user_name},  
+      </if>
+       <if test="shop_ref_share_price != null" >
+      		shop_ref_share_price = #{shop_ref_share_price},  
+      </if>
+       <if test="shop_ref_share_user_name != null" >
+      		shop_ref_share_user_name = #{shop_ref_share_user_name},  
+      </if>
+       <if test="shop_serve_share_price != null" >
+      		shop_serve_share_price = #{shop_serve_share_price},  
+      </if>
+       <if test="shop_serve_share_user_name != null" >
+      		shop_serve_share_user_name = #{shop_serve_share_user_name},  
+      </if>
+       <if test="level1_agent_price != null" >
+      		level1_agent_price = #{level1_agent_price},  
+      </if>
+       <if test="level1_agent_share_user_name != null" >
+      		level1_agent_share_user_name = #{level1_agent_share_user_name},  
+      </if>
+       <if test="level2_agent_price != null" >
+      		level2_agent_price = #{level2_agent_price},  
+      </if>
+       <if test="level2_agent_share_user_name != null" >
+      		level2_agent_share_user_name = #{level2_agent_share_user_name},  
+      </if>
+       <if test="level3_agent_price != null" >
+      		level3_agent_price = #{level3_agent_price},  
+      </if>
+       <if test="level3_agent_share_user_name != null" >
+      		level3_agent_share_user_name = #{level3_agent_share_user_name},  
+      </if>
+      
+      <if test="shop_income_ratio != null" >
+      		shop_income_ratio = #{shop_income_ratio},  
+      </if>
+      <if test="platform_total_income_ratio != null" >
+      		platform_total_income_ratio = #{platform_total_income_ratio},  
+      </if>
+      <if test="user_share_ratio != null" >
+      		user_share_ratio = #{user_share_ratio},  
+      </if>
+      <if test="user_ref_share_ratio != null" >
+      		user_ref_share_ratio = #{user_ref_share_ratio},  
+      </if>
+      <if test="user_ref_share_user_id != null" >
+      		user_ref_share_user_id = #{user_ref_share_user_id},  
+      </if>
+      <if test="shop_ref_share_ratio != null" >
+      		shop_ref_share_ratio = #{shop_ref_share_ratio},  
+      </if>
+      <if test="shop_ref_share_user_id != null" >
+      		shop_ref_share_user_id = #{shop_ref_share_user_id},  
+      </if>
+      <if test="shop_serve_share_ratio != null" >
+      		shop_serve_share_ratio = #{shop_serve_share_ratio},  
+      </if>
+      <if test="shop_serve_share_user_id != null" >
+      		shop_serve_share_user_id = #{shop_serve_share_user_id},  
+      </if>
+      <if test="level1_agent_share_ratio != null" >
+      		level1_agent_share_ratio = #{level1_agent_share_ratio},  
+      </if>
+      <if test="level1_agent_share_user_id != null" >
+      		level1_agent_share_user_id = #{level1_agent_share_user_id},  
+      </if>
+      <if test="level2_agent_share_ratio != null" >
+      		level2_agent_share_ratio = #{level2_agent_share_ratio},  
+      </if>
+      <if test="level2_agent_share_user_id != null" >
+      		level2_agent_share_user_id = #{level2_agent_share_user_id},  
+      </if>
+      <if test="level3_agent_share_ratio != null" >
+      		level3_agent_share_ratio = #{level3_agent_share_ratio},  
+      </if>
+      <if test="level3_agent_share_user_id != null" >
+      		level3_agent_share_user_id = #{level3_agent_share_user_id},  
+      </if>
+        <if test="operator_share_price != null" >
+      		operator_share_price = #{operator_share_price},  
+      </if>
+        <if test="operator_share_ratio != null" >
+      		operator_share_ratio = #{operator_share_ratio},  
+      </if>
+        <if test="operator_share_user_name != null" >
+      		operator_share_user_name = #{operator_share_user_name},  
+      </if>
+        <if test="operator_share_user_id != null" >
+      		operator_share_user_id = #{operator_share_user_id},  
+      </if>
+      <!-- 20160504添加连锁店 -->
+        <if test="integration_promotion_price != null" >
+      		integration_promotion_price = #{integration_promotion_price},  
+      </if>
+        <if test="integration_promotion_ratio != null" >
+      		integration_promotion_ratio = #{integration_promotion_ratio},  
+      </if>
+        <if test="integration_promotion_user_name != null" >
+      		integration_promotion_user_name = #{integration_promotion_user_name},  
+      </if>
+        <if test="integration_promotion_user_id != null" >
+      		integration_promotion_user_id = #{integration_promotion_user_id},  
+      </if>
+      
+        <if test="integration_facilitate_price != null" >
+      		integration_facilitate_price = #{integration_facilitate_price},  
+      </if>
+        <if test="integration_facilitate_ratio != null" >
+      		integration_facilitate_ratio = #{integration_facilitate_ratio},  
+      </if>
+        <if test="integration_facilitate_user_name != null" >
+      		integration_facilitate_user_name = #{integration_facilitate_user_name},  
+      </if>
+        <if test="integration_facilitate_user_id != null" >
+      		integration_facilitate_user_id = #{integration_facilitate_user_id},  
+      </if>
+        <if test="integration_principal_price != null" >
+      		integration_principal_price = #{integration_principal_price},  
+      </if>
+        <if test="integration_principal_ratio != null" >
+      		integration_principal_ratio = #{integration_principal_ratio},  
+      </if>
+        <if test="integration_principal_user_name != null" >
+      		integration_principal_user_name = #{integration_principal_user_name},  
+      </if>
+        <if test="integration_principal_user_id != null" >
+      		integration_principal_user_id = #{integration_principal_user_id},  
+      </if>
+          <if test="refer_agent_price != null" >
+      		refer_agent_price = #{refer_agent_price},  
+      </if>
+          <if test="refer_agent_ratio != null" >
+      		refer_agent_ratio = #{refer_agent_ratio},  
+      </if>
+          <if test="refer_agent_user_name != null" >
+      		refer_agent_user_name = #{refer_agent_user_name},  
+      </if>
+          <if test="refer_agent_user_id != null" >
+      		refer_agent_user_id = #{refer_agent_user_id},  
+      </if>
+     </set>
+  	where order_id = #{orderId}
+  </update>	
+  
+</mapper>

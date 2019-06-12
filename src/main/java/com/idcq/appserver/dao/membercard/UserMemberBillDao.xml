@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.membercard.UserMemberBillDto">
+	<resultMap type="com.idcq.appserver.dto.membercard.UserMemberBillDto" id="userBillMap">
+		
+		<result column="bill_id" property="billId" jdbcType="BIGINT" />
+    	<result column="user_id" property="userId" jdbcType="INTEGER" />
+    	<result column="bill_type" property="billType" jdbcType="VARCHAR" />
+    	<result column="bill_direction" property="billDirection" jdbcType="TINYINT" />
+    	<result column="bill_status" property="billStatus" jdbcType="TINYINT" />
+    	<result column="money" property="money" jdbcType="DECIMAL" />
+    	<result column="transaction_id" property="transactionId" jdbcType="BIGINT" />
+    	<!-- 
+    	<result column="bill_account_type" property="billAccountType" jdbcType="TINYINT" />
+    	<result column="account_id" property="accountId" jdbcType="INTEGER" />
+    	 -->
+    	<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    	<result column="bill_desc" property="billDesc" jdbcType="VARCHAR" />
+
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+    	a.bill_id as bill_id, a.user_id as user_id, a.bill_type as bill_type, a.bill_direction as bill_direction, 
+    	a.bill_status as bill_status, a.money as money, a.transaction_id as transaction_id,
+    	a.create_time as create_time, a.bill_desc as bill_desc
+  </sql>
+	
+    <select id="getListUserBill" parameterType="java.util.Map"  resultMap="userBillMap">
+    	select 
+    	<include refid="Base_Column_List" />
+		from 1dcq_user_bill a
+		inner join  1dcq_user_membership_card b
+		on a.user_id = b.user_id
+		where 1=1
+		<if test="accountId != null" >
+      		and b.umc_id=#{accountId} 
+		</if>
+		<if test="billType != null" >
+      		and a.bill_type=#{billType}
+		</if>
+			and a.create_time &lt;=#{endTime} 
+			and a.create_time >=#{startTime}
+			and b.user_id=#{userId}
+			and b.shop_id=#{shopId}
+		order by a.create_time desc
+		limit #{n},#{m} 
+    </select>
+ 
+    <select id="getCountUserBill" parameterType="java.util.Map"  resultType="int">
+    	select count(1)
+		from 1dcq_user_bill a
+		inner join  1dcq_user_membership_card b
+		on a.user_id = b.user_id
+		where 1=1
+		<if test="accountId != null" >
+      		and b.umc_id=#{accountId} 
+		</if>
+		<if test="billType != null" >
+      		and a.bill_type=#{billType}
+		</if>
+			and a.create_time &lt;=#{endTime} 
+			and a.create_time >=#{startTime}
+			and b.user_id=#{userId}
+			and b.shop_id=#{shopId}
+    </select>
+    <insert id="saveCharge" parameterType="com.idcq.appserver.dto.membercard.UserChargeDto" useGeneratedKeys="true" keyProperty="userId" >
+	    <selectKey resultType="long" order="AFTER" keyProperty="billId">
+	            SELECT LAST_INSERT_ID() AS billId
+	   </selectKey>
+    	insert into 1dcq_user_bill
+    	   (user_id,user_role,bill_direction,money,transaction_id,create_time,bill_type,bill_desc,consumer_user_id,
+    	   consumer_mobile,bill_title,bill_status,bill_status_flag,account_amount,account_after_amount,account_type,user_bill_type,order_id) 
+    	values
+    	   (#{userId}, #{userRole},#{billDirection}, #{amount}, #{transactionId},#{createTime},#{billType},#{billDesc},#{consumerUserId},#{consumerMobile},#{billTitle},
+    	   #{billStatus},#{billStatusFlag},#{accountAmount},#{accountAfterAmount},#{accountType},#{userBillType},#{orderId})
+    </insert>
+    <!-- 更新账单状态 -->
+    <update id="updateUsesrBillByTransactionId" parameterType="com.idcq.appserver.dto.membercard.UserChargeDto">
+    	UPDATE 
+    		1dcq_user_bill
+    	SET
+    	   bill_status = #{billStatus},
+    	   bill_status_flag = #{billStatusFlag}
+    	WHERE 
+    	   transaction_id = #{transactionId}
+    </update>
+        
+    
+</mapper> 
+   

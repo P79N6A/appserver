@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.common.SysConfigureDto">
+	<resultMap type="com.idcq.appserver.dto.common.SysConfigureDto" id="configMap">
+ 		<result column="configure_id" property="configureId" jdbcType="INTEGER"/>
+ 		<result column="configure_key" property="configureKey" jdbcType="VARCHAR"/>
+ 		<result column="configure_value" property="configureValue" jdbcType="VARCHAR"/>
+ 		<result column="configure_type" property="configureType" jdbcType="INTEGER"/>
+ 		<result column="configure_desc" property="configureDesc" jdbcType="VARCHAR"/>
+ 		<result column="create_time" property="createTime"/>
+ 		<result column="last_update_time" property="lastUpdateTime"/>
+ 	</resultMap>
+ 	<sql id="Base_Column_List">
+ 		configure_id,configure_key,configure_value,configure_desc,configure_type,create_time,last_update_time
+ 	</sql>
+ 	<!-- 根据配置key查询系统配置信息 -->
+ 	<select id="getSysConfigureDtoByKey" parameterType="java.lang.String" resultMap="configMap">
+ 		SELECT
+			<include refid="Base_Column_List"/>
+		FROM
+			1dcq_sys_configure
+		WHERE
+			configure_key = #{configureKey}
+ 	</select>
+ 	 	<!-- 根据配置keys查询系统配置信息列表 -->
+ 	<select id="getSysConfiguresByKeys" parameterType="java.util.Map" resultType="java.util.Map">
+ 		SELECT
+ 		       configure_key,
+ 		       configure_value
+		FROM
+			1dcq_sys_configure
+		<where>
+			<if test="configureKeys != null">
+ 				and configure_key in 
+		 	 	<foreach collection="configureKeys" item="key" open="(" separator="," close=")">
+					  #{key}
+				</foreach>
+  			</if>
+  			
+			<if test="configureType != null">
+  				and configure_type in 
+		 	 	<foreach collection="configureType" item="type" open="(" separator="," close=")">
+					  #{type}
+				</foreach>
+  			</if>
+		</where>		
+ 	</select>
+</mapper>

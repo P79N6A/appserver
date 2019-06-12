@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.common.Attachment">
+
+	<resultMap type="com.idcq.appserver.dto.common.Attachment" id="AttachmentMap">
+ 		<result column="attachement_id" property="attachmentId" jdbcType="INTEGER"/>
+ 		<result column="file_url" property="fileUrl" jdbcType="VARCHAR"/>
+ 	</resultMap>
+ 	
+ 	<resultMap type="com.idcq.appserver.dto.common.Attachment" id="AttachmentPartMap">
+ 		<result column="attachement_id" property="attachmentId" jdbcType="INTEGER"/>
+ 		<result column="file_url" property="fileUrl" jdbcType="VARCHAR"/>
+ 		<result column="biz_id" property="bizId" jdbcType="VARCHAR"/>
+ 	</resultMap>
+ 	
+	<resultMap type="com.idcq.appserver.dto.common.Attachment" id="AttachmentAllMap">
+ 		<result column="attachement_id" property="attachmentId" />
+ 		<result column="file_url" property="fileUrl"/>
+ 		<result column="biz_id" property="bizId" />
+ 		<result column="biz_type" property="bizType"/>
+ 		<result column="file_name" property="fileName" />
+ 		<result column="file_size" property="fileSize" />
+ 		<result column="file_type" property="fileType" />
+ 		<result column="upload_user_id" property="uploadUserId" />
+ 		<result column="upload_user_type" property="uploadUserType"/>
+ 		<result column="create_time" property="createTime"/>
+ 	</resultMap>
+  <!-- 查询附件表所有信息 -->
+  <select id="getById" resultMap="AttachmentAllMap" parameterType="java.lang.Long" >
+    select * from 1dcq_attachment where attachement_id = #{primaryKeyId}
+  </select>
+	
+	<select id="queryAttachmentByPage" resultMap="AttachmentMap" parameterType="java.util.Map">
+		select attachement_id,file_url from 1dcq_attachment limit #{start},#{limit}
+	</select>
+	<select id="queryAttachmentCount" resultType="java.lang.Integer">
+		select count(*) from 1dcq_attachment 
+	</select>
+	
+	<select id="queryAttachmentById" resultMap="AttachmentMap">
+		select * from 1dcq_attachment where attachement_id=#{id}
+	</select>
+    
+	<insert id="saveAttachment" parameterType="com.idcq.appserver.dto.common.Attachment" useGeneratedKeys="true" keyProperty="attachmentId"  > 
+	     <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="attachmentId">
+            SELECT LAST_INSERT_ID() AS attachmentId
+        </selectKey> 
+         insert into 1dcq_attachment
+             <trim prefix="(" suffix=")" suffixOverrides="," >
+		      <if test="fileUrl != null" >
+		           file_url,
+		      </if>
+		      <if test="fileName != null" >
+		           file_name,
+		      </if>
+		      <if test="fileSize != null" >
+		           file_size,
+		      </if>
+		      <if test="fileType != null" >
+		           file_type,
+		      </if>
+		      <if test="uploadUserId != null" >
+		           upload_user_id,
+		      </if>
+		       <if test="uploadUserType != null" >
+		           upload_user_type,
+		      </if>
+		      <if test="createTime != null" >
+		           create_time,
+		      </if>
+		       <if test="bizId != null" >
+		           biz_id,
+		      </if>
+		       <if test="bizType != null" >
+		           biz_type,
+		      </if>
+		    </trim>
+		    <trim prefix="values (" suffix=")" suffixOverrides="," >
+		      <if test="fileUrl != null" >
+		        #{fileUrl,jdbcType=VARCHAR},
+		      </if>
+		      <if test="fileName != null" >
+		        #{fileName,jdbcType=VARCHAR},
+		      </if>
+		      <if test="fileSize != null" >
+		        #{fileSize,jdbcType=DOUBLE},
+		      </if>
+		      <if test="fileType != null" >
+		        #{fileType,jdbcType=VARCHAR},
+		      </if>
+		      <if test="uploadUserId != null" >
+		        #{uploadUserId,jdbcType=TINYINT},
+		      </if>
+		        <if test="uploadUserType != null" >
+		          #{uploadUserType,jdbcType=TINYINT},
+		      </if>
+		      <if test="createTime != null" >
+		        #{createTime,jdbcType=TIMESTAMP},
+		      </if>
+		       <if test="bizId != null" >
+		           #{bizId},
+		      </if>
+		       <if test="bizType != null" >
+		           #{bizType},
+		      </if>
+		    </trim>
+	</insert>
+	
+	<insert id="saveAttachmentByPoster" parameterType="com.idcq.appserver.dto.common.Attachment" useGeneratedKeys="true" keyProperty="attachmentId"  > 
+	     <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="attachmentId">
+            SELECT LAST_INSERT_ID() AS attachmentId
+        </selectKey> 
+         insert into 1dcq_attachment
+             <trim prefix="(" suffix=")" suffixOverrides="," >
+		       <if test="bizId != null" >
+		           biz_id,
+		      </if>
+		       <if test="bizType != null" >
+		           biz_type,
+		      </if>
+		      <if test="fileUrl != null" >
+		           file_url,
+		      </if>
+		      <if test="fileName != null" >
+		           file_name,
+		      </if>
+		      <if test="fileSize != null" >
+		           file_size,
+		      </if>
+		      <if test="fileType != null" >
+		           file_type,
+		      </if>
+		      <if test="uploadUserId != null" >
+		           upload_user_id,
+		      </if>
+		       <if test="uploadUserType != null" >
+		           upload_user_type,
+		      </if>
+		      <if test="createTime != null" >
+		           create_time,
+		      </if>
+		    </trim>
+		    <trim prefix="values (" suffix=")" suffixOverrides="," >
+		       <if test="bizId != null" >
+		           #{bizId,jdbcType=INTEGER},
+		      </if>
+		       <if test="bizType != null" >
+		           #{bizType,jdbcType=VARCHAR},
+		      </if>
+		      <if test="fileUrl != null" >
+		        #{fileUrl,jdbcType=VARCHAR},
+		      </if>
+		      <if test="fileName != null" >
+		        #{fileName,jdbcType=VARCHAR},
+		      </if>
+		      <if test="fileSize != null" >
+		        #{fileSize,jdbcType=DOUBLE},
+		      </if>
+		      <if test="fileType != null" >
+		        #{fileType,jdbcType=VARCHAR},
+		      </if>
+		      <if test="uploadUserId != null" >
+		        #{uploadUserId,jdbcType=TINYINT},
+		      </if>
+		        <if test="uploadUserType != null" >
+		          #{uploadUserType,jdbcType=TINYINT},
+		      </if>
+		      <if test="createTime != null" >
+		        #{createTime,jdbcType=TIMESTAMP},
+		      </if>
+		    </trim>
+	</insert>
+	
+	<!-- 根据业务id、业务类型、图片类型获取附件url -->
+	<select id="getAttachUrlListByCondition" resultType="java.lang.String" parameterType="java.util.Map">
+	  select file_url 
+		from 1dcq_attachment a 
+  inner join 1dcq_attachment_relation ar 
+          on a.attachement_id = ar.attachement_id
+       where ar.biz_id = #{bizId}
+         and ar.biz_type = #{bizType}
+         and ar.pic_type = #{picType}
+	</select>
+	
+
+	<select id="getAttachUrlListByPoster" resultType="java.util.Map" parameterType="java.util.Map">
+	  select a.file_url as fileUrl,a.biz_id as bizId
+		from 1dcq_attachment a 
+       where a.biz_Type =#{bizType}
+         and a.file_name = #{fileName}
+	</select>
+	
+	<select id="queryAttachmentBybizId" resultMap="AttachmentPartMap" parameterType="java.util.Map">
+		select * from 1dcq_attachment a
+		inner join 1dcq_attachment_relation ar on a.attachement_id = ar.attachement_id
+		where ar.biz_id=#{bizId} and ar.biz_type=13 
+	</select>
+	
+	<update id="updateAttachment" parameterType="java.util.Map">
+	  	update 1dcq_attachment set file_no = #{fileNo} where attachement_id = #{attachmentId}
+	 </update>
+	<select id="getAttachmentUrl" resultType="java.lang.String" parameterType="java.util.Map">
+	  select file_url 
+		from 1dcq_attachment 
+       where 1=1
+       <if test="attachementId != null">
+           and attachement_id = #{attachementId}
+       </if>
+       <if test="bizId">
+           and biz_Id = #{bizId}
+       </if>
+       <if test="bizType">
+           and biz_type = #{bizType}
+       </if>
+       order by create_time desc
+       limit 1
+	</select> 
+	
+</mapper>

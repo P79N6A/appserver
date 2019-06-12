@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.order.XorderGoodsDto">
+	<resultMap id="BaseResultMap" type="com.idcq.appserver.dto.order.XorderGoodsDto">
+		<id column="xorder_goods_id" property="xorderGoodsId" jdbcType="INTEGER" />
+		<result column="xorder_id" property="xorderId" jdbcType="VARCHAR" />
+		<result column="shop_id" property="shopId" jdbcType="INTEGER" />
+		<result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+		<result column="goods_number" property="goodsNumber" jdbcType="DOUBLE" />
+		<result column="goods_settle_price" property="goodsSettlePrice" jdbcType="DECIMAL" />
+		<result column="goods_index" property="goodsIndex" jdbcType="INTEGER" />
+		<result column="user_remark" property="userRemark" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		xorder_goods_id, xorder_id, shop_id, goods_id, goods_number, goods_settle_price,
+		goods_index, user_remark
+	</sql>
+	<update id="updateSettlePrice">
+		update 1dcq_xorder_goods set goods_settle_price = (goods_settle_price *
+		#{ratio}) where xorder_id = #{orderId}
+	</update>
+	<insert id="addXorderGoodsDto" parameterType="com.idcq.appserver.dto.order.XorderGoodsDto">
+		insert into 1dcq_xorder_goods
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="xorderGoodsId != null">
+				xorder_goods_id,
+			</if>
+			<if test="xorderId != null">
+				xorder_id,
+			</if>
+			<if test="shopId != null">
+				shop_id,
+			</if>
+			<if test="goodsId != null">
+				goods_id,
+			</if>
+			<if test="goodsNumber != null">
+				goods_number,
+			</if>
+			<if test="goodsSettlePrice != null">
+				goods_settle_price,
+			</if>
+			<if test="goodsRequiredPrice != null">
+				goods_required_price,
+			</if>
+			<if test="goodsIndex != null">
+				goods_index,
+			</if>
+			<if test="userRemark != null">
+				user_remark,
+			</if>
+			<if test="standardPrice != null">
+				standard_price,
+			</if>
+			<if test="billerId != null">
+				biller_id,
+			</if>
+			<if test="goodsName != null">
+				goods_name,
+			</if>
+			<if test="specsDesc != null">
+				specs_desc,
+			</if>
+			<if test="orderGoodsDiscount != null">
+				order_goods_discount,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="xorderGoodsId != null">
+				#{xorderGoodsId,jdbcType=INTEGER},
+			</if>
+			<if test="xorderId != null">
+				#{xorderId,jdbcType=VARCHAR},
+			</if>
+			<if test="shopId != null">
+				#{shopId,jdbcType=INTEGER},
+			</if>
+			<if test="goodsId != null">
+				#{goodsId,jdbcType=INTEGER},
+			</if>
+			<if test="goodsNumber != null">
+				#{goodsNumber,jdbcType=DOUBLE},
+			</if>
+			<if test="goodsSettlePrice != null">
+				#{goodsSettlePrice,jdbcType=DECIMAL},
+			</if>
+			<if test="goodsRequiredPrice != null">
+				#{goodsRequiredPrice},
+			</if>
+			<if test="goodsIndex != null">
+				#{goodsIndex,jdbcType=INTEGER},
+			</if>
+			<if test="userRemark != null">
+				#{userRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="standardPrice != null">
+				#{standardPrice},
+			</if>
+			<if test="billerId != null">
+				#{billerId},
+			</if>
+			<if test="goodsName != null">
+				#{goodsName},
+			</if>
+			<if test="specsDesc != null">
+				#{specsDesc},
+			</if>
+			<if test="orderGoodsDiscount != null">
+				#{orderGoodsDiscount},
+			</if>
+		</trim>
+	</insert>
+	<delete id="delGoodsByOrderId" parameterType="java.lang.String">
+		delete from 1dcq_xorder_goods where xorder_id = #{orderId}
+	</delete>
+	<select id="getXorderGoodsDto" parameterType="com.idcq.appserver.dto.order.XorderGoodsDto" resultType="com.idcq.appserver.dto.order.XorderGoodsDto">
+      SELECT
+		t.goods_name,
+		t.specs_desc
+	FROM
+		1dcq_xorder_goods t
+	WHERE
+		t.goods_id = #{goodsId}
+	AND t.shop_id = #{shopId}
+	AND t.xorder_id = #{xorderId}
+  </select>
+</mapper>

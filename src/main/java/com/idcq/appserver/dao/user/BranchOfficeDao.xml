@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.user.BranchOfficeDto" >
+  <resultMap id="baseResultMap" type="com.idcq.appserver.dto.user.BranchOfficeDto">
+    <result column="branch_office_id" property="branchOfficeId"/>
+    <result column="user_id" property="userId"/>
+    <result column="mobile" property="mobile"/>
+    <result column="province_id" property="provinceId"/>
+    <result column="city_id" property="cityId"/>
+    <result column="district_id" property="districtId"/>
+
+    <result column="town_id" property="townId"/>
+    <result column="create_time" property="createTime"/>
+  </resultMap>
+  <select id="searchBranchOfficeByCondition" parameterType="com.idcq.appserver.dto.user.BranchOfficeDto" resultMap="baseResultMap">
+    SELECT * FROM 1dcq_branch_office
+    <where>
+      <if test="branchOfficeId != null">AND branch_office_id=#{branchOfficeId}</if>
+
+      <if test="userId != null">AND user_id=#{userId}</if>
+      <if test="mobile != null">AND mobile=#{mobile}</if>
+      <if test="provinceId != null">AND province_id=#{provinceId}</if>
+      <if test="cityId != null">AND city_id=#{cityId}</if>
+      <if test="districtId != null">AND district_id=#{districtId}</if>
+      <if test="townId != null">AND town_id=#{townId}</if>
+      <if test="createTime != null">AND create_time=#{createTime}</if>
+    </where>
+  </select>
+</mapper>

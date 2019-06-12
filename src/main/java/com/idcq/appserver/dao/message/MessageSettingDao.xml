@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.message.MessageSettingDto">
+	<resultMap type="com.idcq.appserver.dto.message.MessageSettingDto" id="messageSettingMap">
+		<result column="setting_id" property="settingId" />
+		<result column="setting_key" property="settingKey" />
+		<result column="setting_name" property="settingName" />
+		<result column="remand_flag" property="remandFlag" />
+		<result column="msg_title" property="msgTitle" />
+		<result column="msg_content" property="msgContent" />
+	</resultMap>
+	
+	<select id="getMsgSettingByKey" parameterType="java.lang.String" resultMap="messageSettingMap">
+		select setting_id,setting_key,setting_name,remand_flag,msg_title,msg_content
+		from 1dcq_message_setting 
+		where setting_key=#{key}
+		limit 1
+	</select>
+
+</mapper> 
+   

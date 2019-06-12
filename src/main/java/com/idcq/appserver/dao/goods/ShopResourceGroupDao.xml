@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.goods.ShopResourceGroupDto">
+	<resultMap type="com.idcq.appserver.dto.goods.ShopResourceGroupDto" id="shopResourceGroupMap">
+    	<result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    	<result column="show_index" property="showIndex" jdbcType="INTEGER" />
+    	<result column="resource_type" property="resourceType" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List" >
+    	group_id, shop_id, group_name, group_desc, resource_number, max_people, show_index, 
+    	create_time,subscription_money,min_people
+  	</sql>
+    <select id="getListSRG" parameterType="java.util.Map"  resultMap="shopResourceGroupMap">
+    	select distinct resource_type
+    	from 1dcq_shop_resource 
+    	where shop_id = #{shopId} 
+    	order by resource_index 
+    	limit #{n},#{m}
+    </select>
+    <select id="getCountSRG" parameterType="java.lang.Long" resultType="int">
+    	select count(1) from 1dcq_shop_resource_group where shop_id = #{shopId}
+    </select>
+    
+    <select id="getShopResGroupById" parameterType="java.lang.Long"  resultMap="shopResourceGroupMap">
+    	select 
+    	<include refid="Base_Column_List" />
+    	from 1dcq_shop_resource_group 
+    	where group_id = #{groupId} 
+    </select>
+    
+</mapper> 
+   

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.idianmgr.dto.goodsGroup.GoodsGroupPropertyDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.idianmgr.dto.goodsGroup.GoodsGroupPropertyDto" >
+    <id column="group_property_id" property="groupPropertyId" jdbcType="INTEGER" />
+    <result column="group_property_name" property="groupPropertyName" jdbcType="VARCHAR" />
+    <result column="goods_group_id" property="goodsGroupId" jdbcType="INTEGER" />
+    <result column="property_order" property="propertyOrder" jdbcType="SMALLINT" />
+    <result column="property_type" property="propertyType" jdbcType="SMALLINT" />
+    <result column="shop_property_id" property="shopPropertyId"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    group_property_id, group_property_name, goods_group_id, property_order, property_type,shop_property_id
+  </sql>
+  <select id="getGoodsGroupProList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+        <include refid="Base_Column_List" />
+    from 1dcq_goods_group_property
+    where 1=1
+    <if test="goodsGroupIds != null" >
+        and goods_group_id in 
+       <foreach collection="goodsGroupIds" index="index" item="item" open="(" separator="," close=")">  
+            #{item}   
+        </foreach> 
+    </if>
+  </select>
+  <select id="getGoodsGroupProperty" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    <include refid="Base_Column_List" />
+    from 1dcq_goods_group_property
+    where 
+    1=1
+    <if test="groupPropertyId != null">
+      and group_property_id = #{groupPropertyId,jdbcType=INTEGER}
+    </if>
+    <if test="goodsGroupId != null">
+      and goods_group_id = #{goodsGroupId}
+    </if>
+    <if test="groupPropertyName != null">
+      and group_property_name = #{groupPropertyName}
+    </if> 
+    limit 1  
+  </select>
+  <delete id="delGoodsGroupProperty" parameterType="java.lang.Integer" >
+    delete from 1dcq_goods_group_property
+    where group_property_id = #{groupPropertyId,jdbcType=INTEGER}
+  </delete>
+ <!-- 根据属性值编号查询属性信息 -->
+ <select id="getGoodsGroupPropertyByProValuesId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+ 	SELECT
+		ggp.group_property_id,
+		ggp.group_property_name,
+		ggp.goods_group_id,
+		ggp.property_order,
+		ggp.property_type
+	FROM
+		1dcq_goods_group_property ggp
+	INNER JOIN 1dcq_goods_group_pro_values ggpv ON ggpv.group_property_id = ggp.group_property_id
+	WHERE
+		ggpv.pro_values_id = #{proValuesId}
+ </select>
+ <!-- 根据商品族编号查询商品族属性信息 -->
+ <select id="getGoodsGroupPropertyByGroupId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+ 	SELECT
+		ggp.group_property_id,
+		ggp.group_property_name,
+		ggp.goods_group_id,
+		ggp.property_order,
+		ggp.property_type
+	FROM
+		1dcq_goods_group_property ggp
+	INNER JOIN 1dcq_goods_group gg ON ggp.goods_group_id = gg.goods_group_id
+	WHERE
+		ggp.goods_group_id = #{goodsGroupId}
+	LIMIT 1
+ </select>
+  <insert id="insertGoodsGroupPro" parameterType="com.idcq.idianmgr.dto.goodsGroup.GoodsGroupPropertyDto" keyProperty="groupPropertyId" useGeneratedKeys="true">
+    insert into 1dcq_goods_group_property
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="groupPropertyName != null" >
+        group_property_name,
+      </if>
+      <if test="goodsGroupId != null" >
+        goods_group_id,
+      </if>
+      <if test="propertyOrder != null" >
+        property_order,
+      </if>
+      <if test="propertyType != null" >
+        property_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="groupPropertyName != null" >
+        #{groupPropertyName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsGroupId != null" >
+        #{goodsGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="propertyOrder != null" >
+        #{propertyOrder,jdbcType=SMALLINT},
+      </if>
+      <if test="propertyType != null" >
+        #{propertyType,jdbcType=SMALLINT},
+      </if>
+    </trim>
+  </insert>
+  <!-- 添加商品族属性，返回主键 -->
+  <insert id="addGoodsGroupProBackId" parameterType="com.idcq.idianmgr.dto.goodsGroup.GoodsGroupPropertyDto" >
+  	<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="groupPropertyId">
+		SELECT LAST_INSERT_ID() AS groupPropertyId
+	</selectKey>
+	insert into 1dcq_goods_group_property
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="groupPropertyName != null" >
+        group_property_name,
+      </if>
+      <if test="goodsGroupId != null" >
+        goods_group_id,
+      </if>
+      <if test="propertyOrder != null" >
+        property_order,
+      </if>
+      <if test="propertyType != null" >
+        property_type,
+      </if>
+      <if test="shopPropertyId != null" >
+        shop_property_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="groupPropertyName != null" >
+        #{groupPropertyName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsGroupId != null" >
+        #{goodsGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="propertyOrder != null" >
+        #{propertyOrder,jdbcType=SMALLINT},
+      </if>
+      <if test="propertyType != null" >
+        #{propertyType,jdbcType=SMALLINT},
+      </if>
+      <if test="shopPropertyId != null" >
+        #{shopPropertyId},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateGoodsGroupPro" parameterType="com.idcq.idianmgr.dto.goodsGroup.GoodsGroupPropertyDto" >
+    update 1dcq_goods_group_property
+    <set >
+      <if test="groupPropertyName != null" >
+        group_property_name = #{groupPropertyName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsGroupId != null" >
+        goods_group_id = #{goodsGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="propertyOrder != null" >
+        property_order = #{propertyOrder,jdbcType=SMALLINT},
+      </if>
+      <if test="propertyType != null" >
+        property_type = #{propertyType,jdbcType=SMALLINT},
+      </if>
+      <if test="shopPropertyId != null" >
+        shop_property_id = #{shopPropertyId},
+      </if>
+    </set>
+    where group_property_id = #{groupPropertyId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getGoodsGroupProperyByGroupId" resultMap="BaseResultMap">
+  	select * from 1dcq_goods_group_property p where p.goods_group_id=#{goodsGroupId} and p.group_property_id in(select goods_pro.group_property_id from 1dcq_goods goods,1dcq_goods_property  goods_pro where goods.goods_group_id=#{goodsGroupId} and goods.goods_id=goods_pro.goods_id)
+  </select>
+</mapper>

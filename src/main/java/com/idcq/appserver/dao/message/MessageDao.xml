@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.message.MessageDto">
+	<resultMap type="com.idcq.appserver.dto.message.MessageDto"
+		id="messageMap">
+		<result column="id" property="messageId" />
+		<result column="msg_type" property="msgType" />
+		<result column="msg_title" property="msgTitle" />
+		<result column="msg_desc" property="msgDesc" />
+		<result column="msg_img" property="msgImg" />
+		<result column="merchant_id" property="merchantId" />
+		<result column="merchant_name" property="merchantName" />
+		<result column="pub_time" property="pubTime" />
+		<result column="shop_id" property="shopId" />
+		<result column="shop_name" property="shopName" />
+		<result column="target_user_type" property="targetUserType" jdbcType="VARCHAR" />
+		<result column="province_id" property="provinceId" jdbcType="INTEGER" />
+		<result column="city_id" property="cityId" jdbcType="INTEGER" />
+		<result column="district_id" property="districtId" jdbcType="INTEGER" />
+		<result column="town_id" property="townId" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		t1.id as messageId,
+		t1.msg_type as msg_type,
+		t1.msg_title as msg_title,
+		t1.msg_img as msg_img,
+		t1.msg_desc as msg_desc,
+		t1.shop_id as shop_id,
+		t1.pub_time as pub_time,
+		t1.target_user_type,
+		t1.province_id,
+		t1.city_id,
+		t1.district_id,
+		t1.town_id
+		<if test="message.msgType == 1">
+			,t2.shop_name as shop_name
+		</if>
+	</sql>
+
+	<!-- <select id="getMsgList" parameterType="java.util.Map" resultMap="messageMap"> -->
+	<!-- select * from 1dcq_message where 1=1 -->
+	<!-- <if test="message.msgType != null" > -->
+	<!-- and msg_type = #{message.msgType} -->
+	<!-- </if> -->
+	<!-- order by pub_time desc limit #{n},#{m} -->
+	<!-- </select> -->
+	<select id="getMsgList" parameterType="java.util.Map" resultMap="messageMap">
+		select
+		<include refid="Base_Column_List" />
+		from 1dcq_message t1
+		<if test="message.msgType == 1" >
+			inner join 1dcq_shop t2 on t1.shop_id = t2.shop_id
+			where
+				 t1.shop_id = #{message.shopId} 
+			and
+				t1.message_status = 1
+		</if> 
+		<if test="message.msgType==0 ">
+				where t1.msg_type = 0
+			and
+				t1.message_status = 1				
+		</if>
+		order by t1.pub_time desc limit #{n},#{m}
+	</select>
+	
+	<select id="getMsgById" parameterType="java.util.Map" resultMap="messageMap">
+		select
+		<include refid="Base_Column_List" />
+		from 1dcq_message t1 where t1.id = #{message.messageId} 
+		order by t1.pub_time desc 
+	</select>
+	<!-- 获取商铺名称 -->
+	<select id="getShopNameById" parameterType="Long" resultType="String">
+		select shop_name 
+			from 1dcq_shop  where shop_id = #{shopId} 
+	</select>
+	
+	<select id="getMsgListCount" parameterType="java.util.Map"
+		resultType="int">
+		select count(*) from 1dcq_message t1
+		<if test="message.msgType == 1" >
+			inner join 1dcq_shop t2 on t1.shop_id = t2.shop_id
+			where
+				t1.shop_id = #{message.shopId} 
+			and
+				t1.message_status = 1
+		</if> 
+		<if test="message.msgType==0 ">
+			where
+				t1.msg_type = 0
+			and
+				t1.message_status = 1				
+		</if>
+	</select>
+ <insert id="addMessage"  parameterType="java.util.List">  
+    insert into 1dcq_message (
+			id,
+			msg_type,
+			shop_id,
+			target_user_type,
+			province_id,
+			city_id,
+			district_id,
+			pub_user_id,
+			message_status,
+			msg_title,
+			msg_img,
+			msg_desc
+	)   
+    values  
+    <foreach collection="list" item="item" index="index" separator="," >  
+        (
+        	#{item.messageId},
+			#{item.msgType},
+			#{item.shopId},
+			#{item.targetUserType},
+			#{item.provinceId},
+			#{item.cityId},
+			#{item.districtId},
+			#{item.pubUserId},
+			#{item.messageStatus},
+			#{item.msgTitle},
+			#{item.msgImg},
+			#{item.msgDesc}
+        )  
+    </foreach>  
+</insert>  
+	<update id="updateMessage" parameterType="com.idcq.appserver.dto.message.MessageDto">
+		update 1dcq_message
+		set pub_time=now()
+		where id = #{messageId} 
+	</update>
+
+</mapper> 
+   

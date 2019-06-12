@@ -1,0 +1,18 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+        
+        <import resource="classpath:spring/application-aspect.xml"/>
+        <import resource="classpath:spring/application-cache.xml"/>
+        <import resource="classpath:spring/application-common.xml"/>
+        <import resource="classpath:spring/application-interceptor.xml"/>
+        <import resource="classpath:spring/application-job.xml"/>
+        <import resource="classpath:spring/application-persistent.xml"/>
+        <import resource="classpath:spring/application-springMVC.xml"/>
+</beans>

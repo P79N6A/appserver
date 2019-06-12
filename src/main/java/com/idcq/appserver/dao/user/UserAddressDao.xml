@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.user.UserAddressDto">
+	<resultMap type="com.idcq.appserver.dto.user.UserAddressDto" id="userAddressMap">
+		
+		<result column="address_id" property="addressId"/>
+		<result column="default_flag" property="defaultFlag"/>
+		<result column="username" property="userName"/>
+		<result column="mobile" property="mobile"/>
+	    <result column="address" property="address" />
+	    
+		<result column="user_id" property="userId"/>
+	    <result column="province_id" property="provinceId"/>
+		<result column="city_id" property="cityId"/>
+		<result column="district_id" property="districtId"/>
+		<result column="town_id" property="townId"/>
+		<result column="create_time" property="createTime"/>
+		
+		<result column="province_name" property="provinceName"/>
+		<result column="city_name" property="cityName"/>
+		<result column="district_name" property="districtName"/>
+		<result column="town_name" property="townName"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+    	address_id, user_id, default_flag, username, mobile, province_id, city_id, district_id, town_id,
+    	address, create_time
+  	</sql>
+  	
+	<sql id="Detail_Column_List" >
+    	t1.address_id as address_id, t1.address_id as address_id, 
+    	t1.default_flag as default_flag, t1.username as username, 
+    	t1.mobile as mobile, t1.province_id as province_id, 
+    	t1.city_id as city_id, t1.district_id as district_id, 
+    	t1.town_id as town_id,t1.address as address, 
+    	t1.create_time as create_time,t1.address as address,
+    	t2.province_name as province_name,
+    	t3.city_name as city_name,
+    	t4.district_name as district_name,
+    	t5.town_name as town_name,
+    	t1.username as username
+  	</sql>
+	
+	<select id="getListUserAddress" parameterType="java.util.Map"  resultMap="userAddressMap">
+    	select 
+    	<include refid="Base_Column_List" />
+    	from 1dcq_user_address 
+    	where user_id = #{userId} 
+    	<if test="defaultFlag != null">
+    	 and default_flag = #{defaultFlag}
+    	</if>
+    	order by default_flag desc
+    	limit #{n},#{m}
+    </select>
+    
+    <select id="getCountUserAddress" parameterType="java.util.Map" resultType="int">
+    	select count(1) 
+    	from 1dcq_user_address 
+    	where user_id= #{userId}
+    	<if test="defaultFlag != null">
+    	 and default_flag = #{defaultFlag}
+    	</if>
+    </select>
+    
+    <insert id="insertUserAddress" parameterType="com.idcq.appserver.dto.user.UserAddressDto" >
+	    insert into 1dcq_user_address (user_id, default_flag, username, 
+	      	mobile, province_id, city_id, district_id, town_id, address, create_time )
+	    values (#{userId}, #{defaultFlag}, #{userName}, 
+	      	#{mobile}, #{provinceId}, #{cityId}, #{districtId}, #{townId}, #{address}, #{createTime}
+      	)
+  	</insert>
+    
+    <delete id="deleteUserAddress" parameterType="com.idcq.appserver.dto.user.UserAddressDto" >
+    	delete from 1dcq_user_address
+    	where user_id = #{userId} and address_id = #{addressId}
+  	</delete>
+    
+    <select id="getDefAddressByUser" parameterType="com.idcq.appserver.dto.user.UserAddressDto" resultMap="userAddressMap">
+    	select user_id,address_id from 1dcq_user_address where user_id = #{userId} and default_flag = 1
+    </select>
+    
+    <select id="getDefAddressIdByUser" parameterType="java.lang.Long" resultType="java.lang.Long">
+    	select address_id from 1dcq_user_address where user_id = #{userId} and default_flag = 1
+    </select>
+    
+    <!-- 将默认地址设置为非默认地址 -->
+    <update id="updateDefaultFlag" parameterType="java.lang.Long" >
+	    update 1dcq_user_address
+	    set default_flag =0
+	    where user_id=#{userId} and default_flag=1
+	</update>
+	
+	<select id="getListUserAddressByUsreId" parameterType="java.lang.Long"  resultMap="userAddressMap">
+    	select 
+    	<include refid="Base_Column_List" />
+    	from 1dcq_user_address 
+    	where user_id= #{userId} 
+    	order by default_flag desc
+    </select>
+    
+    <select id="getAddressById" parameterType="java.lang.Long"  resultMap="userAddressMap">
+        select 
+    	<include refid="Base_Column_List" />
+    	from 1dcq_user_address 
+    	where address_id= #{addressId} 
+    </select>
+    
+    <select id="getAddressDetialById" parameterType="java.lang.Long"  resultMap="userAddressMap">
+        select 
+    	<include refid="Detail_Column_List" />
+    	from 1dcq_user_address t1 
+    	inner join 1dcq_province t2 on t1.province_id = t2.province_id and t1.address_id = #{addressId}
+    	inner join 1dcq_city t3 on t1.city_id = t3.city_id
+    	left join 1dcq_district t4 on t1.district_id = t4.district_id
+    	left join 1dcq_town t5 on t1.town_id = t5.town_id
+    </select>
+    
+    <!-- 设置默认地址 -->
+    <update id="updateSetDefaultFlag" parameterType="java.lang.Long" >
+	    update 1dcq_user_address
+	    set default_flag = 1
+	    where address_id= #{addressId}
+	</update>
+	
+	<!-- 更新用户地址 -->
+     <update id="updateUserAddress" parameterType="com.idcq.appserver.dto.user.UserAddressDto" >
+	    update 1dcq_user_address
+	    set user_id = #{userId},
+	        default_flag = #{defaultFlag},
+	        username = #{userName}, 
+	        mobile = #{mobile},
+	        province_id = #{provinceId},
+	        city_id = #{cityId},
+	        district_id = #{districtId},
+	        town_id = #{townId},
+	        address =  #{address}
+	   where address_id= #{addressId}
+	</update>
+	
+</mapper> 
+   

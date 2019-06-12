@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.region.TownDto">
+	<resultMap type="com.idcq.appserver.dto.region.TownDto" id="townMap">
+		<result column="town_id" property="townId"/>
+		<result column="town_name" property="townName"/>
+		<result column="district_id" property="districtId"/>
+		<result column="date_created" property="dateCreated"/>
+		<result column="date_updated" property="dateUpdated"/>
+	</resultMap>
+	
+      <select id="getById" parameterType="java.lang.Long"  resultMap="townMap">
+    	select town_id,town_name,district_id,date_created,date_updated from 1dcq_town where town_id = #{primaryKeyId}
+    </select>
+    <select id="getTowns" parameterType="java.util.Map"  resultMap="townMap">
+    	select town_id,town_name from 1dcq_town 
+    	 where 1=1
+    	 <if test="districtId !=null ">
+    	 	and district_id = #{districtId}
+    	 </if>
+    	 limit #{n},#{m}
+    </select>
+    
+    <select id="getTownsTotal" parameterType="java.util.Map" resultType="int">
+    	select count(1) from 1dcq_town
+	    where 1=1
+    	 <if test="districtId !=null ">
+    	 	and district_id = #{districtId}
+    	 </if>
+  </select>
+    
+</mapper> 
+   

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.discount.TimedDiscountGoodsDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.discount.TimedDiscountGoodsDto" >
+    <id column="discount_goods_id" property="discountGoodsId" jdbcType="INTEGER" />
+    <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    <result column="discount_id" property="discountId" jdbcType="INTEGER" />
+    <result column="goods_id" property="goodsId" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="goods_index" property="goodsIndex" jdbcType="INTEGER" />
+    <!-- 商铺限时折扣 -->
+    <result column="discount_type" property="discountType" jdbcType="INTEGER" />
+    <result column="discount_name" property="discountName" jdbcType="VARCHAR" />
+    <result column="discount_status" property="discountStatus" jdbcType="TINYINT" />
+    <result column="discount_period_type" property="discountPeriodType" jdbcType="VARCHAR" />
+    <result column="day_from_time" property="dayFromTime" jdbcType="TIME" />
+    <result column="day_to_time" property="dayToTime" jdbcType="TIME" />
+    <result column="week" property="week" jdbcType="VARCHAR" />
+    <result column="week_from_time" property="weekFromTime" jdbcType="TIME" />
+    <result column="week_to_time" property="weekToTime" jdbcType="TIME" />
+    <result column="custom_from_datetime" property="customFromDatetime" jdbcType="TIMESTAMP" />
+    <result column="custom_to_datetime" property="customToDatetime" jdbcType="TIMESTAMP" />
+    <result column="discount" property="discount" jdbcType="DECIMAL" />
+    <result column="apply_online_flag" property="applyOnlineFlag" jdbcType="INTEGER" />
+    <result column="apply_offline_flag" property="applyOfflineFlag" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    discount_goods_id, shop_id, discount_id, goods_id, create_time, goods_index
+  </sql>
+  <sql id="Base_Column_List_Shop_Goods" >
+    t1.discount_goods_id as discount_goods_id, t1.shop_id as shop_id, 
+    t1.discount_id as discount_id, t1.goods_id as goods_id, 
+    t1.create_time as create_time, t1.goods_index as goods_index,
+	t2.discount_type as discount_type,t2.discount_name as discount_name,
+	t2.discount_status as discount_status,t2.discount_period_type as discount_period_type,
+	t2.day_from_time as day_from_time,t2.day_to_time as day_to_time,
+	t2.week as week,t2.week_from_time as week_from_time,
+	t2.week_to_time as week_to_time,t2.custom_from_datetime as custom_from_datetime,
+	t2.custom_to_datetime as custom_to_datetime,t2.discount as discount,
+	t2.apply_online_flag as apply_online_flag,t2.apply_offline_flag as apply_offline_flag
+  </sql>
+  <sql id="Base_Column_List_Shop" >
+	t2.discount_type as discount_type,t2.discount_name as discount_name,
+	t2.discount_status as discount_status,t2.discount_period_type as discount_period_type,
+	t2.day_from_time as day_from_time,t2.day_to_time as day_to_time,
+	t2.week as week,t2.week_from_time as week_from_time,
+	t2.week_to_time as week_to_time,t2.custom_from_datetime as custom_from_datetime,
+	t2.custom_to_datetime as custom_to_datetime,t2.discount as discount,
+	t2.apply_online_flag as apply_online_flag,t2.apply_offline_flag as apply_offline_flag
+  </sql>
+  
+  <select id="getGoodsDicount" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    <include refid="Base_Column_List_Shop_Goods" />
+    from 1dcq_timed_discount_goods t1 inner join 1dcq_timed_discount t2
+    on t1.discount_id = t2.discount_id
+    and t1.shop_id = #{shopId}
+    and t1.goods_id = #{goodsId}
+    and t2.discount_status = 1
+  </select>
+  
+  <select id="getShopDicount" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    <include refid="Base_Column_List_Shop" />
+    from 1dcq_timed_discount t2
+    where t2.shop_id = #{shopId}
+    and t2.discount_status = 1
+  </select>
+</mapper>

@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.goods.GoodsCategoryDto" >
+  <resultMap id="goodsCategoryMap" type="com.idcq.appserver.dto.goods.GoodsCategoryDto" >
+    <id column="goods_category_id" property="goodsCategoryId" jdbcType="INTEGER" />
+    <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    <result column="category_index" property="categoryIndex" jdbcType="INTEGER" />
+    <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+    <result column="parent_category_id" property="parentCategoryId" jdbcType="INTEGER" />
+    <result column="category_key" property="keywords" jdbcType="VARCHAR" />
+    <result column="category_remark" property="remark" jdbcType="VARCHAR" />
+    <result column="stop_date" property="stopDate" jdbcType="VARCHAR" />
+    <result column="status" property="status" />
+    <result column="column_id" property="columnId" />
+    <result column="source_goods_category_id" property="sourceGoodsCategoryId" />
+  </resultMap>
+  
+  <select id="getGoodsCategoryById" parameterType="java.lang.Long" resultType="java.util.Map">
+  	select category_name as categoryName, parent_category_id as pId from 1dcq_goods_category where goods_category_id = #{id}
+  </select>
+  
+  <select id="queryGoodsCategory" parameterType="com.idcq.appserver.dto.goods.GoodsCategoryDto" resultMap="goodsCategoryMap">
+  	select *
+  	from 1dcq_goods_category 
+  	where status = 1
+    <if test="shopId != null" >
+       AND shop_id = #{shopId}
+     </if>
+     <if test="sourceGoodsCategoryId != null" >
+       AND source_goods_category_id = #{sourceGoodsCategoryId}
+     </if>
+     <if test="categoryName != null" >
+       AND category_name = #{categoryName}
+     </if>
+  </select>
+  
+  <select id="queryGoodsCategoryLastIndex" parameterType="com.idcq.appserver.dto.goods.GoodsCategoryDto" resultType="java.lang.Integer">
+  	select category_index
+  	from 1dcq_goods_category 
+  	<where>
+  	  <if test="shopId != null" >
+        AND shop_id = #{shopId}
+      </if>
+	  <if test="sourceGoodsCategoryId != null" >
+        AND source_goods_category_id = #{sourceGoodsCategoryId}
+      </if>
+      <if test="categoryName != null" >
+        AND category_name = #{categoryName}
+      </if>
+      <if test="parentCategoryId != null" >
+        AND parent_category_id = #{parentCategoryId}
+      </if>
+	</where>
+	ORDER BY category_index DESC LIMIT 1
+  </select>
+  
+  <select id="queryGoodsCategoryIdsByShopId" resultType="java.lang.Long" parameterType="java.lang.Long">
+  		SELECT goods_category_id 
+  		FROM 1dcq_goods_category 
+  		WHERE shop_id = #{shopId}
+  </select>
+  
+  <select id="queryGoodsCategoryById" parameterType="java.lang.Long" resultMap="goodsCategoryMap">
+	  	select *
+	  	from 1dcq_goods_category 
+		where goods_category_id = #{goodsCategoryId}
+  </select>
+  
+ <insert id="addGoodsCategory" parameterType="com.idcq.appserver.dto.goods.GoodsCategoryDto" useGeneratedKeys="true" keyProperty="goodsCategoryId" >
+	   insert into 1dcq_goods_category
+	   <trim prefix="(" suffix=")" suffixOverrides="," >
+	     <if test="shopId != null" >
+	       shop_id,
+	     </if>
+	     <if test="categoryIndex != null" >
+	       category_index,
+	     </if>
+	     <if test="categoryName != null" >
+	       category_name,
+	     </if>
+	     <if test="parentCategoryId != null" >
+	       parent_category_id,
+	     </if>
+	     <if test="keywords != null" >
+	       category_key,
+	     </if>
+	     <if test="remark != null" >
+	       category_remark,
+	     </if>
+	     <if test="stopDate != null" >
+	       stop_date,
+	     </if>
+	     <if test="status != null" >
+	       status,
+	     </if>
+	     <if test="columnId != null" >
+	       column_id,
+	     </if>
+	     <if test="sourceGoodsCategoryId != null" >
+	       source_goods_category_id,
+	     </if>
+	     create_time
+	   </trim>
+	   <trim prefix="values (" suffix=")" suffixOverrides="," >
+	     <if test="shopId != null" >
+	       #{shopId},
+	     </if>
+	     <if test="categoryIndex != null" >
+	       #{categoryIndex},
+	     </if>
+	     <if test="categoryName != null" >
+	       #{categoryName},
+	     </if>
+	     <if test="parentCategoryId != null" >
+	       #{parentCategoryId},
+	     </if>
+	     <if test="keywords != null" >
+	       #{keywords},
+	     </if>
+	     <if test="remark != null" >
+	       #{remark},
+	     </if>
+	     <if test="stopDate != null" >
+	       #{stopDate},
+	     </if>
+	     <if test="status != null" >
+	       #{status},
+	     </if>
+	     <if test="columnId != null" >
+	       #{columnId},
+	     </if>
+	     <if test="sourceGoodsCategoryId != null" >
+	       #{sourceGoodsCategoryId},
+	     </if>
+	     now()
+	   </trim>
+ </insert> 
+	  
+  <select id="getShopGoodsCategory" resultMap="goodsCategoryMap" parameterType="java.util.Map" >
+    select c.goods_category_id,c.category_index,c.category_name,c.parent_category_id,c.category_key,
+    c.category_remark,c.stop_date,c.status 
+	from 1dcq_goods_category c 
+	where c.status = 1
+	<if test="shopId != null">
+	    and c.shop_id=#{shopId}
+	</if>
+	<if test="parentCategoryId != null">
+		and c.parent_category_id=#{parentCategoryId}
+	</if>
+    <if test="columnId != null">
+		and c.column_id=#{columnId}
+	</if>
+	order by category_index
+	limit #{n},#{m}
+  </select>
+  
+  <select id="getShopGoodsCategoryTotal" parameterType="java.util.Map" resultType="int">
+    select count(1) from 1dcq_goods_category c 
+    where c.status = 1
+    <if test="shopId != null">
+        and c.shop_id = #{shopId} 
+    </if>
+    <if test="parentCategoryId != null">
+		and c.parent_category_id=#{parentCategoryId}
+	</if>
+    <if test="columnId != null">
+		and c.column_id=#{columnId}
+	</if>
+  </select>
+  
+  <!-- 获取商品分类 -->
+   <select id="getShopFullCategory" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+     	c.goods_category_id as categoryId,  
+     	c.category_name as categoryName,
+     	c.status as status 
+	from 1dcq_goods_category c inner join  1dcq_shop s on c.shop_id=s.shop_id
+	where c.shop_id=#{shopId} 
+	<if test="parentCategoryId != null">
+		and parent_category_id=#{parentCategoryId}
+	</if>
+	limit #{n},#{m}
+  </select>
+  
+   <select id="getShopGoodsGroupCategory" resultMap="goodsCategoryMap" parameterType="java.util.Map" >
+    select c.goods_category_id,c.category_index,c.category_name,c.parent_category_id,c.category_key,
+    c.category_remark,c.stop_date,c.status 
+	from 1dcq_goods_group_category_relation r LEFT JOIN 1dcq_goods_category c
+	on r.group_category_id=c.goods_category_id
+	where c.status = 1
+	<if test="goodsGroupId != null">
+		and r.goods_group_id=#{goodsGroupId}
+	</if>
+	<if test="parentCategoryId != null">
+		and c.parent_category_id=#{parentCategoryId}
+	</if>
+	<if test="columnId != null">
+		and c.column_id=#{columnId}
+	</if>
+	limit #{n},#{m}
+  </select>
+  
+   <select id="getShopGoodsGroupCategoryTotal" parameterType="java.util.Map" resultType="int">
+     select count(1)
+	from 1dcq_goods_group_category_relation r LEFT JOIN 1dcq_goods_category c
+	on r.group_category_id=c.goods_category_id
+	where c.status = 1
+	<if test="goodsGroupId != null">
+		and r.goods_group_id=#{goodsGroupId}
+	</if>
+    <if test="parentCategoryId != null">
+		and c.parent_category_id=#{parentCategoryId}
+	</if>
+  </select>
+  
+  <select id="getCategoryList" parameterType="com.idcq.appserver.dto.common.PageModel" resultMap="goodsCategoryMap">
+  	select * from 1dcq_goods_category where status = 1 limit #{start},#{limit}	
+  </select>
+  
+  <select id="getCategoryCount" resultType="java.lang.Integer">
+  	select count(*) from  1dcq_goods_category where status = 1
+  </select>
+  
+  <select id="getGoodsCategoryByCategoryPid" resultMap="goodsCategoryMap">
+  	select c.goods_category_id,c.category_index,c.category_name,c.parent_category_id
+	from 1dcq_goods_category c where c.parent_category_id in (#{parentCategoryId})
+  </select>
+  
+  <select id="getById" resultMap="goodsCategoryMap">
+  	 select
+     	c.goods_category_id ,  
+     	c.category_name ,
+     	c.status as status,
+     	c.parent_category_id,
+     	c.category_index 
+	from 1dcq_goods_category c inner join  1dcq_shop s on c.shop_id=s.shop_id
+	where c.goods_category_id=#{primaryKeyId} 
+  </select>
+  <!-- 查询商品销售统计，只查询上价商品 -->
+  <select id="getGoodsSalesStat" parameterType="java.util.Map" resultType="java.util.Map">
+  		SELECT
+			gs.goods_id AS goodsId,
+			gs.goods_name AS goodsName,
+			gs.goods_category_id AS goodsCategoryId,
+			gc.category_name as categoryName,
+			sum(gs.sold_num) AS soldNum,
+			sum(gs.settle_price) AS soldMoney,
+			g.goods_pro_values_names as goodsProValuesNames,
+			g.standard_price AS standardPrice,
+			gs.parent_goods_category_id as firstGoodsCategoryId,
+			pgc.category_name as firstCategoryName
+		FROM
+			1dcq_goods_stat gs
+		LEFT JOIN 
+			1dcq_goods_category gc 
+		ON 
+			gs.goods_category_id = gc.goods_category_id
+		LEFT JOIN 
+			1dcq_goods_category pgc 
+		ON 
+			gs.parent_goods_category_id = pgc.goods_category_id
+		LEFT JOIN
+			1dcq_goods g
+		ON
+			g.goods_id = gs.goods_id
+		WHERE
+			 gs.shop_id = #{shopId}
+			<if test="goodsStatus != null">
+			  AND g.goods_status = #{goodsStatus} 
+			</if>
+			<if test="isShow != null">
+			  AND g.is_show = #{isShow}
+			</if>
+			<if test="startTime != null">
+				AND gs.stat_date &gt;= #{startTime}  
+			</if>
+			<if test="endTime != null">
+				AND gs.stat_date  &lt;= #{endTime}
+			</if>
+			<if test="goodsCategoryId != null">
+				AND (
+						gs.goods_category_id = #{goodsCategoryId} OR gc.parent_category_id = #{goodsCategoryId}
+				    )
+			</if>
+			<if test="searchKey != null">
+				AND (
+					g.goods_name like concat('%',trim(#{searchKey}),'%') 
+					or 
+					g.pinyinCode like concat('%',trim(#{searchKey}),'%')
+					or 
+					g.goods_no like concat('%',trim(#{searchKey}),'%')
+					or 
+					g.barcode like concat('%',trim(#{searchKey}),'%')
+				)
+			</if>
+		GROUP BY
+			gs.goods_Id
+		<if test="orderBy == 1">
+			order by sum(gs.sold_num) ASC
+		</if>
+		<if test="orderBy == 2">
+		    order by sum(gs.sold_num) DESC
+		</if>
+		LIMIT #{limit},#{pSize}
+  </select>
+  <select id="getGoodsSalesStatCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+  		SELECT
+			count(DISTINCT(g.goods_id))
+		FROM
+			1dcq_goods_stat gs
+		LEFT JOIN 
+			1dcq_goods_category gc 
+		ON 
+			gs.goods_category_id = gc.goods_category_id
+		LEFT JOIN 
+			1dcq_goods_category pgc 
+		ON 
+			gs.parent_goods_category_id = pgc.goods_category_id
+		LEFT JOIN
+			1dcq_goods g
+		ON
+			g.goods_id = gs.goods_id
+		WHERE
+			gs.shop_id = #{shopId} 
+		    <if test="isShow != null">
+			  AND g.is_show = #{isShow}
+			</if> 
+			<if test="goodsStatus != null">
+			  AND g.goods_status = #{goodsStatus} 
+			</if>
+			<if test="startTime != null">
+				AND gs.stat_date &gt;= #{startTime}  
+			</if>
+			<if test="endTime != null">
+				AND gs.stat_date  &lt;=  #{endTime}
+			</if>
+			<if test="goodsCategoryId != null">
+				AND (
+						gs.goods_category_id = #{goodsCategoryId} OR gc.parent_category_id = #{goodsCategoryId}
+				    )
+			</if>
+			<if test="searchKey != null">
+				AND (
+					g.goods_name like concat('%',trim(#{searchKey}),'%') 
+					or 
+					g.pinyinCode like concat('%',trim(#{searchKey}),'%')
+					or 
+					g.goods_no like concat('%',trim(#{searchKey}),'%')
+					or 
+					g.barcode like concat('%',trim(#{searchKey}),'%')
+				)
+			</if>
+  </select>
+  
+  <select id="getCategoryListByIdList" resultMap="goodsCategoryMap" parameterType="java.util.Map">
+  		select goods_category_id,parent_category_id from 1dcq_goods_category where goods_category_id in
+  		<foreach collection="goodsCategoryIdList" item="item"  separator="," open="("  close=")">
+     		#{item}
+    	 </foreach>
+  </select>
+  <!-- 查询商品销售统计，只查询上价商品 -->
+  <select id="getGoodsCategorySalesStat" parameterType="java.util.Map" resultType="java.util.Map">
+  		SELECT
+			sum(gs.sold_num) AS soldNum,
+			sum(gs.settle_price) AS soldMoney,
+			gs.parent_goods_category_id as firstGoodsCategoryId,
+			pgc.category_name as firstCategoryName
+		FROM
+			1dcq_goods_stat gs
+		LEFT JOIN 
+			1dcq_goods g
+		ON
+			g.goods_id = gs.goods_id
+		LEFT JOIN 
+			1dcq_goods_category gc 
+		ON 
+			gs.goods_category_id = gc.goods_category_id
+		AND gc.status=1
+		LEFT JOIN 
+			1dcq_goods_category pgc 
+		ON 
+			gs.parent_goods_category_id = pgc.goods_category_id
+		AND pgc.status=1
+		WHERE
+			 1 = 1
+			<if test="shopId != null">
+			   AND gs.shop_id = #{shopId}
+			</if>
+			<if test="startTime != null">
+				AND gs.create_time &gt;#{startTime}  
+			</if>
+			<if test="endTime != null">
+				AND gs.create_time  &lt; #{endTime}
+			</if>
+		GROUP BY  gs.parent_goods_category_id
+		<if test="orderBy == 1">
+			order by sum(gs.sold_num) ASC
+		</if>
+		<if test="orderBy == 2">
+		    order by sum(gs.sold_num) DESC
+		</if>
+		LIMIT #{limit},#{pSize}
+  </select>
+  <select id="getGoodsCategorySalesStatCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select
+    	count(*)
+    from
+    (
+	    SELECT
+				count(*)
+			FROM
+				1dcq_goods_stat gs
+			LEFT JOIN 
+				1dcq_goods_category gc 
+			ON 
+				gs.goods_category_id = gc.goods_category_id
+			AND gc.status=1
+			LEFT JOIN 
+				1dcq_goods_category pgc 
+			ON 
+				gs.parent_goods_category_id = pgc.goods_category_id
+			AND pgc.status=1
+			WHERE
+				 gs.shop_id = #{shopId}
+				<if test="startTime != null">
+					AND gs.create_time &gt;#{startTime}  
+				</if>
+				<if test="endTime != null">
+					AND gs.create_time  &lt; #{endTime}
+				</if>
+			GROUP BY  gs.parent_goods_category_id
+    ) t
+  </select>
+
+</mapper>

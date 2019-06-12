@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shop.ShopMemberLevelDto" >
+  <resultMap id="shopMemberLevelMap" type="com.idcq.appserver.dto.shop.ShopMemberLevelDto" >
+    <id column="shop_member_level_id" property="shopMemberLevelId" jdbcType="INTEGER" />
+    <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    <result column="shop_member_level_name" property="shopMemberLevelName" jdbcType="VARCHAR" />
+    <result column="consume_min_amount" property="consumeMinAmount" jdbcType="DOUBLE" />
+    <result column="consume_max_amout" property="consumeMaxAmout" jdbcType="DOUBLE" />
+    <result column="discount" property="discount" jdbcType="DOUBLE" />
+    <result column="is_auto_upgrate" property="isAutoUpgrate" jdbcType="TINYINT" />
+    <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+    <result column="level_description" property="levelDescription" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <insert id="addShopMemberLevelDto" parameterType="com.idcq.appserver.dto.shop.ShopMemberLevelDto" useGeneratedKeys="true"
+            keyProperty="shopMemberLevelId">
+        insert into 1dcq_shop_member_level
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="shopMemberLevelId != null">
+                shop_member_level_id,
+            </if>
+            <if test="shopId != null">
+                shop_id,
+            </if>
+            <if test="shopMemberLevelName != null">
+                shop_member_level_name,
+            </if>
+            <if test="consumeMinAmount != null">
+                consume_min_amount,
+            </if>
+            <if test="consumeMaxAmout != null">
+                consume_max_amout,
+            </if>
+            <if test="discount != null">
+                discount,
+            </if>
+            <if test="isAutoUpgrate != null">
+                is_auto_upgrate,
+            </if>
+            <if test="isDelete != null">
+                is_delete,
+            </if>
+            <if test="levelDescription != null">
+                level_description,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="shopMemberLevelId != null">
+                #{shopMemberLevelId,jdbcType=INTEGER},
+            </if>
+            <if test="shopId != null">
+                #{shopId,jdbcType=INTEGER},
+            </if>
+            <if test="shopMemberLevelName != null">
+                #{shopMemberLevelName,jdbcType=VARCHAR},
+            </if>
+            <if test="consumeMinAmount != null">
+                #{consumeMinAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="consumeMaxAmout != null">
+                #{consumeMaxAmout,jdbcType=DECIMAL},
+            </if>
+            <if test="discount != null">
+                #{discount,jdbcType=DECIMAL},
+            </if>
+            <if test="isAutoUpgrate != null">
+                #{isAutoUpgrate,jdbcType=TINYINT},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=TINYINT},
+            </if>
+            <if test="levelDescription != null">
+                #{levelDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+ 	
+ 	
+ 	<update id="updateShopMemberLevel" parameterType="com.idcq.appserver.dto.shop.ShopMemberLevelDto">
+        update 1dcq_shop_member_level
+        <set>
+            <if test="shopId != null">
+                shop_id = #{shopId,jdbcType=INTEGER},
+            </if>
+            <if test="shopMemberLevelName != null">
+                shop_member_level_name = #{shopMemberLevelName,jdbcType=VARCHAR},
+            </if>
+            <if test="consumeMinAmount != null">
+                consume_min_amount = #{consumeMinAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="consumeMaxAmout != null">
+                consume_max_amout = #{consumeMaxAmout,jdbcType=DECIMAL},
+            </if>
+            <if test="discount != null">
+                discount = #{discount,jdbcType=DECIMAL},
+            </if>
+            <if test="isAutoUpgrate != null">
+                is_auto_upgrate = #{isAutoUpgrate,jdbcType=TINYINT},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <where>
+        	<if test="shopMemberLevelId != null">
+        		shop_member_level_id = #{shopMemberLevelId,jdbcType=INTEGER}
+        	</if>
+        </where>
+    </update>
+ 	
+ 	<select id="getShopMemberLevelList" parameterType="java.util.Map" resultMap="shopMemberLevelMap">
+       select *
+       from 1dcq_shop_member_level m
+       <where>
+       		<if test="shopId != null">
+       			and m.shop_id = #{shopId}
+       		</if>
+       		<if test="shopMemberLevelName != null">
+       			and m.shop_member_level_name like concat('%',trim(#{shopMemberLevelName}),'%')
+       		</if>
+       		<if test="wholeShopMemberLevelName != null">
+       			and m.shop_member_level_name = #{wholeShopMemberLevelName}
+       		</if>
+       		<if test="consumeAmount != null">
+       			and  <![CDATA[ m.consume_min_amount <= #{consumeAmount}
+       			and m.consume_max_amout > #{consumeAmount}]]>
+       		</if>
+       		<if test="discount != null">
+       			and m.discount = #{discount}
+       		</if>
+       		<if test="isAutoUpgrate != null">
+       			and m.is_auto_upgrate = #{isAutoUpgrate}
+       		</if>
+       		<if test="isDelete != null">
+       			and m.is_delete = #{isDelete}
+       		</if>
+       		<if test="shopMemberLevelId != null">
+       			and m.shop_member_level_id
+       			<if test="isNotEqual != null">
+       				!= #{shopMemberLevelId}
+       			</if>
+       			<if test="isNotEqual == null">
+       				= #{shopMemberLevelId}
+       			</if>
+       			
+       		</if>
+			<if test="overConsumeMinAmount != null"> 
+				and <![CDATA[ m.consume_min_amount >= #{overConsumeMinAmount}]]>
+			</if>
+			<if test="overConsumeMinAmount != null"> 
+				and <![CDATA[ m.consume_max_amout < #{overConsumeMaxAmount}]]>
+			</if>
+       		
+       		
+       </where>
+    </select>
+ 	
+ 	<update id="deleteShopMemberLevel" parameterType="java.util.Map">
+	  	UPDATE 1dcq_shop_member_level SET is_delete = 1 WHERE shop_id = #{shopId} AND shop_member_level_id = #{shopMemberLevelId}
+	</update>
+ 	
+ 	
+</mapper>

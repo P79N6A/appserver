@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.pay.TransactionDto" >
+  <resultMap id="transactionMap" type="com.idcq.appserver.dto.pay.TransactionDto" >
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="order_id" property="orderId" jdbcType="INTEGER" />
+    <result column="transaction_id" property="transactionId" />
+    <result column="status" property="status" />
+    <result column="user_pay_channel_id" property="userPayChannelId" />
+    <result column="pay_amount" property="payAmount" /> 
+    <result column="order_pay_type" property="orderPayType" />
+    <result column="3rd_org_name" property="rdOrgName" />
+    <result column="transaction_type" property="transactionType" />
+    <result column="terminal_type" property="terminalType" />
+    <result column="3rd_transaction_id" property="rdTransactionId" />
+    <result column="payee_user_id" property="payeeUserId" />
+    <result column="3rd_notify_time" property="rdNotifyTime" />
+    <result column="out_trade_no" property="outTradeNo" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+	user_id,
+	order_id,
+	transaction_id,
+	status,
+	user_pay_channel_id,
+	pay_amount,
+	order_pay_type,
+	3rd_org_name,
+	transaction_type,
+	terminal_type,
+	3rd_transaction_id,
+	payee_user_id,
+	3rd_notify_time,
+	out_trade_no
+  </sql>
+  <insert id="addTransaction" useGeneratedKeys="true" keyProperty="transactionId" parameterType="com.idcq.appserver.dto.pay.TransactionDto">  
+    insert 
+    	into 1dcq_transaction
+    	(
+    		user_id,
+    		order_id,
+    		payee_user_id,
+    		transaction_time,
+    		status,
+    		user_pay_channel_id,
+    		pay_amount,
+    		order_pay_type,
+    		3rd_org_name,
+    		transaction_type,
+    		terminal_type,
+    		last_update_time
+    	)  
+    values
+      (
+    	#{userId},
+    	#{orderId},
+    	#{payeeUserId},
+    	#{transactionTime},
+    	#{status},
+    	#{userPayChannelId},
+    	#{payAmount},
+    	#{orderPayType},
+    	#{rdOrgName},
+    	#{transactionType},
+    	#{terminalType},
+    	#{lastUpdateTime})  
+  </insert>  
+  
+ <select id="getPayTargetById" parameterType="java.lang.Long" resultType="java.util.Map">
+  	select 
+    	payee_user_id AS payeeUserId,order_id AS orderId
+    from 
+    	1dcq_transaction
+    where transaction_id = #{transactionId}
+  </select> 
+  
+   <select id="getTransactionById" resultMap="transactionMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from 1dcq_transaction
+    where transaction_id = #{transactionId}
+  </select>
+  
+  <delete id="delTransaction" parameterType="java.lang.Integer">
+  	delete from 1dcq_transaction
+  	where transaction_id=#{transactionId}
+  </delete>
+  
+  <update id="updateTransaction" parameterType="com.idcq.appserver.dto.pay.TransactionDto">
+  	update 1dcq_transaction
+  	<set>
+  		<if test="status != null">
+  			status=#{status},
+  		</if>
+  		<if test="payAmount != null">
+  			pay_amount=#{payAmount},
+  		</if>
+  		<if test="rdTransactionId != null">
+  			3rd_transaction_id=#{rdTransactionId},
+  		</if>
+  		<if test="outTradeNo != null">
+  			out_trade_no=#{outTradeNo}
+  		</if>
+  	</set>
+  	where  transaction_id=#{transactionId}
+  </update>
+  
+   <update id="updateTransactionAfterPaySuccess" parameterType="com.idcq.appserver.dto.pay.TransactionDto">
+  	update 1dcq_transaction
+  	<set>
+  		<if test="status != null">
+  			status=#{status},
+  		</if>
+  		<if test="rdTransactionId != null">
+  			3rd_transaction_id=#{rdTransactionId},
+  		</if>
+  		<if test="rdNotifyTime != null">
+  			3rd_notify_time=#{rdNotifyTime},
+  		</if>
+  		<if test="orderId != null">
+  			order_id=#{orderId},
+  		</if>
+		<if test="rdNotifyId != null">
+  			3rd_notify_id=#{rdNotifyId},
+  		</if>
+  		<if test="lastUpdateTime != null">
+  			last_update_time=#{lastUpdateTime}
+  		</if>
+  	</set>
+  	where  transaction_id=#{transactionId}
+  </update>
+
+	<select id="getPlatformIncomeStaticsByTimeAndMoneySource" parameterType="java.util.Map" resultMap="transactionMap">
+	SELECT SUM(pay_amount) AS pay_amount, 3rd_org_name
+	FROM 1dcq_transaction
+	WHERE status = 1
+	<![CDATA[
+	AND 3rd_notify_time >= #{beginDate} AND 3rd_notify_time < #{endDate}
+	]]>
+	GROUP BY
+	3rd_org_name
+	</select>
+</mapper>

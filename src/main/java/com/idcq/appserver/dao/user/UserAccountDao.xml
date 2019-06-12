@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.user.UserAccountDto" >
+  <resultMap id="userAccountMap" type="com.idcq.appserver.dto.user.UserAccountDto" >
+    <result column="account_id" property="accountId" jdbcType="DOUBLE" />
+    <result column="amount" property="amount" jdbcType="DOUBLE" />
+    <result column="user_id" property="userId" />
+    <result column="account_status" property="accountStatus" jdbcType="DOUBLE" />
+    <result column="freeze_amount" property="freezeAmount" jdbcType="DOUBLE" />
+    <result column="coupon_amount" property="couponAmount" jdbcType="DOUBLE" />
+    <result column="reward_amount" property="rewardAmount" jdbcType="DOUBLE" />
+    <result column="reward_total" property="rewardTotal" jdbcType="DOUBLE" />
+    <result column="sales_total" property="salesTotal" jdbcType="DOUBLE" />
+    
+    <result column="legend_total" property="legendTotal" jdbcType="DOUBLE" />
+    <result column="consume_amount" property="consumeAmount" jdbcType="DOUBLE" />
+    <result column="consume_total" property="consumeTotal" jdbcType="DOUBLE" />
+    <result column="voucher_amount" property="voucherAmount" jdbcType="DOUBLE" />
+    <result column="voucher_total" property="voucherTotal" jdbcType="DOUBLE" />
+    <result column="deduction_count_value" property="deductionCountValue" jdbcType="DOUBLE" />
+    <result column="deduction_total" property="deductionTotal" jdbcType="DOUBLE" />
+    <result column="consume_rebate_total" property="consumeRebateTotal" jdbcType="DOUBLE" />
+    <result column="consume_rebate_money" property="consumeRebateMoney" jdbcType="DOUBLE" />
+    <result column="coupon_rebates_total" property="couponRebatesTotal" jdbcType="DOUBLE" />
+  </resultMap>
+  
+  <select id="getAccountMoney" resultMap="userAccountMap" parameterType="java.lang.Long" >
+    SELECT 
+    	account_id,
+	    ifnull(amount,0) amount, 
+	    account_status,
+	    ifnull(reward_amount,0) reward_amount,
+	    ifnull(reward_total,0) reward_total,
+	    ifnull(coupon_amount,0) coupon_amount,
+	    ifnull(freeze_amount,0) freeze_amount,
+	    ifnull(sales_total,0) sales_total,
+
+	    ifnull(legend_total,0) legend_total,
+	    ifnull(consume_amount,0) consume_amount,
+	    ifnull(consume_total,0) consume_total,
+	    ifnull(voucher_amount,0) voucher_amount,
+	    ifnull(voucher_total,0) voucher_total,
+	    ifnull(deduction_count_value,0) deduction_count_value,
+	    ifnull(deduction_total,0) deduction_total,
+	    ifnull(consume_rebate_total,0) consume_rebate_total,
+	    ifnull(consume_rebate_money,0) consume_rebate_money,
+	    ifnull(coupon_rebates_total,0) coupon_rebates_total
+     FROM
+        1dcq_user_account
+     WHERE
+     	user_id = #{userId}
+  </select>
+  
+<select id="getAllUserAccount" resultMap="userAccountMap" parameterType="java.util.Map" >
+    SELECT 
+    	account_id,
+    	user_id,
+	    ifnull(amount,0) amount, 
+	    account_status,
+	    ifnull(reward_amount,0) reward_amount,
+	    ifnull(reward_total,0) reward_total,
+	    ifnull(coupon_amount,0) coupon_amount,
+	    ifnull(freeze_amount,0) freeze_amount,
+	    ifnull(sales_total,0) sales_total,
+
+	    ifnull(legend_total,0) legend_total,
+	    ifnull(consume_amount,0) consume_amount,
+	    ifnull(consume_total,0) consume_total,
+	    ifnull(voucher_amount,0) voucher_amount,
+	    ifnull(voucher_total,0) voucher_total,
+	    ifnull(deduction_count_value,0) deduction_count_value,
+	    ifnull(deduction_total,0) deduction_total,
+	    ifnull(consume_rebate_total,0) consume_rebate_total,
+	    ifnull(consume_rebate_money,0) consume_rebate_money
+     FROM
+        1dcq_user_account
+      <if test="money != null" >
+         where <![CDATA[ifnull(consume_rebate_total,0) > #{money}]]>         
+     </if>
+     <if test="pageSize != null" >
+         limit #{limit},#{pageSize}
+     </if>
+  </select>
+  
+  <!-- 查询会员红包详情-->
+  <select id="getRedPacketUserDetail" resultType="java.util.Map" parameterType="java.lang.Long" >
+		SELECT u.username AS userName,
+		u.nick_name AS nickName,
+		u.true_name AS trueName,
+		u.mobile AS mobile
+		FROM 1dcq_user u 
+		WHERE u.user_id = #{userId}
+  </select>
+  
+  
+  <update id="updateAccountMoney" parameterType="java.util.Map">
+  	update 1dcq_user_account
+  	set amount=#{amount}
+  	where user_id = #{userId}
+  </update>
+  
+ <update id="updateCouponAndRewardAmount" parameterType="java.util.Map">
+  	update 1dcq_user_account
+  	<set >
+      <if test="amount != null" >
+        amount = #{amount},
+      </if>
+      <if test="rewardAmount != null" >
+        reward_amount = #{rewardAmount},
+      </if>
+      <if test="couponAmount != null" >
+        coupon_amount = #{couponAmount},
+      </if>
+      <if test="voucherAmount != null" >
+        voucher_amount = #{voucherAmount},
+      </if>
+    </set>
+  	where user_id = #{userId}
+ </update>
+  
+  <!-- 更新冻结资金 -->
+  <update id="updateFreezeMoney" parameterType="java.util.Map">
+  	UPDATE
+  		 1dcq_user_account
+  	SET
+  		 freeze_amount=#{freezeAmount}
+  	WHERE
+  		 user_id = #{userId}
+  </update>
+  
+  <insert id="saveAccount" parameterType="com.idcq.appserver.dto.user.UserAccountDto" useGeneratedKeys="true" keyProperty="accountId">
+	   insert into 1dcq_user_account (user_id, user_role, amount, account_status, contact, telephone, create_time)
+	   values (#{userId}, #{userRole}, #{amount}, #{accountStatus}, #{contact}, #{telephone}, #{createTime})
+  </insert>
+  
+   <update id="backAccountMoney" parameterType="java.util.Map">
+  	update 1dcq_user_account
+  	set amount= ifnull(amount + #{amount}, 0)  
+  	where user_id = #{userId}
+  </update>
+    <!--   更新用户账号 -->
+   <update id="updateUserAccount" parameterType="java.util.Map" >
+    update 1dcq_user_account
+    <set >
+      <if test="changeAmount != null" >
+        amount = amount + #{changeAmount},
+      </if>
+      <if test="changeRewardAmount != null" >
+        reward_amount = reward_amount + #{changeRewardAmount},
+      </if>
+      <if test="changeRewardTotal != null" >
+        reward_total = reward_total + #{changeRewardTotal},
+      </if>
+      <if test="changeCouponAmount != null" >
+        coupon_amount = coupon_amount + #{changeCouponAmount},
+      </if>
+      <if test="changeFreezeAmount != null" >
+        freeze_amount = freeze_amount + #{changeFreezeAmount},
+      </if>
+      <if test="legendTotal != null" >
+        legend_total = legend_total + #{legendTotal},
+      </if>
+      <if test="consumeAmount != null" >
+        consume_amount = consume_amount + #{consumeAmount},
+      </if>
+      <if test="consumeTotal != null" >
+        consume_total = consume_total + #{consumeTotal},
+      </if>
+      <if test="voucherAmount != null" >
+        voucher_amount = voucher_amount + #{voucherAmount},
+      </if>
+      <if test="voucherTotal != null" >
+        voucher_total = voucher_total + #{voucherTotal},
+      </if>
+      <if test="deductionCountValue != null" >
+        deduction_count_value = deduction_count_value + #{deductionCountValue},
+      </if>
+      <if test="deductionTotal != null" >
+        deduction_total = deduction_total + #{deductionTotal},
+      </if> 
+      <if test="consumeRebateTotal != null" >
+        consume_rebate_total = consume_rebate_total + #{consumeRebateTotal},
+      </if> 
+      <if test="consumeRebateMoney != null" >
+        consume_rebate_money = consume_rebate_money + #{consumeRebateMoney},
+      </if> 
+       <if test="couponRebateTotal != null" >
+        coupon_rebates_total = coupon_rebates_total + #{couponRebateTotal},
+      </if> 
+    </set>
+    where user_id = #{userId}
+  </update>
+  
+   <!--   根据账号编号更新账号信息 -->
+   <update id="updateUserAccountByKey" parameterType="java.util.Map" >
+    update 1dcq_user_account
+    <set >
+      <if test="amount != null" >
+        amount = #{amount},
+      </if>
+      <if test="rewardAmount != null" >
+        reward_amount = #{rewardAmount},
+      </if>
+      <if test="rewardTotal != null" >
+        reward_total = #{rewardTotal},
+      </if>
+      <if test="couponAmount != null" >
+        coupon_amount = #{couponAmount},
+      </if>
+      <if test="freezeAmount != null" >
+        freeze_amount = #{freezeAmount},
+      </if>
+      <if test="voucherAmount != null" >
+        voucher_amount = #{voucherAmount},
+      </if>
+    </set>
+    where account_id = #{accountId}
+  </update>
+  
+   <!-- P45：查询用户奖励总额接口 2015.12.3 add by huangrui-->
+   <select id="rewardsum" resultType="java.util.Map" parameterType="java.lang.Long" >
+    SELECT 
+    	TRUNCATE(reward_total,4) as rewardSum,
+	    TRUNCATE(reward_amount,4) as rewardBalance, 
+	    (SELECT COUNT(1) FROM 1dcq_user u WHERE u.`refer_user_id`= #{userId}) as recommendedUserSum 
+     FROM 
+        1dcq_user_account
+     WHERE
+     	user_id = #{userId}
+  </select>
+  
+</mapper>

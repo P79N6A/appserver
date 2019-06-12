@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.user.AgentDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.user.AgentDto" >
+     <id column="agent_id" property="agentId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="agent_type" property="agentType" jdbcType="INTEGER" />
+    <result column="agent_status" property="agentStatus" jdbcType="INTEGER" />
+    <result column="province_id" property="provinceId" jdbcType="INTEGER" />
+    <result column="city_id" property="cityId" jdbcType="INTEGER" />
+    <result column="district_id" property="districtId" jdbcType="INTEGER" />
+    <result column="town_id" property="townId" jdbcType="INTEGER" />
+    <result column="agent_valid_from" property="agentValidFrom" jdbcType="TIMESTAMP" />
+    <result column="agent_valid_to" property="agentValidTo" jdbcType="TIMESTAMP" />
+    <result column="agent_share_ratio" property="agentShareRatio" jdbcType="DOUBLE" />
+    <result column="refer_user_id" property="referUserId" jdbcType="DOUBLE" />
+    <result column="slotting_fee" property="slottingFee" />
+    <result column="create_time" property="createTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    agent_id,
+    user_id, 
+    agent_type, 
+    agent_status,
+    province_id, 
+    city_id, 
+    district_id, 
+    town_id,
+    agent_valid_from, 
+    agent_valid_to,
+    agent_share_ratio,
+    refer_user_id,
+    create_time,
+    slotting_fee
+  </sql>
+  	 <insert id="addAgent" parameterType="com.idcq.appserver.dto.user.AgentDto" useGeneratedKeys="true" keyProperty="agentId" >
+	    insert into 1dcq_agent
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="userId != null" >
+	        user_id,
+	      </if>
+	      <if test="agentType != null" >
+	        agent_type,
+	      </if>
+	      <if test="agentShareRatio != null" >
+	        agent_share_ratio,
+	      </if>
+	      <if test="referUserId != null" >
+	        refer_user_id,
+	      </if>
+	      <if test="slottingFee != null" >
+	        slotting_fee,
+	      </if>
+	      <if test="createTime != null" >
+	        create_time,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="userId != null" >
+	        #{userId},
+	      </if>
+	      <if test="agentType != null" >
+	        #{agentType},
+	      </if>
+	      <if test="agentShareRatio != null" >
+	        #{agentShareRatio},
+	      </if>
+	      <if test="referUserId != null" >
+	        #{referUserId},
+	      </if>
+	      <if test="slottingFee != null" >
+	        #{slottingFee},
+	      </if>
+          <if test="createTime != null" >
+	        #{createTime},
+	      </if>
+	    </trim>
+	  </insert> 
+	  
+  <select id="getAgent" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from 1dcq_agent
+    where 1=1
+    <if test="userId != null">
+    	and user_id = #{userId,jdbcType=INTEGER}
+    </if>
+    <if test="cityId != null">
+    	and city_id=#{cityId}
+    </if>
+    <if test="districtId != null">
+    	and district_id=#{districtId}
+    </if>
+    <if test="townId != null">
+    	and town_id=#{townId}
+    </if>
+    <if test="agentType != null">
+    	and agent_type=#{agentType}
+    </if>
+    <if test="orderTime != null">
+    	and agent_valid_from &lt;=#{orderTime} and agent_valid_to &gt;=#{orderTime}
+    </if>
+    limit 1
+  </select>
+
+      <!-- 查询所有代理角色 -->
+  <select id="getAgentByUserIdAndAgentId" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM 
+    	1dcq_agent
+    WHERE 
+        agent_id = #{agentId}
+	    <if test="userId != null">
+	    AND user_id = #{userId}
+	    </if>
+   </select>
+
+    <!-- 查询所有代理角色 -->
+    <select id="getAgentByUserIdAndAgentTypes" resultMap="BaseResultMap" parameterType="java.util.Map" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        1dcq_agent
+        <where>
+        <if test="agentId != null">
+          agent_id = #{agentId}
+        </if>
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+        <if test="agentTypes != null">
+            AND agent_type IN
+            <foreach collection="agentTypes" item="items" open="(" close=")" separator=",">
+                #{items}
+            </foreach>
+        </if>
+        </where>
+    </select>
+</mapper>

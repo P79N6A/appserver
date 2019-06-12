@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.rebates.ShopRebatesDto" >
+
+  <resultMap id="shopRebatesDtoMap" type="com.idcq.appserver.dto.rebates.ShopRebatesDto" >
+    <result column="shop_id" property="shopId" />
+    <result column="buy_v_money" property="buyvMoney" />
+    <result column="shop_wait_rebates_money" property="shopWaitRebatesMoney"  />
+    <result column="b_buy_v_rebates_ratio" property="bBuyvRebatesRatio"  />
+    <result column="is_finish" property="isFinish" />
+    <result column="last_update_time" property="lastUpdateTime" />
+    <result column="create_time" property="createTime" />
+  </resultMap>
+  
+  <select id="getShopRebates" resultMap="shopRebatesDtoMap" parameterType="com.idcq.appserver.dto.rebates.ShopRebatesDto" >
+    SELECT 
+	    shop_id,
+	    buy_v_money,
+	    shop_wait_rebates_money,
+	    b_buy_v_rebates_ratio,
+	    is_finish,
+	    last_update_time,
+	    create_time
+	FROM 
+		1dcq_shop_rebates sr
+	WHERE 
+	1=1
+	<if test="shopId != null">
+		and shop_id=#{shopId} 
+	</if>
+	<if test="isFinish != null">
+		and is_finish = #{isFinish}
+	</if>
+	<if test="buyvMoney != null">
+		and buy_v_money = #{buyvMoney}
+	</if>
+	<if test="shopWaitRebatesMoney != null">
+		and shop_wait_rebates_money = #{shopWaitRebatesMoney}
+	</if>
+	<if test="bBuyvRebatesRatio != null">
+		and b_buy_v_rebates_ratio = #{bBuyvRebatesRatio}
+	</if>
+	<if test="isFinish != null">
+		and is_finish = #{isFinish}
+	</if>
+	<if test="lastUpdateTime != null">
+		and last_update_time = #{lastUpdateTime}
+	</if>
+	<if test="createTime != null">
+		and create_time = #{createTime}
+	</if>
+	ORDER BY
+	    last_update_time DESC
+	<if test="limit != null and pageSize != null">
+			LIMIT #{limit},#{pageSize}
+	</if>
+  </select>
+<update id="updateShopRebates" parameterType="com.idcq.appserver.dto.rebates.ShopRebatesDto">
+	update 1dcq_shop_rebates
+	<set>
+	<if test="buyvMoney != null">
+		buy_v_money = #{buyvMoney},
+	</if>
+	<if test="shopWaitRebatesMoney != null">
+		shop_wait_rebates_money = #{shopWaitRebatesMoney},
+	</if>
+	<if test="bBuyvRebatesRatio != null">
+		b_buy_v_rebates_ratio = #{bBuyvRebatesRatio},
+	</if>
+	<if test="isFinish != null">
+		is_finish = #{isFinish},
+	</if>
+	<if test="lastUpdateTime != null">
+		last_update_time = #{lastUpdateTime},
+	</if>
+	<if test="createTime != null">
+		create_time = #{createTime}
+	</if>
+	</set>
+	<where>
+		shop_id=#{shopId}
+	</where>
+</update>
+
+	<insert id="insertShopRebates" parameterType="com.idcq.appserver.dto.rebates.ShopRebatesDto" >
+		INSERT INTO 1dcq_shop_rebates
+		(shop_id, buy_v_money, shop_wait_rebates_money, b_buy_v_rebates_ratio, is_finish, last_update_time, create_time)
+		VALUES
+		(#{shopId}, #{buyvMoney}, #{shopWaitRebatesMoney}, #{bBuyvRebatesRatio}, #{isFinish}, #{lastUpdateTime}, #{createTime})
+	</insert>
+
+
+  <select id="countRemainedRebates" resultType="java.lang.Integer">
+	  SELECT count(1)
+	  FROM
+	  1dcq_shop_rebates sr
+	  WHERE
+	  sr.is_finish = 0 AND sr.shop_wait_rebates_money > 0
+  </select>
+
+	<select id="getToExecuteRebates" resultMap="shopRebatesDtoMap">
+		SELECT * FROM
+		1dcq_shop_rebates
+		WHERE
+		is_finish = 0 AND shop_wait_rebates_money > 0;
+	</select>
+</mapper>

@@ -1,0 +1,560 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.idcq.appServer</groupId>
+	<artifactId>appServer</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>appserver Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+
+	<build>
+		<!-- <testSourceDirectory>${basedir}/src/main</testSourceDirectory> -->
+		<finalName>appServer</finalName>
+		<defaultGoal>package</defaultGoal>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<!-- 源代码JDK版本 -->
+					<source>1.7</source>
+					<!-- 目标平台JDK版本 -->
+					<target>1.7</target>
+					<!-- 指定编译时的字符集 -->
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<!-- 打源码包插件 -->
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<attach>true</attach>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- findbug plugin -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<threshold>High</threshold>
+					<effort>Default</effort>
+					<findbugsXmlOutput>true</findbugsXmlOutput>
+					<findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+					<xmlOutput>true</xmlOutput>
+					<formats>
+						<format>html</format>
+					</formats>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<!-- skipTests为true发布时候自动跳过单元测试 -->
+					<skipTests>false</skipTests>
+					<includes>
+						<include>**/*Tests.java</include>
+					</includes>
+					<formats>
+						<format>html</format>
+					</formats>
+				</configuration>
+			</plugin>
+			<!-- end findbug -->
+			<!-- 生成javadoc插件 -->
+			<!-- <plugin> <artifactId>maven-javadoc-plugin</artifactId> <version>2.9.1</version> 
+				<configuration> <attach>true</attach> <encoding>UTF-8</encoding> </configuration> 
+				<executions> <execution> <id>attach-javadocs</id> <phase>package</phase> 
+				<goals> <goal>jar</goal> </goals> </execution> </executions> </plugin> -->
+		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.properties</include>
+					<include>**/*.vm</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
+	<!-- findbug reporting -->
+	<reporting>
+		<plugins>
+			<!-- To use the plugin goals in your POM or parent POM -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.14.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</reporting>
+	<!-- end findbug reporting -->
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<!-- <version>3.8.2</version> -->
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- 单元测试，支持数据与代码分离，入读取excel -->
+		<!-- <dependency> <groupId>org.databene</groupId> <artifactId>feed4junit</artifactId> 
+			<version>1.1.3</version> </dependency> -->
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+			<version>0.9.0</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- solr -->
+		<!-- <dependency> <groupId>org.apache.httpcomponents</groupId> <artifactId>httpmime</artifactId> 
+			<version>4.2.3</version> </dependency> <dependency> <groupId>org.apache.zookeeper</groupId> 
+			<artifactId>zookeeper</artifactId> <version>3.4.5</version> </dependency> -->
+		<dependency>
+			<groupId>com.alibaba.rocketmq</groupId>
+			<artifactId>rocketmq-tools</artifactId>
+			<version>3.1.3</version>
+		</dependency>
+		<!-- velocity模板 start -->
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.7</version>
+		</dependency>
+		<!-- velocity模板 end -->
+
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+			<version>4.5.0</version>
+		</dependency>
+		<!-- springMVC -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3.1</version>
+		</dependency>
+
+		<!-- FastDFS 对应jar包1.20版本 -->
+		<dependency>
+			<groupId>org.csource</groupId>
+			<artifactId>fastdfs_client</artifactId>
+			<version>1.20</version>
+		</dependency>
+		<!-- aspects -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.6.12</version>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+		<!-- mybatis -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>${mybatis.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>1.2.1</version>
+		</dependency>
+		<!-- cglib -->
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>${cglib.version}</version>
+		</dependency>
+		<!-- json -->
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<version>${json-lib.version}</version>
+			<classifier>jdk15</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>${json-simple.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ezmorph</groupId>
+			<artifactId>ezmorph</artifactId>
+			<version>1.0.6</version>
+		</dependency>
+		<!-- MySQL -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.25</version>
+		</dependency>
+		<!-- connect pool -->
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>${commons-dbcp.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-pool2</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<!-- 分布式缓存 -->
+		<dependency>
+			<groupId>com.googlecode.xmemcached</groupId>
+			<artifactId>xmemcached</artifactId>
+			<version>${xmemcached.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.simple-spring-memcached</groupId>
+			<artifactId>spymemcached</artifactId>
+			<version>${spymemcached.version}</version>
+		</dependency>
+		<!-- 日志 -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
+		<!-- Lucene -->
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<!-- <version>3.6.1</version> -->
+			<version>4.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-common</artifactId>
+			<version>4.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-common</artifactId>
+			<version>4.5.0</version>
+		</dependency>
+		<!-- 其他 -->
+		<!-- quartz的依赖 -->
+		<dependency>
+			<groupId>javax.transaction</groupId>
+			<artifactId>jta</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<!-- 建设银行-start -->
+		<dependency>
+			<groupId>netpay.merchant.crypto</groupId>
+			<artifactId>netpay</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<!-- 建设银行-end -->
+
+		<!-- 农业银行 -->
+		<dependency>
+			<groupId>com.abc.payclient</groupId>
+			<artifactId>trustpay</artifactId>
+			<version>3.1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>antlr</groupId>
+			<artifactId>antlr</artifactId>
+			<version>${antlr.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+			<version>${activation.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons-lang3.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.2</version>
+		</dependency>
+
+		<!-- json-lib-2.4所依赖jar <dependency> <groupId>commons-httpclient</groupId> 
+			<artifactId>commons-httpclient</artifactId> <version>3.1</version> </dependency> 
+			<dependency> <groupId>org.codehaus.groovy</groupId> <artifactId>groovy-all</artifactId> 
+			<version>1.7.5</version> </dependency> <dependency> <groupId>oro</groupId> 
+			<artifactId>oro</artifactId> <version>2.0.8</version> </dependency> <dependency> 
+			<groupId>xmlunit</groupId> <artifactId>xmlunit</artifactId> <version>1.0</version> 
+			</dependency> <dependency> <groupId>xom</groupId> <artifactId>xom</artifactId> 
+			<version>1.1</version> </dependency> -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.8</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.9</version>
+		</dependency>
+		<!-- webservice -->
+		<!-- <dependency> <groupId>org.apache.cxf.karaf</groupId> <artifactId>apache-cxf</artifactId> 
+			<version>2.7.11</version> </dependency> -->
+		<!-- 任务调度 -->
+		<!-- <dependency> <groupId>org.ow2.easybeans</groupId> <artifactId>quartz</artifactId> 
+			<version>${quartz.version}</version> </dependency> -->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>${quartz.version}</version>
+		</dependency>
+		<!-- 本地install的paoding -->
+		<!-- <dependency> <groupId>net.paoding</groupId> <artifactId>paoding-analysis</artifactId> 
+			<version>2.0.4-beta</version> </dependency> -->
+		<!-- <dependency> <groupId>paoding</groupId> <artifactId>paoding-analysis</artifactId> 
+			<version>2.0.4</version> </dependency> -->
+		<!-- httpclient -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${httpClient.version}</version>
+		</dependency>
+		<!-- dom4j -->
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<!-- JPush -->
+		<dependency>
+			<groupId>cn.jpush.api</groupId>
+			<artifactId>jpush-client</artifactId>
+			<version>3.1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>17.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp</groupId>
+			<artifactId>mockwebserver</artifactId>
+			<version>1.5.4</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- redis -->
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+			<version>1.0.0.RELEASE</version>
+		</dependency>
+		<!-- 拼音4j -->
+		<dependency>
+			<groupId>com.belerweb</groupId>
+			<artifactId>pinyin4j</artifactId>
+			<version>2.5.0</version>
+		</dependency>
+		<!-- 读excel工具包 -->
+		<dependency>
+			<groupId>net.sourceforge.jexcelapi</groupId>
+			<artifactId>jxl</artifactId>
+			<version>2.6.12</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
+			<version>1.1-beta-6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.ik</groupId>
+			<artifactId>IKAnalyzer</artifactId>
+			<version>2.0</version>
+		</dependency>
+
+<!-- 		<dependency>
+			<groupId>com.scanpay</groupId>
+			<artifactId>aliscan</artifactId>
+			<version>1.0</version>
+		</dependency> -->
+
+		<dependency>
+			<groupId>com.alipay</groupId>
+			<artifactId>alipay-sdk-java</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<!-- poi -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.14</version>
+		</dependency>
+		<!-- mybatis分页插件 -->
+		<!-- <dependency>
+			<groupId>com.github.pagehelper</groupId>
+			<artifactId>pagehelper</artifactId>
+			<version>4.1.3</version>
+		</dependency> -->
+		<!-- http://mvnrepository.com/artifact/javax.validation/validation-api -->
+	<!-- 	<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.1.0.Final</version>
+		</dependency> -->
+		<!-- http://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
+	<!-- 	<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.3.0.Alpha1</version>
+		</dependency> -->
+		<dependency>
+			<groupId>org.eclipse.paho</groupId>
+			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+	</dependencies>
+
+	<properties>
+		<spring.version>3.2.2.RELEASE</spring.version>
+		<!-- <spring.version>4.2.6.RELEASE</spring.version> -->
+		<mybatis.version>3.2.3</mybatis.version>
+		<json-lib.version>2.4</json-lib.version>
+		<json-simple.version>1.1</json-simple.version>
+		<cglib.version>2.2.2</cglib.version>
+		<antlr.version>2.7.6</antlr.version>
+		<activation.version>1.1.1</activation.version>
+		<commons-dbcp.version>1.4</commons-dbcp.version>
+		<commons-lang3.version>3.1</commons-lang3.version>
+		<xmemcached.version>1.4.1</xmemcached.version>
+		<spymemcached.version>2.8.1</spymemcached.version>
+		<slf4j-api.version>1.7.5</slf4j-api.version>
+		<log4j.version>1.2.16</log4j.version>
+		<quartz.version>1.8.5</quartz.version>
+		<httpClient.version>4.3</httpClient.version>
+	</properties>
+
+	<repositories>
+		<!-- <repository> <id>local_reporsitory_id</id> <url>http://192.168.193.64:8070/mavenRepository</url> 
+			</repository> -->
+		<repository>
+			<id>Spring_json</id>
+			<url>http://spring-json.sourceforge.net/repository</url>
+		</repository>
+		<repository>
+			<id>mvnreporsitory_id2</id>
+			<url>http://mvnrepository.com/artifact</url>
+		</repository>
+		<repository>
+			<id>mvnreporsitory_id</id>
+			<url>http://mvnrepository.com</url>
+		</repository>
+		<repository>
+			<id>jasig-repository</id>
+			<name>Jasig Maven2 Repository</name>
+			<url>http://developer.ja-sig.org/maven2</url>
+		</repository>
+		<repository>
+			<id>jboss</id>
+			<name>JBoss Repository</name>
+			<layout>default</layout>
+			<url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>mojo-snapshot</id>
+			<name>Codehause Mojo Snapshot Repository</name>
+			<url>https://nexus.codehaus.org/content/repositories/codehaus-snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+</project>

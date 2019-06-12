@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.plugin.ShopPluginDto">
+	<resultMap id="BaseResultMap" type="com.idcq.appserver.dto.plugin.ShopPluginDto">
+		<id column="shop_plugin_id" property="shopPluginId" jdbcType="BIGINT" />
+		<result column="shop_id" property="shopId" jdbcType="INTEGER" />
+		<result column="plugin_id" property="pluginId" jdbcType="INTEGER" />
+		<result column="buy_number" property="buyNumber" jdbcType="INTEGER" />
+		<result column="money" property="money" jdbcType="DOUBLE" />
+		<result column="order_time" property="orderTime" jdbcType="TIMESTAMP" />
+		<result column="begin_time" property="beginTime" jdbcType="TIMESTAMP" />
+		<result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+		<result column="is_paid" property="isPaid" jdbcType="TINYINT" />
+		<result column="is_settled" property="isSettled" jdbcType="TINYINT" />
+		<result column="is_active" property="isActive" jdbcType="TINYINT" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		shop_plugin_id,
+		shop_id,
+		plugin_id,
+		buy_number,
+		money,
+		order_time,
+		begin_time,
+		end_time,
+		is_paid,
+		is_settled,
+		is_active
+	</sql>
+
+	<select id="getShopPluginById" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from 1dcq_shop_plugin
+		where shop_plugin_id = #{shopPluginId}
+	</select>
+
+	<select id="getShopPluginInDeclaredDate" resultMap="BaseResultMap"
+		parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from 1dcq_shop_plugin
+		where shop_id = #{shopId}
+		AND plugin_id =
+		#{pluginId}
+		AND is_active = 1
+		ORDER BY end_time DESC
+	</select>
+
+	<insert id="insertShopPlugin" parameterType="com.idcq.appserver.dto.plugin.ShopPluginDto"
+		useGeneratedKeys="true" keyProperty="shopPluginId">
+		insert into 1dcq_shop_plugin
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="shopId != null">
+				shop_id,
+			</if>
+			<if test="pluginId != null">
+				plugin_id,
+			</if>
+			<if test="buyNumber != null">
+				buy_number,
+			</if>
+			<if test="money != null">
+				money,
+			</if>
+			<if test="orderTime != null">
+				order_time,
+			</if>
+			<if test="beginTime != null">
+				begin_time,
+			</if>
+			<if test="endTime != null">
+				end_time,
+			</if>
+			<if test="isPaid != null">
+				is_paid,
+			</if>
+			<if test="isSettled != null">
+				is_settled,
+			</if>
+			<if test="isActive != null">
+				is_active,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="shopId != null">
+				#{shopId},
+			</if>
+			<if test="pluginId != null">
+				#{pluginId},
+			</if>
+			<if test="buyNumber != null">
+				#{buyNumber},
+			</if>
+			<if test="money != null">
+				#{money},
+			</if>
+			<if test="orderTime != null">
+				#{orderTime},
+			</if>
+			<if test="beginTime != null">
+				#{beginTime},
+			</if>
+			<if test="endTime != null">
+				#{endTime},
+			</if>
+			<if test="isPaid != null">
+				#{isPaid},
+			</if>
+			<if test="isSettled != null">
+				#{isSettled},
+			</if>
+			<if test="isActive != null">
+				#{isActive},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateShopPlugin" parameterType="com.idcq.appserver.dto.plugin.ShopPluginDto">
+		update 1dcq_shop_plugin
+		<set>
+			<if test="buyNumber != null">
+				buy_number = #{buyNumber},
+			</if>
+			<if test="money != null">
+				money = #{money},
+			</if>
+			<if test="orderTime != null">
+				order_time = #{orderTime},
+			</if>
+			<if test="beginTime != null">
+				begin_time = #{beginTime},
+			</if>
+			<if test="endTime != null">
+				end_time = #{endTime},
+			</if>
+			<if test="isPaid != null">
+				is_paid = #{isPaid},
+			</if>
+			<if test="isSettled != null">子元素
+				is_settled = #{isSettled},
+			</if>
+			<if test="isActive != null">
+				is_active = #{isActive},
+			</if>
+		</set>
+		where shop_plugin_id = #{shopPluginId}
+	</update>
+	<resultMap type="com.idcq.appserver.dto.plugin.PluginModel"
+		id="infoMap">
+		<result property="pluginId" column="pluginId" />
+		<result property="pluginName" column="pluginName" />
+		<result property="lastApprovedVersion" column="lastApprovedVersion" />
+		<result property="lastApprovedUrl" column="lastApprovedUrl" />
+		<result property="baseSystem" column="baseSystem" />
+		<result property="pluginType" column="pluginType" />
+		<result property="endTime" column="endTime" />
+		<result property="logoUrl" column="logoUrl" />
+		<result property="isActive" column="isActive" />
+		<result property="minSysVersion" column="minSysVersion" />
+		<result property="functionType" column="functionType" />
+		<result property="allowCache" column="allowCache" />
+		<result property="pointId" column="pointId" />
+		<result property="pointCode" column="pointCode" />
+		<result property="pluginCategory" column="pluginCategory" />
+		<result property="pluginClass" column="pluginClass" />
+		<result property="pointType" column="pointType" />
+		<result property="implementInterface" column="implementInterface" />
+		<collection property="dependencies" resultMap="dependencies"
+			javaType="java.util.List"></collection>
+	</resultMap>
+	<resultMap type="com.idcq.appserver.dto.plugin.PluginModel$Dependency"
+		id="dependencies">
+		<result property="dependencyPluginId" column="dependencyPluginId" />
+		<result property="minNum" column="minNum" />
+	</resultMap>
+	<select id="getShopPluginUpdateInfo" parameterType="java.util.Map"
+		resultMap="infoMap">
+		SELECT
+		pl.plugin_id AS pluginId,
+		pl.plugin_name AS pluginName,
+		pl.last_approved_version AS lastApprovedVersion,
+		pl.last_approved_url
+		AS lastApprovedUrl,
+		pl.base_system
+		AS baseSystem,
+		pl.plugin_type
+		AS pluginType,
+		sp.end_time AS endTime,
+		sp.is_active AS isActive,
+		pv.min_sys_version AS minSysVersion,
+		at.file_url AS logoUrl,
+		pl.function_type AS functionType,
+		pl.plugin_category AS pluginCategory,
+		pl.plugin_class AS pluginClass,
+		pl.allow_cache AS allowCache,
+		pp.point_id AS pointId,
+		pp.point_code AS pointCode,
+		pp.point_type AS
+		pointType,
+		pp.implement_interface AS implementInterface,
+		pd.dependency_plugin_id AS dependencyPluginId,
+		pd.min_version_num AS
+		minNum
+
+		FROM 1dcq_shop_plugin sp LEFT JOIN 1dcq_plugin pl ON
+		sp.plugin_id=pl.plugin_id LEFT JOIN 1dcq_plugin_point pp ON
+		pl.point_id=pp.point_id LEFT JOIN 1dcq_plugin_dependency pd ON
+		pl.plugin_id=pd.plugin_id AND
+		pl.last_approved_version=pd.plugin_version_num
+		LEFT JOIN
+		1dcq_plugin_version pv ON pl.plugin_id=pv.plugin_id AND
+		pl.last_approved_version=pv.version_num LEFT JOIN 1dcq_attachment at
+		ON pl.logo_id=at.attachement_id WHERE
+		sp.shop_id=#{shopId}
+		<if test="baseSystem"> AND pl.base_system=#{baseSystem} </if>
+		<if test="functionType"> AND pl.function_type=#{functionType} </if>
+		<if test="pluginId"> AND pl.plugin_id=#{pluginId} </if>
+		<if test="pointId"> AND pp.point_id=#{pointId} </if>
+		ORDER BY pl.create_time DESC
+		limit #{startRows},#{pSize};
+	</select>
+	<select id="getPluginCountForShop" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT
+		count(1)
+
+		FROM 1dcq_shop_plugin sp LEFT JOIN 1dcq_plugin pl ON
+		sp.plugin_id=pl.plugin_id LEFT JOIN 1dcq_plugin_point pp ON
+		pl.point_id=pp.point_id
+		WHERE
+		sp.shop_id=#{shopId}
+		<if test="baseSystem"> AND pl.base_system=#{baseSystem} </if>
+		<if test="functionType"> AND pl.function_type=#{functionType} </if>
+		<if test="pluginId"> AND pl.plugin_id=#{pluginId} </if>
+		<if test="pointId"> AND pp.point_id=#{pointId} </if>
+	</select>
+</mapper>

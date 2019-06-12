@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.storage.ShopStorageDetailDto">
+
+<!--    storage_detail_id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '出入库详单ID',
+   biz_id INT(10) UNSIGNED NOT NULL  COMMENT '业务ID：biz_type=17时存出/入库ID，=18时存盘点ID',
+   biz_type TINYINT(2) unsigned NOT NULL COMMENT '业务主键类型:出入库记录=17,盘点记录=18',
+   goods_id INT(10) UNSIGNED NOT NULL COMMENT '商品ID',
+   storage_price DECIMAL(12,2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '商品入库价格(单价)',
+   goods_total_price DECIMAL(12,2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '商品入库价格(总价)',
+   storage_number DECIMAL(12,2) NOT NULL DEFAULT 0.00 COMMENT '出入库变动数量',
+   storage_after_number DECIMAL(12,2) NOT NULL DEFAULT 0.00 COMMENT '出入库后库存数量',
+   create_time DATETIME DEFAULT NULL COMMENT '创建时间',
+   detail_remark VARCHAR(50) DEFAULT NULL COMMENT '备注', -->
+   
+	<resultMap id="shopStorageDetailMap" type="com.idcq.appserver.dto.storage.ShopStorageDetailDto">
+	
+		<result column="storage_detail_id" property="storageDetailId" />
+		<result column="biz_id" property="bizId" />
+		<result column="biz_type" property="bizType" />
+		<result column="change_type" property="changeType"/>
+		<result column="goods_id" property="goodsId" />
+		<result column="storage_price" property="storagePrice"/>
+		<result column="goods_total_price" property="goodsTotalPrice"/>
+		<result column="storage_number" property="storageNumber"/>
+		<result column="storage_after_number" property="storageAfterNumber" />
+		<result column="create_time" property="createTime" />
+		<result column="detail_remark" property="detailRemark" />
+		
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		storage_detail_id ,
+		biz_id,
+		biz_type,
+		change_type,
+		goods_id,
+		storage_price,
+		goods_total_price,
+		storage_number,
+		storage_after_number,
+		create_time,
+		detail_remark
+	</sql>
+	
+	<!-- 批量插入出入库详情 -->
+	<insert id="batchInsertShopStorageDetail" parameterType="java.util.List">
+	
+	  	insert into 1dcq_shop_storage_detail
+		(
+			biz_id,
+			biz_type,
+			change_type,
+			goods_id,
+			storage_price,
+			goods_total_price,
+			storage_number,
+			storage_after_number,
+			create_time,
+			detail_remark,
+			unit_id,
+			unit_name
+		 )
+		 values
+		 <foreach collection="shopStorageDetailDtos" item="item" separator=",">
+		 	(
+		  	#{item.bizId},
+		  	#{item.bizType},
+		  	#{item.changeType},
+		  	#{item.goodsId},
+		  	#{item.storagePrice},
+		  	ABS(#{item.goodsTotalPrice}),
+		  	#{item.storageNumber},
+		  	#{item.storageAfterNumber},
+		  	#{item.createTime},
+		  	#{item.detailRemark},
+		  	#{item.unitId},
+		  	#{item.unitName}
+	  		)
+		 </foreach>
+	  </insert>
+	  
+	<select id="getShopStorageDetailList" resultType="java.util.Map" parameterType="java.util.Map">
+	
+	 SELECT
+		  ssd.storage_detail_id as storageDetailId,
+		  ssd.change_type as changeType,
+		  ssd.goods_id as goodsId,
+		  g.goods_name as goodsName,
+		  g.unit_name as unitName,
+		  g.barcode as barcode,
+		  g.goods_no as goodsNo,
+		  ssd.storage_price as storagePrice,
+		  ssd.goods_total_price as goodsTotalPrice,
+		  ssd.storage_number as storageNumber,
+		  ssd.storage_after_number as storageAfterNumber,
+		  ssd.detail_remark as detailRemark,
+		  
+		  <!-- 新增的规格名称    20160719 增加规格名称 -->
+			g.goods_pro_values_ids as goodsProValuesIds,
+			g.goods_pro_values_names as goodsProValuesNames
+	  FROM
+		  1dcq_shop_storage_detail ssd
+	  LEFT JOIN
+	  	1dcq_goods g
+	  ON
+	  	g.goods_id = ssd.goods_id
+	  WHERE
+	  	  ssd.biz_id = #{bizId}
+	  <if test="bizType != null">
+	  	  AND ssd.biz_type = #{bizType}
+	  </if>
+	  ORDER By ssd.create_time
+	</select>
+
+</mapper>

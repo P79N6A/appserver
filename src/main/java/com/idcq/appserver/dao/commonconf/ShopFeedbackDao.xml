@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.commonconf.ShopFeedBackDto">
+	<resultMap type="com.idcq.appserver.dto.commonconf.ShopFeedBackDto" id="shopFeedbackMap">
+	
+    	<result column="user_id" property="userId" />
+    	<result column="feedback" property="feedback" />
+    	<result column="create_time" property="createTime" />	
+		<result column="handle_suggestion" property="handleSuggestion"/>
+		<result column="handle_time" property="handleTime"/>
+		<result column="shop_id" property="shopId"/>
+		<result column="feedback_id" property="feedbackId"/>
+		<result column="handle_status" property="handleStatus"/>
+		<result column="handle_admin_id" property="handleAdminId"/>
+		<result column="feedbackTime" property="feedbackTime" jdbcType="TIMESTAMP"/>
+		<result column="feedback_type" property="feedbackType"/>
+		<result column="client_system_type" property="clientSystemType"/>
+	</resultMap>
+	
+    <insert id="insertShopFeedback" parameterType="com.idcq.appserver.dto.commonconf.ShopFeedBackDto"  useGeneratedKeys="true" keyProperty="feedbackId" >
+    	insert into 1dcq_shop_feedback (shop_id, feedback, create_time, feedback_type, client_system_type)
+    	values (#{shopId}, #{feedback}, #{createTime}, #{feedbackType}, #{clientSystemType})
+  	</insert>
+    
+    <select id="getShopFeedBackList" parameterType="java.util.Map" resultMap="shopFeedbackMap">
+    	select *,sf.create_time as feedbackTime from 1dcq_shop_feedback sf where sf.shop_id=#{shopId} order by sf.create_time desc limit #{start},#{limit}
+    </select>
+    
+    <select id="getShopFeedBackCount" resultType="java.lang.Integer">
+		select count(*) from   1dcq_shop_feedback  sf where sf.shop_id=#{shopId}
+    </select>
+    <select id="getShopFeedbackInfo" parameterType="java.lang.Long" resultMap="shopFeedbackMap">
+    	select *,sf.create_time as feedbackTime from 1dcq_shop_feedback sf where sf.feedback_id=#{feedbackId}
+    </select>
+    
+</mapper> 
+   

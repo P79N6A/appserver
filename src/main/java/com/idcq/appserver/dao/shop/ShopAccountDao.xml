@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shop.ShopAccountDto" >
+<resultMap id="shopAccountMap" type="com.idcq.appserver.dto.shop.ShopAccountDto" >
+	<result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="DOUBLE" />
+    <result column="freeze_amount" property="freezeAmount" jdbcType="DOUBLE" />
+    <result column="online_income_amount" property="onlineIncomeAmount" jdbcType="DOUBLE" />
+    <result column="reward_amount" property="rewardAmount" jdbcType="DOUBLE" />
+    <result column="deposit_amount" property="depositAmount" jdbcType="DOUBLE" />
+    <result column="reward_total" property="rewardTotal" jdbcType="DOUBLE" />
+    <result column="account_status" property="accountStatus" jdbcType="INTEGER" />
+    <result column="market_amount" property="marketAmount"  />
+    <result column="market_total" property="marketTotal"  />
+    <result column="legend_total" property="legendTotal"  />
+    <result column="market_rebate_total" property="marketRebateTotal"  />
+    <result column="market_rebate_money" property="marketRebateMoney"  />
+  </resultMap>
+  
+  <select id="getShopAccount" resultMap="shopAccountMap" parameterType="java.lang.Long" >
+    select 
+     	ifnull(amount,0) amount, 
+	    account_status,
+	    ifnull(freeze_amount,0) freeze_amount,
+	    ifnull(online_income_amount,0) online_income_amount,
+	    ifnull(reward_amount,0) reward_amount,
+	    ifnull(deposit_amount,0) deposit_amount, 
+	    ifnull(reward_total,0) reward_total,
+	    ifnull(market_amount,0) market_amount,
+	    ifnull(legend_total,0) legend_total,
+	    shop_id shopId
+    from 1dcq_shop_account 
+    where shop_id = #{shopId}
+  </select>
+
+  <select id="getAllAccount" resultMap="shopAccountMap" parameterType="java.util.Map" >
+	    select 
+	     	ifnull(amount,0) amount, 
+		    account_status,
+		    ifnull(freeze_amount,0) freeze_amount,
+		    ifnull(online_income_amount,0) online_income_amount,
+		    ifnull(reward_amount,0) reward_amount,
+		    ifnull(deposit_amount,0) deposit_amount, 
+		    ifnull(reward_total,0) reward_total,
+		    ifnull(market_amount,0) market_amount,
+		    ifnull(legend_total,0) legend_total,
+		    ifnull(market_rebate_total,0) market_rebate_total,
+		    ifnull(market_rebate_money,0) market_rebate_money,
+		    shop_id shopId
+	    from 1dcq_shop_account
+	    WHERE market_rebate_total &gt; 0
+	    <if test="pageSize != null" >
+         	limit #{limit},#{pageSize}
+    	</if>
+  </select>
+  
+  <update id="updateShopAccountMoney" parameterType="java.util.Map">
+  	update 1dcq_shop_account
+  	set amount=#{amount}
+  	where shop_id = #{shopId}
+  </update>
+  
+  <select id="queryIsGiveDepositFlag" resultType="java.lang.Integer">
+  	select is_give from 1dcq_shop_account sa
+  	where sa.shop_id=#{shopId}
+  </select>
+  
+  <update id="giveShopDeposit" parameterType="java.util.Map">
+  	update 1dcq_shop_account sa
+  	set sa.is_give=1,
+  	sa.amount=IFNULL(sa.amount,0)+#{amount},
+  	sa.deposit_amount=IFNULL(sa.deposit_amount,0)+#{amount}
+  	where sa.shop_id=#{shopId}
+  </update>
+  <update id="updateShopFreezeMoney" parameterType="java.util.Map">
+  	UPDATE 
+  		1dcq_shop_account
+  	SET 
+  		freeze_amount =#{freezeAmount}
+  	WHERE 
+  		shop_id = #{shopId}
+  </update>
+  
+  <select id="getShopAccountMoney" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			TRUNCATE(SUM(sa.amount),2) as amount,
+			TRUNCATE(SUM(sa.freeze_amount),2) as freezeAmount,
+			TRUNCATE(SUM(sa.online_income_amount),2) as onlineIncomeAmount,
+			TRUNCATE(SUM(sa.online_income_total),2) as incomeTotal,
+			TRUNCATE(SUM(sa.reward_amount),2) as rewardAmount,
+			TRUNCATE(SUM(sa.reward_total),2) as rewardTotal,
+			TRUNCATE(SUM(sa.deposit_amount),2) as bailAmount,
+			TRUNCATE(SUM(sa.market_amount),4) as marketAmount,
+			TRUNCATE(SUM(sa.market_total),4) as marketTotal,
+			TRUNCATE(SUM(sa.market_rebate_total),4) as marketRebateTotal,
+			TRUNCATE(SUM(sa.market_rebate_money),4) as marketRebateMoney,
+			sa.arrears_Flag as arrearsFlag
+		FROM
+			1dcq_shop_account AS sa
+		WHERE
+			sa.shop_id IN
+	    <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">  
+            #{item}   
+        </foreach>  
+		LIMIT 1
+   </select>
+	<sql id="shop_Column_list">
+		s.shop_name as userName,
+		s.shop_name as name,
+		1 as type,
+		s.create_time as regTime,
+		s.last_update_time as lastLogintime,
+		sb.money as recommandAward
+	</sql>
+	<sql id="user_Column_list">
+		u.username as userName,
+		u.username as name,
+		0 as type,
+		u.create_time as regTime,
+		u.last_login_time as lastLogintime,
+		ub.money as recommandAward
+	</sql>
+  <select id="getShopAwardList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			<include refid="shop_Column_list" />
+		FROM
+			1dcq_shop s
+		RIGHT JOIN 
+			1dcq_shop_bill sb 
+		ON 
+			s.shop_id = sb.shop_id
+		WHERE
+			s.shop_id = #{shopId}
+		AND
+			sb.bill_type = 6
+		AND 
+			sb.bill_status = 2
+		AND		
+			year(sb.create_time)=#{year}
+		AND
+		 	month(sb.create_time)=#{month}
+		 <if test="type==1">
+		 	AND sb.bill_desc = '推荐奖励-推荐用户'
+		 </if>
+		 <if test="type==2">
+		 	AND sb.bill_desc = '推荐奖励-推荐店铺'
+		 </if>
+<!-- 		<if test="searchContent!=null">
+			OR s.refer_user_id = #{searchContent}
+		</if> -->
+		LIMIT #{n},#{m} 
+   </select>
+  <select id="getShopAwardCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM
+			1dcq_shop s
+		RIGHT JOIN 
+			1dcq_shop_bill sb 
+		ON 
+			s.shop_id = sb.shop_id
+		WHERE
+			s.shop_id = #{shopId}
+		AND
+			sb.bill_type = 6
+		AND 
+			sb.bill_status = 2
+		AND		
+			year(sb.settle_time)=#{year}
+		AND
+		 	month(sb.settle_time)=#{month}
+		 <if test="type==1">
+		 	AND sb.bill_desc = '推荐奖励-推荐用户'
+		 </if>
+		 <if test="type==2">
+		 	AND sb.bill_desc = '推荐奖励-推荐店铺'
+		 </if>
+<!-- 		<if test="searchContent!=null">
+			OR s.refer_user_id = #{searchContent}
+		</if> -->
+   </select>
+	<!-- user -->  
+  <select id="getUserAwardList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			<include refid="user_Column_list" />
+		FROM
+			1dcq_user u
+		RIGHT JOIN 
+			1dcq_user_bill ub 
+		ON 
+			u.user_id = ub.user_id
+		WHERE
+			u.user_id = #{userId}
+		AND
+			ub.bill_type = '推荐奖励'
+		AND
+			year(ub.settle_time)=#{year}
+		AND 
+			month(ub.settle_time)=#{month}
+		<if test="searchContent!=null">
+			OR u.refer_user_id = #{searchContent}
+		</if>
+		LIMIT #{n},#{m} 
+   </select>
+  <select id="getUserAwardCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM
+			1dcq_user u
+		RIGHT JOIN 
+			1dcq_user_bill ub 
+		ON 
+			u.user_id = ub.user_id
+		WHERE
+			u.user_id = #{userId}
+		AND
+			ub.bill_type = '推荐奖励'
+		AND
+			year(ub.settle_time)=#{year}
+		AND 
+			month(ub.settle_time)=#{month}
+		<if test="searchContent!=null">
+			OR u.refer_user_id = #{searchContent}
+		</if>
+   </select> 
+    <!--  查询所有奖励记录  -->
+  <select id="getAllAwardList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			<include refid="user_Column_list" />
+		FROM
+			1dcq_user u
+		RIGHT JOIN 
+			1dcq_user_bill ub 
+		ON 
+			u.user_id = ub.user_id
+		WHERE
+			u.user_id = #{userId}
+		AND
+			ub.bill_type = '推荐奖励'
+		AND
+			year(ub.settle_time)=#{year}
+		AND 
+			month(ub.settle_time)=#{month}
+		<if test="searchContent!=null">
+			OR u.refer_user_id = #{searchContent}
+		</if>
+		UNION ALL 
+		SELECT
+			<include refid="shop_Column_list" />
+		FROM
+			1dcq_shop s
+		RIGHT JOIN 1dcq_shop_bill sb ON s.shop_id = sb.shop_id
+		WHERE
+			s.shop_id = #{shopId}
+		AND
+			sb.bill_type = 6
+		AND
+			year(sb.settle_time)=#{year}
+		AND
+		 	month(sb.settle_time)=#{month}
+		<if test="searchContent!=null">
+			OR s.refer_user_id = #{searchContent}
+		</if>
+		LIMIT #{n},#{m} 
+   </select>
+ 
+  <select id="getAllAwardCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+  SELECT count(1) from
+  (
+		SELECT
+			<include refid="user_Column_list" />
+		FROM
+			1dcq_user u
+		RIGHT JOIN 
+			1dcq_user_bill ub 
+		ON 
+			u.user_id = ub.user_id
+		WHERE
+			u.user_id = #{userId}
+		AND
+			ub.bill_type = '推荐奖励'
+		AND
+			year(ub.settle_time)=#{year}
+		AND 
+			month(ub.settle_time)=#{month}
+		<if test="searchContent!=null">
+			OR u.refer_user_id = #{searchContent}
+		</if>
+		UNION ALL 
+		SELECT
+			<include refid="shop_Column_list" />
+		FROM
+			1dcq_shop s
+		RIGHT JOIN 1dcq_shop_bill sb ON s.shop_id = sb.shop_id
+		WHERE
+			s.shop_id = #{shopId}
+		AND
+			sb.bill_type = 6
+		AND
+			year(sb.settle_time)=#{year}
+		AND
+		 	month(sb.settle_time)=#{month}
+	)  a
+   </select>
+<!-- 查询奖励金额 -->   
+  <select id="getShopAwardTotal" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			sum(sb.money) as recommandAward 
+		FROM
+			1dcq_shop s
+		RIGHT JOIN 
+			1dcq_shop_bill sb 
+		ON 
+			s.shop_id = sb.shop_id
+		WHERE
+			s.shop_id = #{shopId}
+		AND
+			sb.bill_type = 6
+		AND 
+			sb.bill_status = 2
+		AND		
+			year(sb.settle_time)=#{year}
+		AND
+		 	month(sb.settle_time)=#{month}
+		 <if test="type==1">
+		 	AND sb.bill_desc = '推荐奖励-推荐用户'
+		 </if>
+		 <if test="type==2">
+		 	AND sb.bill_desc = '推荐奖励-推荐店铺'
+		 </if>
+   </select>
+	<!-- user -->  
+  <select id="getUserAwardTotal" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			sum(ub.money) as recommandAward
+		FROM
+			1dcq_user u
+		RIGHT JOIN 
+			1dcq_user_bill ub 
+		ON 
+			u.user_id = ub.user_id
+		WHERE
+			u.user_id = #{userId}
+		AND
+			ub.bill_type = '推荐奖励'
+		AND
+			year(ub.settle_time)=#{year}
+		AND 
+			month(ub.settle_time)=#{month}
+   </select>
+   
+   <update id="updateShopAccount" parameterType="java.util.Map" >
+    update 1dcq_shop_account
+    <set >
+      <if test="changeAmount != null" >
+        amount = amount + #{changeAmount},
+      </if>
+      <if test="changeOnlineAmount != null" >
+        online_income_amount = online_income_amount + #{changeOnlineAmount},
+      </if>
+      <if test="changeRewardAmount != null" >
+        reward_amount = reward_amount + #{changeRewardAmount},
+      </if>
+      <if test="changeRewardTotal != null" >
+        reward_total = reward_total + #{changeRewardTotal},
+      </if>
+      <if test="changeDepositAmount != null" >
+        deposit_amount = deposit_amount + #{changeDepositAmount},
+      </if>
+      <if test="changeFreezeAmount != null" >
+        freeze_amount = freeze_amount + #{changeFreezeAmount},
+      </if>
+      <if test="arrearsFlag != null" >
+        arrears_Flag = #{arrearsFlag},
+      </if>
+      <if test="marketAmount != null" >
+        market_amount = market_amount + #{marketAmount},
+      </if>
+      <if test="marketTotal != null" >
+        market_total = market_total + #{marketTotal},
+      </if>
+	  <if test="legendTotal != null" >
+		  legend_total = legend_total + #{legendTotal},
+      </if>
+        <if test="marketRebateTotal != null" >
+		  market_rebate_total = market_rebate_total + #{marketRebateTotal},
+      </if>
+        <if test="marketRebateMoney != null" >
+		  market_rebate_money = market_rebate_money + #{marketRebateMoney},
+      </if>
+    </set>
+    where shop_id = #{shopId}
+  </update>
+</mapper>

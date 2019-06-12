@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.message.PushUserMsgDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.message.PushUserMsgDto" >
+    <id column="pm_id" property="pmId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="reg_id" property="regId" jdbcType="VARCHAR" />
+    <result column="action" property="action" jdbcType="VARCHAR" />
+    <result column="message_content" property="messageContent" jdbcType="VARCHAR" />
+    <result column="message_status" property="messageStatus" jdbcType="TINYINT" />
+    <result column="send_time" property="sendTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="os_info" property="osInfo" />
+    <result column="user_type" property="userType" />
+    <result column="title" property="title" />
+  </resultMap>
+  
+  <insert id="insertSelective" parameterType="com.idcq.appserver.dto.message.PushUserMsgDto" >
+    insert into 1dcq_push_user_message
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pmId != null" >
+        pm_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="regId != null" >
+        reg_id,
+      </if>
+      <if test="action != null" >
+        action,
+      </if>
+      <if test="messageContent != null" >
+        message_content,
+      </if>
+      <if test="messageStatus != null" >
+        message_status,
+      </if>
+      <if test="sendTime != null" >
+        send_time,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="osInfo != null" >
+        os_info,
+      </if>
+      <if test="userType != null" >
+        user_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pmId != null" >
+        #{pmId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="regId != null" >
+        #{regId,jdbcType=VARCHAR},
+      </if>
+      <if test="action != null" >
+        #{action,jdbcType=VARCHAR},
+      </if>
+      <if test="messageContent != null" >
+        #{messageContent,jdbcType=VARCHAR},
+      </if>
+      <if test="messageStatus != null" >
+        #{messageStatus,jdbcType=TINYINT},
+      </if>
+      <if test="sendTime != null" >
+        #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        #{createTime},
+      </if>
+      <if test="osInfo != null" >
+        #{osInfo},
+      </if>
+      <if test="userType != null" >
+        #{userType},
+      </if>
+    </trim>
+  </insert>
+  <insert id="batchInsertSelective" parameterType="java.util.List">
+  	insert into 1dcq_push_user_message(user_id,reg_id,action,message_content,message_status,send_time,create_time,os_info, user_type)values
+		<foreach collection="list" item="user" close="" open="" separator=",">
+			(#{user.userId,jdbcType=INTEGER},#{user.regId,jdbcType=VARCHAR},#{user.action,jdbcType=VARCHAR},
+			#{user.messageContent,jdbcType=VARCHAR},#{user.messageStatus,jdbcType=TINYINT},#{user.sendTime,jdbcType=TIMESTAMP}, #{user.createTime}, #{user.osInfo}, #{user.userType})
+		</foreach>
+  </insert>
+
+  <insert id="batchUpdateOrInsert" parameterType="java.util.List">
+  	insert into 1dcq_push_user_message(user_id,reg_id,action,message_content,message_status,send_time,create_time,os_info, user_type, pm_id)values
+		<foreach collection="list" item="user" close="" open="" separator=",">
+			(#{user.userId,jdbcType=INTEGER},#{user.regId,jdbcType=VARCHAR},#{user.action,jdbcType=VARCHAR},
+			#{user.messageContent,jdbcType=VARCHAR},#{user.messageStatus,jdbcType=TINYINT},#{user.sendTime,jdbcType=TIMESTAMP}, #{user.createTime}, #{user.osInfo}, #{user.userType}, #{user.pmId})
+		</foreach>
+    ON  DUPLICATE KEY UPDATE message_status = VALUES(message_status), send_time=VALUES(send_time)
+  </insert>
+
+  <select id="getPushUserMsg" parameterType="com.idcq.appserver.dto.message.PushUserMsgDto" resultMap="BaseResultMap">
+    SELECT *
+    FROM 1dcq_push_user_message
+    <where>
+      <trim prefixOverrides="AND">
+        <if test="pmId != null">AND pm_id=#{pmId}</if>
+        <if test="userId != null">AND user_id=#{userId}</if>
+        <if test="regId != null">AND reg_id=#{regId}</if>
+        <if test="action != null">AND action=#{action}</if>
+        <if test="createTime != null">AND create_time > #{createTime}</if>
+        <if test="sendTime != null">AND send_time > #{sendTime}</if>
+        <if test="messageStatus != null">AND message_status=#{messageStatus}</if>
+      </trim>
+    </where>
+  </select>
+
+  <select id="countPushUserMsg" parameterType="com.idcq.appserver.dto.message.PushUserMsgDto" resultType="java.lang.Integer">
+    SELECT count(*)
+    FROM 1dcq_push_user_message
+    <where>
+      <trim prefixOverrides="AND">
+        <if test="pmId != null">AND pm_id=#{pmId}</if>
+        <if test="userId != null">AND user_id=#{userId}</if>
+        <if test="regId != null">AND reg_id=#{regId}</if>
+        <if test="action != null">AND action=#{action}</if>
+        <if test="createTime != null">AND create_time > #{createTime}</if>
+        <if test="sendTime != null">AND send_time > #{sendTime}</if>
+        <if test="messageStatus != null">AND message_status=#{messageStatus}</if>
+      </trim>
+    </where>
+  </select>
+</mapper>

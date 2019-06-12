@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.activity.BusinessAreaShopDto">
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.activity.BusinessAreaShopDto">
+    <id column="business_area_activity_id" jdbcType="INTEGER" property="businessAreaActivityId" />
+    <id column="shop_id" jdbcType="INTEGER" property="shopId" />
+    <result column="shop_type" jdbcType="TINYINT" property="shopType" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="member_num" jdbcType="INTEGER" property="memberNum" />
+    <result column="redpacket_order_num" jdbcType="INTEGER" property="redpacketOrderNum" />
+    <result column="redpacket_used_num" jdbcType="INTEGER" property="redpacketUsedNum" />
+    <result column="redpacket_used_money" jdbcType="DECIMAL" property="redpacketUsedMoney" />
+    <result column="join_time" jdbcType="TIMESTAMP" property="joinTime" />
+    <result column="join_type" jdbcType="TINYINT" property="joinType" />
+    <result column="client_system_type" jdbcType="TINYINT" property="clientSystemType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    business_area_activity_id, shop_id, shop_type, status, member_num, redpacket_order_num, 
+    redpacket_used_num, redpacket_used_money, join_time, join_type, client_system_type
+  </sql>
+  
+  <sql id="Base_Column_List_2">
+    p.business_area_activity_id, p.shop_id, shop_type, status, member_num, redpacket_order_num, 
+    redpacket_used_num, redpacket_used_money, join_time, join_type, p.client_system_type
+  </sql>
+  <select id="getBusinessAreaShopList" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List_2" />
+    from 1dcq_business_area_shop p,1dcq_business_area_activity ac  
+    where 1=1 and p.business_area_activity_id=ac.business_area_activity_id
+    <if test="businessAreaShopDto!=null and businessAreaShopDto.shopId!=null">
+    	and p.shop_id=#{businessAreaShopDto.shopId}
+    </if>
+    <if test="businessAreaShopDto!=null and businessAreaShopDto.shopType!=null">
+    	and shop_type=#{businessAreaShopDto.shopType}
+    </if>
+    <if test="businessAreaShopDto!=null and businessAreaShopDto.activityIdList!=null">
+    	and p.business_area_activity_id in
+    	<foreach collection="businessAreaShopDto.activityIdList" item="item" open="(" close=")" separator=",">
+    		#{item}
+    	</foreach>
+    </if>
+    <if test="businessAreaShopDto!=null and businessAreaShopDto.activityStatus!=null">
+   			 and p.business_area_activity_id in
+    			(select business_area_activity_id from 1dcq_business_area_activity a 
+    			where a.activity_status=#{businessAreaShopDto.activityStatus})
+    </if>
+    order by ac.create_time desc
+    limit #{start},#{limit}
+    
+  </select>
+  <select id="getBusinessAreaShopByCompKey" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from 1dcq_business_area_shop
+    where business_area_activity_id = #{businessAreaActivityId,jdbcType=INTEGER}
+      and shop_id = #{shopId,jdbcType=INTEGER}
+  </select>
+  <delete id="delBusinessAreaShopByCompKey" parameterType="java.util.Map">
+    delete from 1dcq_business_area_shop
+    where business_area_activity_id = #{businessAreaActivityId,jdbcType=INTEGER}
+      and shop_id = #{shopId,jdbcType=INTEGER}
+  </delete>
+  <delete id="delBusinessAreaShopByActivityId" parameterType="java.lang.Long">
+    delete from 1dcq_business_area_shop
+    where business_area_activity_id = #{businessAreaActivityId,jdbcType=INTEGER}
+  </delete>
+  <insert id="addBusinessAreaShop" parameterType="com.idcq.appserver.dto.activity.BusinessAreaShopDto">
+    insert into 1dcq_business_area_shop
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="businessAreaActivityId != null">
+        business_area_activity_id,
+      </if>
+      <if test="shopId != null">
+        shop_id,
+      </if>
+      <if test="shopType != null">
+        shop_type,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="memberNum != null">
+        member_num,
+      </if>
+      <if test="redpacketOrderNum != null">
+        redpacket_order_num,
+      </if>
+      <if test="redpacketUsedNum != null">
+        redpacket_used_num,
+      </if>
+      <if test="redpacketUsedMoney != null">
+        redpacket_used_money,
+      </if>
+      <if test="joinTime != null">
+        join_time,
+      </if>
+      <if test="joinType != null">
+        join_type,
+      </if>
+      <if test="clientSystemType != null">
+        client_system_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="businessAreaActivityId != null">
+        #{businessAreaActivityId,jdbcType=INTEGER},
+      </if>
+      <if test="shopId != null">
+        #{shopId,jdbcType=INTEGER},
+      </if>
+      <if test="shopType != null">
+        #{shopType,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="memberNum != null">
+        #{memberNum,jdbcType=INTEGER},
+      </if>
+      <if test="redpacketOrderNum != null">
+        #{redpacketOrderNum,jdbcType=INTEGER},
+      </if>
+      <if test="redpacketUsedNum != null">
+        #{redpacketUsedNum,jdbcType=INTEGER},
+      </if>
+      <if test="redpacketUsedMoney != null">
+        #{redpacketUsedMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="joinTime != null">
+        #{joinTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="joinType != null">
+        #{joinType,jdbcType=TINYINT},
+      </if>
+      <if test="clientSystemType != null">
+        #{clientSystemType,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateBusinessAreaShopByCompKey" parameterType="com.idcq.appserver.dto.activity.BusinessAreaShopDto">
+    update 1dcq_business_area_shop
+    <set>
+      <if test="shopType != null">
+        shop_type = #{shopType,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="memberNum != null">
+        member_num = #{memberNum,jdbcType=INTEGER},
+      </if>
+      <if test="redpacketOrderNum != null">
+        redpacket_order_num = #{redpacketOrderNum,jdbcType=INTEGER},
+      </if>
+      <if test="redpacketUsedNum != null">
+        redpacket_used_num = #{redpacketUsedNum,jdbcType=INTEGER},
+      </if>
+      <if test="redpacketUsedMoney != null">
+        redpacket_used_money = #{redpacketUsedMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="joinTime != null">
+        join_time = #{joinTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="joinType != null">
+        join_type = #{joinType,jdbcType=TINYINT},
+      </if>
+      <if test="clientSystemType != null">
+        client_system_type = #{clientSystemType,jdbcType=TINYINT},
+      </if>
+    </set>
+    where business_area_activity_id = #{businessAreaActivityId,jdbcType=INTEGER}
+      and shop_id = #{shopId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getBusinessAreaShopCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+  	  select
+	    count(*)
+	    from 1dcq_business_area_shop
+	    where 1=1
+	    <if test="businessAreaShopDto!=null and businessAreaShopDto.shopId!=null">
+	    	and shop_id=#{businessAreaShopDto.shopId}
+	    </if>
+	    <if test="businessAreaShopDto!=null and businessAreaShopDto.shopType!=null">
+	    	and shop_type=#{businessAreaShopDto.shopType}
+	    </if>
+	    <if test="businessAreaShopDto!=null and businessAreaShopDto.activityIdList!=null">
+	    	and business_area_activity_id in
+	    	<foreach collection="businessAreaShopDto.activityIdList" item="item" open="(" close=")" separator=",">
+	    		#{item}
+	    	</foreach>
+	    </if>
+	    <if test="businessAreaShopDto!=null and businessAreaShopDto.activityStatus!=null">
+   			 and business_area_activity_id in
+    			(select business_area_activity_id from 1dcq_business_area_activity a 
+    			where a.activity_status=#{businessAreaShopDto.activityStatus})
+   		 </if>
+  	
+  </select>
+</mapper>

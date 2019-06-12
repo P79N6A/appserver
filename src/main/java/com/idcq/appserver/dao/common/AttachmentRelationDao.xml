@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.common.AttachmentRelationDto">
+
+	<resultMap type="com.idcq.appserver.dto.common.AttachmentRelationDto" id="AttachmentMap">
+ 		<result column="file_url" property="fileUrl" jdbcType="VARCHAR"/>
+ 		<result column="attachement_id" property="attachmentId" jdbcType="VARCHAR"/>
+ 		<result column="biz_id" property="bizId" jdbcType="VARCHAR"/>
+ 		<result column="attachment_relation_id" property="attachmentRelationId" jdbcType="VARCHAR"/>
+ 		<result column="file_no" property="fileNo" jdbcType="VARCHAR"/>
+ 	</resultMap>
+ 	
+ 	<resultMap type="com.idcq.appserver.dto.common.AttachmentRelationDto" id="AttachmentRelationMap">
+ 		<id column="attachment_relation_id" property="attachmentRelationId" jdbcType="INTEGER" />
+ 		<result column="attachement_id" property="attachmentId" jdbcType="INTEGER"/>
+ 		<result column="biz_id" property="bizId" jdbcType="INTEGER"/>
+ 		<result column="biz_type" property="bizType" jdbcType="INTEGER"/>
+ 		<result column="pic_type" property="picType" jdbcType="INTEGER"/>
+ 		<result column="biz_index" property="bizIndex" jdbcType="INTEGER"/>
+ 	</resultMap>
+ 	
+	<select id="getAttachRelatIdListByCondition" parameterType="java.util.Map" resultType="java.lang.Long">
+		select attachement_id from 1dcq_attachment_relation where 
+		biz_id = #{bizId} and biz_type = #{bizType} and pic_type = #{picType}
+	</select>
+	<select id="findByCondition" resultMap="AttachmentMap" parameterType="java.util.Map">
+		select ac.file_url,ac.attachement_id,ac.file_no from 1dcq_attachment_relation re,1dcq_attachment ac
+		where ac.attachement_id=re.attachement_id
+		<if test="param.bizId!=null">
+			and re.biz_id=#{param.bizId}
+		</if>
+		<if test="param.bizType!=null">
+			and re.biz_type=#{param.bizType}
+		</if>
+		<if test="param.picType!=null">
+			and re.pic_type=#{param.picType}
+		</if>
+		<if test="param.bizIndex!=null">
+			and re.biz_index=#{param.bizIndex}
+		</if>
+	</select>
+	
+	<select id="queryAttachmentRelation" resultMap="AttachmentRelationMap" parameterType="com.idcq.appserver.dto.common.AttachmentRelationDto">
+		select *
+		from 1dcq_attachment_relation
+		<where>
+			<if test="bizId != null">
+				and biz_id=#{bizId}
+			</if>
+			<if test="bizType != null">
+				and biz_type=#{bizType}
+			</if>
+	    </where>
+	</select>
+	
+ 	<delete id="delAttachmentRelationByDto" parameterType="com.idcq.appserver.dto.common.AttachmentRelationDto">
+  		delete from 1dcq_attachment_relation where biz_id=#{bizId} and biz_type=#{bizType}
+  	</delete>
+  	
+	<select id="findByConditionIn" resultMap="AttachmentMap" parameterType="java.util.Map">
+		select ac.file_url,re.biz_id,re.attachment_relation_id from 1dcq_attachment_relation re,1dcq_attachment ac
+		where ac.attachement_id=re.attachement_id
+		<if test="idList!=null">
+			and re.biz_id in
+			<foreach collection="idList" item="item" open="(" separator="," close=")">
+		     	#{item}
+		     </foreach>  
+		</if>
+		<if test="param.bizType!=null">
+			and re.biz_type=#{param.bizType}
+		</if>
+		<if test="param.picType!=null">
+			and re.pic_type=#{param.picType}
+		</if>
+	</select>
+	
+	<insert id="addAttachmentRelationBatch" parameterType="java.util.List" >
+    insert into 1dcq_attachment_relation(
+    	attachement_id,
+		biz_id,
+		biz_type,
+		pic_type,
+		biz_index
+    )
+    values 
+    <foreach collection="list" item="item" separator="," >  
+    (
+        #{item.attachmentId},
+		#{item.bizId},
+		#{item.bizType},
+		#{item.picType},
+		#{item.bizIndex}
+	)
+    </foreach>  
+  </insert>
+  <delete id="delAttachmentRelationByGgId" parameterType="java.lang.Long">
+  	delete from 1dcq_attachment_relation where biz_id = #{id}
+  </delete>
+  <delete id="delAttachmentRelationByCondition" parameterType="java.util.Map">
+  	delete from 1dcq_attachment_relation where biz_id = #{id} and biz_type = #{bizType} and pic_type = #{picType}
+  </delete>
+  <delete id="delAttachmentRelationByConditionBatch" parameterType="java.util.Map">
+  	  delete from 1dcq_attachment_relation
+  	  where biz_type = #{bizType} and pic_type = #{picType} and biz_id in 
+  	   <foreach collection="ids" item="item" open="(" close=")" separator="," >  
+        #{item}
+    </foreach>  
+  </delete>
+</mapper>

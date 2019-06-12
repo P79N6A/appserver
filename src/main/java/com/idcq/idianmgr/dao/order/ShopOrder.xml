@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.idianmgr.dto.order.ShopOrderDto" >
+ <resultMap id="BaseResultMap" type="com.idcq.idianmgr.dto.order.ShopOrderDto" >
+    <id column="order_id" property="orderId" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="username" property="userName" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    <result column="order_service_type" property="orderServiceType" jdbcType="TINYINT" />
+    <result column="order_title" property="orderTitle" jdbcType="VARCHAR" />
+	<result column="order_status" property="orderStatus" jdbcType="INTEGER" />
+	<result column="order_total_price" property="orderTotalPrice" jdbcType="DECIMAL" />
+	<result column="book_Time" property="bookTime" jdbcType="VARCHAR" />
+	
+	<result column="order_time" property="orderTime"  />
+	<result column="pay_status" property="payStatus"  />
+	<result column="logistics_price" property="logisticsPrice"  />
+	<result column="settle_price" property="settlePrice"  />
+	<result column="address_id" property="addressId"  />
+	<result column="user_remark" property="userRemark"  />
+	<result column="resource_type" property="resourceType"  />
+	<result column="biz_id" property="bizId"  />
+	<result column="biz_name" property="bizName"  />
+	<result column="shop_name" property="shopName"  />
+	
+	
+ </resultMap>
+ 
+   <sql id="order_Column_List" >
+    t1.user_id as user_id, 
+    t1.order_time as order_time, 
+    t1.pay_status as pay_status,  
+    t1.logistics_price as logistics_price, 
+    t1.goods_price_before_discount as order_total_price, 
+    t1.settle_price as settle_price, 
+    t1.address_id as address_id,
+    t1.user_remark as user_remark,
+    t1.order_title as order_title,
+    t1.shop_id as shop_id,
+    t1.order_status as order_status,
+    t2.shop_name as shop_name,
+    t3.nick_name as username,
+    t3.mobile as mobile
+  </sql>
+
+  <select id="getShopOrders" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+         o.order_id,
+         o.user_id, 
+         os.username, 
+         os.mobile,
+         o.shop_id,
+         o.order_service_type,
+         o.order_title,
+         o.order_status,
+         o.order_time,
+         o.order_total_price,
+         os.resource_type,
+         os.biz_id,
+         os.biz_name,
+         CONCAT(DATE_FORMAT(os.reserve_resource_date,'%Y-%m-%d'), ' ', IFNULL(DATE_FORMAT(os.start_time,'%H:%i'), '00:00')) AS book_Time,
+         now() AS currentTime
+    from 1dcq_order o 
+    left join 1dcq_order_shop_resource os
+    on o.order_id = os.order_id
+    where o.shop_id = #{shopId}
+      and o.delete_type in (0, 1)
+     <if test="mobile != null">
+	     and os.mobile = #{mobile}
+	</if>
+    <if test="orderStatus == 0">
+      and o.order_status = 9
+      and o.pay_status = 1
+      order by o.order_time
+    </if>
+    <if test="orderStatus == 1">
+         and o.order_status = 0
+       order by o.order_time
+    </if>
+     <if test="orderStatus == 2">
+         and o.order_status = 1
+         order by o.order_time
+    </if>
+	<if test="orderStatus == 3">
+	     and o.order_status = 4
+	     order by o.order_time
+	</if>
+	<if test="orderStatus == 4">
+	     and o.order_status in (3, 5)
+	     order by o.order_time DESC
+	</if>
+    limit #{n},#{m}
+  </select>     
+    <select id="getShopOrdersCount" resultType="int" parameterType="java.util.Map" >
+   select count(1)
+    from 1dcq_order o 
+    left join 1dcq_order_shop_resource os
+    on o.order_id = os.order_id
+    where o.shop_id = #{shopId}
+      and o.delete_type in (0, 1)
+    <if test="orderStatus == 0">
+      and o.order_status = 9
+      and o.pay_status = 1
+    </if>
+    <if test="orderStatus == 1">
+         and o.order_status = 0
+    </if>
+     <if test="orderStatus == 2">
+         and o.order_status = 1
+    </if>
+	<if test="orderStatus == 3">
+	     and o.order_status = 4
+	</if>
+	<if test="orderStatus == 4">
+	     and o.order_status in (3, 5)
+	</if>
+	<if test="mobile != null">
+	     and os.mobile = #{mobile}
+	</if>
+  </select>
+
+  <select id="getShopOrdersNumber" resultType="java.util.Map" parameterType="java.lang.Long">
+     select o.order_status as orderStatus,
+            count(1) as number
+      from 1dcq_order o 
+     where o.shop_id = #{shopId} 
+       and o.delete_type in (0, 1)
+     group by o.order_status
+  </select> 
+  
+  <!-- 待确认未付款的订单不统计-->
+  <select id="getNotPayOrderNum" resultType="java.lang.Integer" parameterType="java.util.Map">
+	 select count(1)
+	   from 1dcq_order 
+	  where shop_id = #{shopId}
+	    and order_status = #{orderStatus}
+	    and pay_status != 1 
+	    and delete_type in (0, 1) 
+  </select>
+  
+  <select id="getShopCategoryOrders" resultType="java.util.Map" parameterType="java.util.Map">
+    SELECT DISTINCT o.order_id  AS orderId,
+			        osr.username AS userName, 
+			        osr.mobile,
+			        osr.user_id userId,
+			        o.shop_id AS shopId,
+			        gc.goods_category_id AS categoryId,
+			        o.order_title AS orderTitle,
+			        o.order_status AS orderStatus,
+			        o.order_total_price AS orderTotalPrice,
+			        osr.biz_id AS resourceId,
+			        DATE_FORMAT(osr.reserve_resource_date,'%Y-%m-%d') AS bookDate,
+			        DATE_FORMAT(osr.start_time,'%H:%i') AS bookBeginTime,
+			        DATE_FORMAT(osr.end_time,'%H:%i') AS bookEndTime,
+			        CONCAT(DATE_FORMAT(osr.reserve_resource_date,'%Y-%m-%d'), ' ', IFNULL(DATE_FORMAT(osr.start_time,'%H:%i'), '00:00'), '-',IFNULL(DATE_FORMAT(osr.end_time,'%H:%i'), '00:00') ) AS bookTime
+		      FROM 1dcq_order o 
+		INNER JOIN 1dcq_order_shop_resource osr
+		        ON o.order_id = osr.order_id
+		       AND o.pay_status = 1
+		INNER JOIN 1dcq_order_goods og 
+		        ON o.order_id = og.order_id    
+		INNER JOIN 1dcq_goods g
+				ON g.goods_id = og.goods_id
+		INNER JOIN 1dcq_goods_group gg
+		        ON gg.goods_group_id = g.goods_group_id
+		INNER JOIN 1dcq_goods_group_category_relation ggcr
+		        ON gg.goods_group_id = ggcr.goods_group_id
+		INNER JOIN 1dcq_goods_category gc 
+				ON gc.goods_category_id = ggcr.group_category_id
+		     WHERE o.shop_id = #{shopId}
+		       AND (gc.goods_category_id = #{categoryId} or gc.parent_category_id = #{categoryId})
+		       <choose>
+		       <when test="date != null">
+		       AND osr.reserve_resource_date in  
+		        <foreach item="item" index="index" collection="date" open="(" separator="," close=")">  
+  					   #{item}  
+                </foreach>  
+		       </when>
+		       <otherwise>
+		           <![CDATA[AND (osr.reserve_resource_date > CURDATE() OR (osr.reserve_resource_date = CURDATE() AND osr.end_time > TIME(NOW())) )]]> 
+		       </otherwise>
+		       </choose>
+		 ORDER BY o.order_time DESC
+  </select> 
+  
+   <select id="getShopOrderById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="order_Column_List" />
+    from 1dcq_order t1
+    left join 1dcq_shop t2
+    on t1.shop_id = t2.shop_id
+    left join 1dcq_user t3
+    on t1.user_id = t3.user_id
+    where t1.order_id = #{orderId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getGoodsLogoByOrderId" resultType="java.lang.String" parameterType="java.lang.String" >
+        SELECT a.file_url AS fileUrl
+          FROM 1dcq_order_goods og
+    INNER JOIN 1dcq_attachment_relation ar
+            ON og.goods_id = ar.biz_id 
+           AND ar.biz_type = 8
+           AND ar.pic_type = 1
+    INNER JOIN 1dcq_attachment a
+            ON ar.attachement_id = a.attachement_id
+         WHERE og.order_id = #{orderId}
+           AND a.file_url IS NOT NULL 
+           limit 1
+  </select>
+</mapper>

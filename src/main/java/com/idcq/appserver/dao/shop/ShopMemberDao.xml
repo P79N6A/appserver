@@ -1,0 +1,1602 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shop.ShopMemberDto">
+    <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.shop.ShopMemberDto">
+        <id column="member_id" property="memberId" jdbcType="INTEGER"/>
+        <result column="shop_id" property="shopId" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="mobile" property="mobile" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="grade" property="grade" jdbcType="INTEGER"/>
+        <result column="member_card_no" property="memberCardNo" jdbcType="VARCHAR"/>
+        <result column="member_status" property="memberStatus" jdbcType="TINYINT"/>
+        <result column="source_type" property="sourceType" jdbcType="TINYINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="sex" property="sex" jdbcType="TINYINT"/>
+        <result column="birthday_year" property="birthdayYear" jdbcType="DATE"/>
+        <result column="birthday_date" property="birthdayDate" jdbcType="DATE"/>
+        <result column="qq" property="qq" jdbcType="BIGINT"/>
+        <result column="weixin_no" property="weixinNo" jdbcType="VARCHAR"/>
+        <result column="weixin_id" property="weixinId" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="refer_mobile" property="referMobile" jdbcType="BIGINT"/>
+        <result column="amount" property="cardMoney" jdbcType="DECIMAL"/>
+        <result column="card_money" property="cardMoney" jdbcType="DECIMAL"/>
+        <result column="charge_money" property="chargeMoney" jdbcType="DECIMAL"/>
+        <result column="purchase_num" property="purchaseNum" jdbcType="INTEGER"/>
+        <result column="used_money" property="purchaseMoney" jdbcType="DECIMAL"/>
+        <result column="purchase_money" property="purchaseMoney" jdbcType="DECIMAL"/>
+        <result column="points" property="points" jdbcType="DECIMAL"/>
+        <result column="total_points" property="totalPoints" jdbcType="DECIMAL"/>
+        <result column="member_desc" property="memberDesc" jdbcType="VARCHAR"/>
+        <result column="client_system_type" property="clientSystemType" jdbcType="TINYINT"/>
+        <result column="shopMemberNum" property="shopMemberNum" jdbcType="INTEGER"/>
+        <result column="tags" property="tags" jdbcType="VARCHAR"/>
+        <result column="is_send_birthday_sms" property="isSendBirthdaySms" jdbcType="TINYINT"/>
+        
+         <result column="shop_member_level_id" property="shopMemberLevelId" jdbcType="INTEGER"/>
+         <result column="shop_member_level_name" property="shopMemberLevelName" jdbcType="VARCHAR"/>
+         <result column="discount" property="discount" jdbcType="DECIMAL"/>
+         <result column="consume_min_amount" property="consumeMinAmount" jdbcType="DECIMAL"/>
+         <result column="consume_max_amout" property="consumeMaxAmout" jdbcType="DECIMAL"/>
+         <result column="is_auto_upgrate" property="isAutoUpgrate" jdbcType="DECIMAL"/>
+<!--          le.consume_min_amount,le.consume_max_amout -->
+        <!--     <result column="amount" property="amount" jdbcType="DECIMAL"/> -->
+    </resultMap>
+    <sql id="Base_Column_List">
+    member_id, shop_id, user_id, mobile, name, grade, member_card_no, member_status, 
+    source_type, create_time, sex, birthday_year, birthday_date, qq, weixin_no, address, 
+    refer_mobile, card_money, charge_money, purchase_num, purchase_money, points, total_points, 
+    member_desc, client_system_type,weixin_id
+  </sql>
+
+    <select id="getShopMemberCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select 
+	    	count(*)
+        from (
+	        select
+		        distinct m.member_id, m.shop_id, m.user_id, m.mobile, m.name, m.grade, m.member_card_no, m.member_status,
+		        m.source_type, m.create_time, m.sex, m.birthday_year, m.birthday_date, m.qq, m.weixin_no, m.address,
+		        m.refer_mobile, m.charge_money, m.purchase_num, m.points, m.total_points,m.is_send_birthday_sms ,
+		        m.member_desc, m.client_system_type,m.weixin_id,s.used_money,s.amount,m.purchase_money,
+		        IF(
+					LENGTH(m.birthday_date)-LENGTH(REPLACE(m.birthday_date,'-',''))=2,
+					DATE(CONCAT("2000-",RIGHT(m.birthday_date,LENGTH(m.birthday_date)-5))),
+					DATE(CONCAT("2000-",m.birthday_date))
+					) AS birthDay
+	        from 1dcq_shop_member m
+	        left join 1dcq_shop_member_card s on s.member_id = m.member_id and s.shop_id = #{shopId} and s.card_status = 1
+	       
+	      	 LEFT JOIN 1dcq_shop_member_level le ON m.shop_id = le.shop_id AND m.shop_member_level_id = le.shop_member_level_id
+	        
+	       
+	        WHERE m.shop_id = #{shopId} and member_status != 3
+		        <if test="userId != null">
+		            and m.user_id = #{userId}
+		        </if>
+		        <if test="mobile != null">
+		            and m.mobile = #{mobile}
+		        </if>
+		        
+		        
+		        <if test="shopMemberLevelId != null">
+		             and le.shop_member_level_id = #{shopMemberLevelId}
+		        </if>
+		        
+		        
+		        
+		        <if test="name != null">
+		            and m.name = #{name}
+		        </if>
+		        <if test="qq != null">
+		            and m.qq = #{qq}
+		        </if>
+		        <if test="weixinNo != null">
+		            and m.weixin_no = #{weixinNo}
+		        </if>
+		        <if test="memberStatus != null">
+		            and m.member_status = #{memberStatus}
+		        </if>
+		        <if test="startTime != null">
+		            and m.create_time &gt;= #{startTime}
+		        </if>
+		        <if test="endTime != null">
+		            and m.create_time &lt;= #{endTime}
+		        </if>
+		        <if test="existMobile!=null">
+		            <choose>
+		                <when test="existMobile==0">
+		                    and m.mobile is null
+		                </when>
+		                <otherwise>
+		                    and m.mobile is not null
+		                </otherwise>
+		            </choose>
+		        </if>
+		        <if test="grade != null">
+		            AND m.grade IN
+		            <foreach collection="grade" open="(" close=")" separator="," item="item">
+		                #{item}
+		            </foreach>
+		        </if>
+		        <if test="searchKey != null">
+		            and (m.mobile LIKE '%${searchKey}%' OR m.name LIKE '%${searchKey}%' OR m.qq LIKE '%${searchKey}%'
+		            )
+		        </if>
+		        <if test="shopMemberLevelId != null">
+		        	and m.shop_member_level_id = #{shopMemberLevelId}
+		        </if>
+	        )t 
+        <where>
+        	<if test="continueStartTime != null"><!-- 跨年查询 -->
+				<![CDATA[
+					AND (
+						(Date(birthDay) >=#{birthdayStartDate} AND Date(birthDay) <=#{continueStartTime}) 
+						OR
+						(Date(birthDay) >=#{continueEndTime} AND Date(birthDay) <=#{birthdayEndDate})
+						)
+				]]>
+			</if>
+	        <if test="continueStartTime ==null and birthdayStartDate != null">
+	            <![CDATA[
+						AND (Date(birthDay) >=#{birthdayStartDate} ) 
+							
+					]]>
+	        </if>
+	        <if test="continueStartTime ==null and birthdayEndDate != null">
+	             <![CDATA[
+						AND (Date(birthDay) <= #{birthdayEndDate} ) 
+							
+					]]>
+	        </if>
+	      </where>
+    </select>
+
+    <select id="getShopMemberList" resultMap="BaseResultMap" parameterType="java.util.Map">
+    	select 
+	    	<if test="distinct">
+	            distinct
+	        </if>
+	        member_id, shop_id, user_id, mobile, name, grade,member_card_no,member_status,
+	        source_type,create_time,sex,birthday_year,birthday_date,qq,weixin_no,address,
+	        refer_mobile,charge_money,purchase_num,points,total_points,is_send_birthday_sms ,
+	        member_desc,client_system_type,weixin_id,ifnull(used_money,0) as used_money,sum(ifnull(amount,0)) as amount ,
+	        shop_member_level_id,discount,shop_member_level_name
+        from (
+	        select
+		        m.member_id, m.shop_id, m.user_id, m.mobile, m.name, m.grade, m.member_card_no, m.member_status,
+		        m.source_type, m.create_time, m.sex, m.birthday_year, m.birthday_date, m.qq, m.weixin_no, m.address,
+		        m.refer_mobile, m.charge_money, m.purchase_num, m.points, m.total_points,m.is_send_birthday_sms ,
+		        m.member_desc, m.client_system_type,m.weixin_id,s.used_money,s.amount,m.purchase_money,
+		        IF(
+					LENGTH(m.birthday_date)-LENGTH(REPLACE(m.birthday_date,'-',''))=2,
+					DATE(CONCAT("2000-",RIGHT(m.birthday_date,LENGTH(m.birthday_date)-5))),
+					DATE(CONCAT("2000-",m.birthday_date))
+					) AS birthDay,
+					le.shop_member_level_id,le.discount,le.shop_member_level_name
+	        from 1dcq_shop_member m
+	        left join 1dcq_shop_member_card s on s.member_id = m.member_id and s.shop_id = #{shopId} and s.card_status = 1
+	        
+	        LEFT JOIN 1dcq_shop_member_level le ON m.shop_id = le.shop_id 
+		            AND m.shop_member_level_id = le.shop_member_level_id 
+	        
+	        
+	        WHERE m.shop_id = #{shopId} and member_status != 3
+		        <if test="userId != null">
+		            and m.user_id = #{userId}
+		        </if>
+		        <if test="mobile != null">
+		            and m.mobile = #{mobile}
+		        </if>
+		        
+		        <if test="name != null">
+		            and m.name = #{name}
+		        </if>
+		        <if test="qq != null">
+		            and m.qq = #{qq}
+		        </if>
+		        <if test="weixinNo != null">
+		            and m.weixin_no = #{weixinNo}
+		        </if>
+		        <if test="memberStatus != null">
+		            and m.member_status = #{memberStatus}
+		        </if>
+		        <if test="startTime != null">
+		            and m.create_time &gt;= #{startTime}
+		        </if>
+		        <if test="endTime != null">
+		            and m.create_time &lt;= #{endTime}
+		        </if>
+		        <if test="existMobile!=null">
+		            <choose>
+		                <when test="existMobile==0">
+		                    and m.mobile is null
+		                </when>
+		                <otherwise>
+		                    and m.mobile is not null
+		                </otherwise>
+		            </choose>
+		        </if>
+		        <if test="grade != null">
+		            AND m.grade IN
+		            <foreach collection="grade" open="(" close=")" separator="," item="item">
+		                #{item}
+		            </foreach>
+		        </if>
+		        <if test="searchKey != null">
+		            and (m.mobile LIKE '%${searchKey}%' OR m.name LIKE '%${searchKey}%' OR m.qq LIKE '%${searchKey}%'
+		            )
+		        </if>
+		        <if test="shopMemberLevelId != null">
+		             and le.shop_member_level_id = #{shopMemberLevelId}
+		        </if>
+	        )t 
+        <where>
+        	<if test="continueStartTime != null"><!-- 跨年查询 -->
+				<![CDATA[
+					AND (
+						(Date(birthDay) >=#{birthdayStartDate} AND Date(birthDay) <=#{continueStartTime}) 
+						OR
+						(Date(birthDay) >=#{continueEndTime} AND Date(birthDay) <=#{birthdayEndDate})
+						)
+				]]>
+			</if>
+	        <if test="continueStartTime ==null and birthdayStartDate != null">
+	            <![CDATA[
+						AND (Date(birthDay) >=#{birthdayStartDate} ) 
+							
+					]]>
+	        </if>
+	        <if test="continueStartTime ==null and birthdayEndDate != null">
+	             <![CDATA[
+						AND (Date(birthDay) <= #{birthdayEndDate} ) 
+							
+					]]>
+	        </if>
+		</where>
+		 GROUP BY member_id
+	        <if test="orderField == 1">
+	            ORDER BY create_time desc
+	        </if>
+	        <if test="orderField == 2">
+	            ORDER BY purchase_num desc
+	        </if>
+	        <if test="orderField == 3">
+	            ORDER BY purchase_money desc
+	        </if>
+	        <if test="orderField == 4">
+	            ORDER BY total_points desc
+	        </if>
+	        <if test="n != null">
+	            limit #{n},#{m}
+	        </if>        
+    </select>
+
+    <select id="getShopMemberByCoreInfo" parameterType="com.idcq.appserver.dto.shop.ShopMemberDto"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from 1dcq_shop_member
+        <trim prefix="where" prefixOverrides="AND">
+            shop_id=#{shopId}
+            <if test="mobile != null">AND mobile=#{mobile}</if>
+            <if test="qq != null">AND qq=#{qq}</if>
+            <if test="weixinId != null">AND weixin_id=#{weixinId}</if>
+            <if test="memberId != null">AND member_id=#{memberId}</if>
+        </trim>
+    </select>
+
+    <select id="searchByIdAndConditions" parameterType="com.idcq.appserver.dto.shop.ShopMemberDto"
+            resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"></include>
+        FROM 1dcq_shop_member
+        <where>
+            shop_id=#{shopId,jdbcType=INTEGER}
+            <if test="memberStatus != null">and member_status != #{memberStatus}</if>
+            <trim prefix="AND (" suffix=")" prefixOverrides="OR">
+                <if test="memberId != null">OR member_id=#{memberId}</if>
+                <if test="userId != null">OR user_id=#{userId}</if>
+                <if test="mobile != null">OR mobile=#{mobile}</if>
+                <if test="name != null and name != ''">OR name=#{name}</if>
+                <if test="grade != null">OR grade=#{grade}</if>
+                <if test="memberCardNo != null">OR member_card_no=#{memberCardNo}</if>
+
+                <if test="sourceType != null">OR source_type=#{sourceType}</if>
+                <if test="createTime != null">OR create_time=#{createTime}</if>
+                <if test="sex != null">OR sex=#{sex}</if>
+                <if test="birthdayYear != null">OR birthday_year=#{birthdayYear}</if>
+                <if test="birthdayDate != null">OR birthday_date=#{birthdayDate}</if>
+                <if test="qq != null">OR qq=#{qq}</if>
+                <if test="weixinNo != null">OR weixin_no=#{weixinNo}</if>
+                <if test="weixinId != null">OR weixin_id=#{weixinId}</if>
+                <if test="address != null">OR address=#{address}</if>
+                <if test="referMobile != null">OR refer_mobile=#{referMobile}</if>
+                <if test="cardMoney != null">OR card_money=#{cardMoney}</if>
+                <if test="chargeMoney != null">OR charge_money=#{chargeMoney}</if>
+                <if test="purchaseNum != null">OR purchase_num=#{purchaseNum}</if>
+                <if test="purchaseMoney != null">OR purchase_money=#{purchaseMoney}</if>
+                <if test="points != null">OR points >= #{points}</if>
+                <if test="totalPoints != null">OR total_points >= #{totalPoints}</if>
+                <if test="memberDesc != null">OR member_desc=#{memberDesc}</if>
+                <if test="clientSystemType != null">OR client_system_type=#{clientSystemType}</if>
+            </trim>
+        </where>
+    </select>
+
+    <select id="getShopMemberById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select 
+    m.member_id, m.shop_id, m.user_id, m.mobile, m.name, m.grade, m.member_card_no, m.member_status, 
+    m.source_type, m.create_time, m.sex, m.birthday_year, m.birthday_date, m.qq, m.weixin_no, m.address, 
+    m.refer_mobile, m.charge_money, m.purchase_num, m.points, m.total_points,
+    m.member_desc, m.client_system_type,m.weixin_id
+    from 1dcq_shop_member m
+    where member_id = #{memberId,jdbcType=INTEGER}
+  </select>
+
+    <select id="getShopMemberByIdMap" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select
+        m.member_id, m.shop_id, m.user_id, m.mobile, m.name, m.grade, m.member_card_no, m.member_status,
+        m.source_type, m.create_time, m.sex, m.birthday_year, m.birthday_date, m.qq, m.weixin_no, m.address,
+        m.refer_mobile, m.charge_money, m.purchase_num, ifnull(s.used_money,0) as used_money, m.points,
+        m.total_points,ifnull(s.amount,0) as amount,
+        m.member_desc, m.client_system_type,m.weixin_id,m.tags,
+        le.shop_member_level_id,le.shop_member_level_name,le.discount,
+        le.consume_min_amount,le.consume_max_amout
+        
+        from 1dcq_shop_member m
+        left join 1dcq_shop_member_card s on s.member_id = m.member_id and s.shop_id = #{shopId} and s.card_status = 1
+        <if test="shopId != null">
+           and m.user_id is not null
+        </if>
+        
+       LEFT JOIN 1dcq_shop_member_level le ON m.shop_member_level_id = le.shop_member_level_id AND m.shop_id = le.shop_id
+       and is_delete = 0
+        <where>
+        	<if test="memberId != null">
+	        	and m.member_id = #{memberId}
+	        </if>
+	        <if test="mobile != null">
+	        	and m.mobile = #{mobile}
+	        </if>
+        </where>
+        limit 0,1;
+    </select>
+    <select id="getShopMbByMobileAndShopId" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+         m.member_id, m.shop_id, m.user_id, m.mobile, m.name, m.grade, m.member_card_no, m.member_status, 
+	     m.source_type, m.create_time, m.sex, m.birthday_year, m.birthday_date, m.qq, m.weixin_no, m.address, 
+	     m.refer_mobile, m.card_money, m.charge_money, m.purchase_num, m.purchase_money, m.points, m.total_points, 
+	     m.member_desc, m.client_system_type,m.weixin_id,sml.shop_member_level_id,sml.shop_member_level_name,sml.discount,
+	     sml.consume_min_amount,sml.consume_max_amout,sml.is_auto_upgrate
+        FROM 1dcq_shop_member m
+        left join 1dcq_shop_member_level sml on sml.shop_member_level_id = m.shop_member_level_id and sml.is_delete = 0 AND m.shop_id = sml.shop_id
+        WHERE m.shop_id = #{shopId}
+        <if test="mobile != null">
+            AND m.mobile = #{mobile}
+        </if>
+        <if test="memberStatus != null">
+            AND m.member_status != #{memberStatus}
+        </if>
+        LIMIT 1
+    </select>
+
+    <select id="validShopMbByMobileAndShopId" resultMap="BaseResultMap" parameterType="java.util.Map">
+    SELECT COUNT(1)
+    FROM 1dcq_shop_member
+    WHERE SHOP_ID = #{shopId} AND MOBILE = #{mobile}
+  </select>
+    <update id="delShopMemberByIds" parameterType="java.util.Map">
+        update 1dcq_shop_member
+        <set>
+            <if test="memberStatus != null">
+                member_status = #{memberStatus},
+            </if>
+        </set>
+        where 1=1
+        <if test="memberId != null">
+            and member_id IN
+            <foreach collection="memberId" open="(" close=")" separator="," item="item">
+                #{item}
+            </foreach>
+        </if>
+    </update>
+
+
+    <insert id="insert" parameterType="com.idcq.appserver.dto.shop.ShopMemberDto">
+    insert into 1dcq_shop_member (member_id, shop_id, user_id, 
+      mobile, name, grade, 
+      member_card_no, member_status, source_type, 
+      create_time, sex, birthday_year, 
+      birthday_date, qq, weixin_no, 
+      address, refer_mobile, card_money, 
+      charge_money, purchase_num, purchase_money, 
+      points, total_points, member_desc, 
+      client_system_type)
+    values (#{memberId,jdbcType=INTEGER}, #{shopId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{mobile,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{grade,jdbcType=INTEGER}, 
+      #{memberCardNo,jdbcType=VARCHAR}, #{memberStatus,jdbcType=TINYINT}, #{sourceType,jdbcType=TINYINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{sex,jdbcType=TINYINT}, #{birthdayYear,jdbcType=DATE}, 
+      #{birthdayDate,jdbcType=DATE}, #{qq,jdbcType=BIGINT}, #{weixinNo,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{referMobile,jdbcType=BIGINT}, #{cardMoney,jdbcType=DECIMAL}, 
+      #{chargeMoney,jdbcType=DECIMAL}, #{purchaseNum,jdbcType=INTEGER}, #{purchaseMoney,jdbcType=DECIMAL}, 
+      #{points,jdbcType=DECIMAL}, #{totalPoints,jdbcType=DECIMAL}, #{memberDesc,jdbcType=VARCHAR}, 
+      #{clientSystemType,jdbcType=TINYINT})
+  </insert>
+    <insert id="addShopMember" parameterType="com.idcq.appserver.dto.shop.ShopMemberDto" useGeneratedKeys="true"
+            keyProperty="memberId">
+        insert into 1dcq_shop_member
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="memberId != null">
+                member_id,
+            </if>
+            <if test="shopId != null">
+                shop_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="mobile != null">
+                mobile,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="grade != null">
+                grade,
+            </if>
+            <if test="memberCardNo != null">
+                member_card_no,
+            </if>
+            <if test="memberStatus != null">
+                member_status,
+            </if>
+            <if test="sourceType != null">
+                source_type,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="birthdayYear != null">
+                birthday_year,
+            </if>
+            <if test="birthdayDate != null">
+                birthday_date,
+            </if>
+            <if test="qq != null">
+                qq,
+            </if>
+            <if test="weixinNo != null">
+                weixin_no,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="referMobile != null">
+                refer_mobile,
+            </if>
+            <if test="cardMoney != null">
+                card_money,
+            </if>
+            <if test="chargeMoney != null">
+                charge_money,
+            </if>
+            <if test="purchaseNum != null">
+                purchase_num,
+            </if>
+            <if test="purchaseMoney != null">
+                purchase_money,
+            </if>
+            <if test="points != null">
+                points,
+            </if>
+            <if test="totalPoints != null">
+                total_points,
+            </if>
+            <if test="memberDesc != null">
+                member_desc,
+            </if>
+            <if test="clientSystemType != null">
+                client_system_type,
+            </if>
+            <if test="weixinId != null">
+                weixin_id,
+            </if>
+            <if test="tags != null">
+                tags,
+            </if>
+            <if test="shopMemberLevelId != null">
+                shop_member_level_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="memberId != null">
+                #{memberId,jdbcType=INTEGER},
+            </if>
+            <if test="shopId != null">
+                #{shopId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="mobile != null">
+                #{mobile,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="grade != null">
+                #{grade,jdbcType=INTEGER},
+            </if>
+            <if test="memberCardNo != null">
+                #{memberCardNo,jdbcType=VARCHAR},
+            </if>
+            <if test="memberStatus != null">
+                #{memberStatus,jdbcType=TINYINT},
+            </if>
+            <if test="sourceType != null">
+                #{sourceType,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="sex != null">
+                #{sex,jdbcType=TINYINT},
+            </if>
+            <if test="birthdayYear != null">
+                #{birthdayYear,jdbcType=VARCHAR},
+            </if>
+            <if test="birthdayDate != null">
+                #{birthdayDate,jdbcType=DATE},
+            </if>
+            <if test="qq != null">
+                #{qq,jdbcType=BIGINT},
+            </if>
+            <if test="weixinNo != null">
+                #{weixinNo,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="referMobile != null">
+                #{referMobile,jdbcType=BIGINT},
+            </if>
+            <if test="cardMoney != null">
+                #{cardMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="chargeMoney != null">
+                #{chargeMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="purchaseNum != null">
+                #{purchaseNum,jdbcType=INTEGER},
+            </if>
+            <if test="purchaseMoney != null">
+                #{purchaseMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="points != null">
+                #{points,jdbcType=DECIMAL},
+            </if>
+            <if test="totalPoints != null">
+                #{totalPoints,jdbcType=DECIMAL},
+            </if>
+            <if test="memberDesc != null">
+                #{memberDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="clientSystemType != null">
+                #{clientSystemType,jdbcType=TINYINT},
+            </if>
+            <if test="weixinId != null">
+                #{weixinId,jdbcType=TINYINT},
+            </if>
+            <if test="tags != null">
+                #{tags,jdbcType=VARCHAR},
+            </if>
+            <if test="shopMemberLevelId != null">
+                #{shopMemberLevelId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <select id="countShopMemberByTime" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(*) from 1dcq_shop_member sm
+        WHERE
+        sm.shop_id = #{shopId}
+        AND (sm.member_status = 1 OR sm.member_status = 2)
+        <if test="startDate != null">
+            AND sm.create_time >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND sm.create_time <![CDATA[ <  ]]> #{endDate}
+        </if>
+    </select>
+
+    <update id="updateShopMemberById" parameterType="com.idcq.appserver.dto.shop.ShopMemberDto">
+        update 1dcq_shop_member
+        <set>
+            <if test="shopId != null">
+                shop_id = #{shopId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="mobile != null">
+                mobile = #{mobile,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="grade != null">
+                grade = #{grade,jdbcType=INTEGER},
+            </if>
+            <if test="memberCardNo != null">
+                member_card_no = #{memberCardNo,jdbcType=VARCHAR},
+            </if>
+            <if test="memberStatus != null">
+                member_status = #{memberStatus,jdbcType=TINYINT},
+            </if>
+            <if test="sourceType != null">
+                source_type = #{sourceType,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=TINYINT},
+            </if>
+            <if test="birthdayYear != null">
+                birthday_year = #{birthdayYear,jdbcType=DATE},
+            </if>
+            <if test="birthdayDate != null">
+                birthday_date = #{birthdayDate,jdbcType=DATE},
+            </if>
+            <if test="qq != null">
+                qq = #{qq,jdbcType=BIGINT},
+            </if>
+            <if test="weixinNo != null">
+                weixin_no = #{weixinNo,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="referMobile != null">
+                refer_mobile = #{referMobile,jdbcType=BIGINT},
+            </if>
+            <if test="cardMoney != null">
+                card_money = #{cardMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="chargeMoney != null">
+                charge_money = #{chargeMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="purchaseNum != null">
+                purchase_num = #{purchaseNum,jdbcType=INTEGER},
+            </if>
+            <if test="purchaseMoney != null">
+                purchase_money = #{purchaseMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="points != null">
+                points = #{points,jdbcType=DECIMAL},
+            </if>
+            <if test="totalPoints != null">
+                total_points = #{totalPoints,jdbcType=DECIMAL},
+            </if>
+            <if test="memberDesc != null">
+                member_desc = #{memberDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="clientSystemType != null">
+                client_system_type = #{clientSystemType,jdbcType=TINYINT},
+            </if>
+            <if test="weixinId != null">
+                weixin_id = #{weixinId,jdbcType=VARCHAR},
+            </if>
+            <if test="isSendBirthdaySms != null">
+                is_send_birthday_sms = #{isSendBirthdaySms,jdbcType=INTEGER},
+            </if>
+            <if test="tags != null">
+                tags = #{tags,jdbcType=VARCHAR}
+            </if>
+            <if test="shopMemberLevelId != null">
+                shop_member_level_id = #{shopMemberLevelId,jdbcType=INTEGER}
+            </if>
+        </set>
+        where member_id = #{memberId,jdbcType=INTEGER}
+    </update>
+    <update id="updateShopMemberByMobile" parameterType="com.idcq.appserver.dto.shop.ShopMemberDto">
+        update 1dcq_shop_member
+        <set>
+            <if test="shopId != null">
+                shop_id = #{shopId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="grade != null">
+                grade = #{grade,jdbcType=INTEGER},
+            </if>
+            <if test="memberCardNo != null">
+                member_card_no = #{memberCardNo,jdbcType=VARCHAR},
+            </if>
+            <if test="memberStatus != null">
+                member_status = #{memberStatus,jdbcType=TINYINT},
+            </if>
+            <if test="sourceType != null">
+                source_type = #{sourceType,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=TINYINT},
+            </if>
+            <if test="birthdayYear != null">
+                birthday_year = #{birthdayYear,jdbcType=DATE},
+            </if>
+            <if test="birthdayDate != null">
+                birthday_date = #{birthdayDate,jdbcType=DATE},
+            </if>
+            <if test="qq != null">
+                qq = #{qq,jdbcType=BIGINT},
+            </if>
+            <if test="weixinNo != null">
+                weixin_no = #{weixinNo,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="referMobile != null">
+                refer_mobile = #{referMobile,jdbcType=BIGINT},
+            </if>
+            <if test="cardMoney != null">
+                card_money = #{cardMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="chargeMoney != null">
+                charge_money = #{chargeMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="purchaseNum != null">
+                purchase_num = #{purchaseNum,jdbcType=INTEGER},
+            </if>
+            <if test="purchaseMoney != null">
+                purchase_money = #{purchaseMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="points != null">
+                points = #{points,jdbcType=DECIMAL},
+            </if>
+            <if test="totalPoints != null">
+                total_points = #{totalPoints,jdbcType=DECIMAL},
+            </if>
+            <if test="memberDesc != null">
+                member_desc = #{memberDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="clientSystemType != null">
+                client_system_type = #{clientSystemType,jdbcType=TINYINT},
+            </if>
+            <if test="weixinId != null">
+                weixin_id = #{weixinId,jdbcType=VARCHAR},
+            </if>
+            <if test="tags != null">
+                tags = #{tags,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where mobile = #{mobile,jdbcType=BIGINT}
+    </update>
+    <update id="updateShopMemberByWeixin" parameterType="com.idcq.appserver.dto.shop.ShopMemberDto">
+        update 1dcq_shop_member
+        <set>
+            <if test="shopId != null">
+                shop_id = #{shopId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="mobile != null">
+                mobile = #{mobile,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="grade != null">
+                grade = #{grade,jdbcType=INTEGER},
+            </if>
+            <if test="memberCardNo != null">
+                member_card_no = #{memberCardNo,jdbcType=VARCHAR},
+            </if>
+            <if test="memberStatus != null">
+                member_status = #{memberStatus,jdbcType=TINYINT},
+            </if>
+            <if test="sourceType != null">
+                source_type = #{sourceType,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=TINYINT},
+            </if>
+            <if test="birthdayYear != null">
+                birthday_year = #{birthdayYear,jdbcType=DATE},
+            </if>
+            <if test="birthdayDate != null">
+                birthday_date = #{birthdayDate,jdbcType=DATE},
+            </if>
+            <if test="qq != null">
+                qq = #{qq,jdbcType=BIGINT},
+            </if>
+            <if test="weixinNo != null">
+                weixin_no = #{weixinNo,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="referMobile != null">
+                refer_mobile = #{referMobile,jdbcType=BIGINT},
+            </if>
+            <if test="cardMoney != null">
+                card_money = #{cardMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="chargeMoney != null">
+                charge_money = #{chargeMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="purchaseNum != null">
+                purchase_num = #{purchaseNum,jdbcType=INTEGER},
+            </if>
+            <if test="purchaseMoney != null">
+                purchase_money = #{purchaseMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="points != null">
+                points = #{points,jdbcType=DECIMAL},
+            </if>
+            <if test="totalPoints != null">
+                total_points = #{totalPoints,jdbcType=DECIMAL},
+            </if>
+            <if test="memberDesc != null">
+                member_desc = #{memberDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="clientSystemType != null">
+                client_system_type = #{clientSystemType,jdbcType=TINYINT},
+            </if>
+            <if test="tags != null">
+                tags = #{tags,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where weixin_id = #{weixinId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateShopMemberByQq" parameterType="com.idcq.appserver.dto.shop.ShopMemberDto">
+        update 1dcq_shop_member
+        <set>
+            <if test="shopId != null">
+                shop_id = #{shopId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="mobile != null">
+                mobile = #{mobile,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="grade != null">
+                grade = #{grade,jdbcType=INTEGER},
+            </if>
+            <if test="memberCardNo != null">
+                member_card_no = #{memberCardNo,jdbcType=VARCHAR},
+            </if>
+            <if test="memberStatus != null">
+                member_status = #{memberStatus,jdbcType=TINYINT},
+            </if>
+            <if test="sourceType != null">
+                source_type = #{sourceType,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=TINYINT},
+            </if>
+            <if test="birthdayYear != null">
+                birthday_year = #{birthdayYear,jdbcType=DATE},
+            </if>
+            <if test="birthdayDate != null">
+                birthday_date = #{birthdayDate,jdbcType=DATE},
+            </if>
+            <if test="weixinNo != null">
+                weixin_no = #{weixinNo,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="referMobile != null">
+                refer_mobile = #{referMobile,jdbcType=BIGINT},
+            </if>
+            <if test="cardMoney != null">
+                card_money = #{cardMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="chargeMoney != null">
+                charge_money = #{chargeMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="purchaseNum != null">
+                purchase_num = #{purchaseNum,jdbcType=INTEGER},
+            </if>
+            <if test="purchaseMoney != null">
+                purchase_money = #{purchaseMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="points != null">
+                points = #{points,jdbcType=DECIMAL},
+            </if>
+            <if test="totalPoints != null">
+                total_points = #{totalPoints,jdbcType=DECIMAL},
+            </if>
+            <if test="memberDesc != null">
+                member_desc = #{memberDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="clientSystemType != null">
+                client_system_type = #{clientSystemType,jdbcType=TINYINT},
+            </if>
+            <if test="weixinId != null">
+                weixin_id = #{weixinId,jdbcType=VARCHAR},
+            </if>
+            <if test="tags != null">
+                tags = #{tags,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where qq = #{qq,jdbcType=BIGINT}
+    </update>
+    
+     <update id="updateShopMemberByMobileOrUserId" parameterType="com.idcq.appserver.dto.shop.ShopMemberDto">
+        update 1dcq_shop_member
+        <set>
+             <if test="isSendBirthdaySms != null">
+                is_send_birthday_sms = #{isSendBirthdaySms,jdbcType=INTEGER}
+            </if>
+        </set>
+        <where>
+        	shop_id = #{shopId} and is_send_birthday_sms = 0
+        	<if test="memberStatus">
+        		and member_status != #{memberStatus}
+        	</if>
+        	<if test="mobile != null">
+        		and mobile = #{mobile,jdbcType=BIGINT}
+        	</if>
+        	<if test="userId != null">
+                and user_id = #{userId,jdbcType=INTEGER}
+            </if>
+        </where>
+    </update>
+
+    <select id="getShopMemberStatisInfoByActivityIdList" parameterType="java.util.Map"
+            resultType="com.idcq.appserver.dto.shop.ShopMemberStatInfo">
+        SELECT
+        shop_id,
+        count(*) as shopMemberNum
+        FROM
+        1dcq_shop_member b
+        WHERE
+        b.shop_id IN (
+        SELECT
+        shop_id AS startShopId
+        FROM
+        1dcq_business_area_shop
+        where business_area_activity_id in
+        <foreach collection="activityIdList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        )
+        GROUP BY
+        b.shop_id
+    </select>
+
+
+    <select id="getNeedPushShopMemberList" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT
+        d.shop_id,
+        d.mobile,
+        d.user_id
+        FROM
+        1dcq_shop_member d
+        LEFT JOIN (
+        SELECT
+        mobile,
+        max(purchase_num) AS maxNum
+        FROM
+        1dcq_shop_member m
+        WHERE
+        m.mobile IS NOT NULL
+        AND m.shop_id IN
+        <foreach collection="shopIdList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        GROUP BY
+        mobile
+        ) e ON d.mobile = e.mobile
+        AND d.purchase_num = e.maxNum
+        WHERE
+        d.shop_id IN
+        <foreach collection="shopIdList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+
+        GROUP BY
+        d.mobile
+    </select>
+
+    <!-- 会员的消费次数加1,消费金额累加 -->
+    <update id="updateShopMemberPurchaseNum" parameterType="java.util.Map">
+        update 1dcq_shop_member
+        set purchase_num = purchase_num+1
+        <if test="purchaseMoney != null">
+            , purchase_money=purchase_money+#{purchaseMoney}
+        </if>
+        where shop_id = #{shopId} and mobile =#{mobile}
+    </update>
+    <select id="getNewAddShopMemberTotal" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(*)
+        from 1dcq_shop_member s
+        where s.shop_id=#{shopId}
+        and s.member_status != #{memberStatus}
+        <if test="startTime != null">
+            <![CDATA[
+				AND Date(s.create_time) >=#{startTime}
+			]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[
+				AND Date(s.create_time) <=#{endTime}
+			]]>
+        </if>
+    </select>
+
+    <select id="getConsumeShopMembersCount" parameterType="java.util.Map" resultType="java.util.Map">
+        select ifnull(sum(charge_money),0) as chargeMoneySum,ifnull(sum(present_money),0) as presentMoneySum,7 as
+        payType
+        from 1dcq_shop_member_card_bill s
+        where s.shop_id=#{shopId}
+
+        <if test="startTime != null">
+            <![CDATA[
+				AND Date(s.bill_time) >=#{startTime}
+			]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[
+				AND Date(s.bill_time) <=#{endTime}
+			]]>
+        </if>
+        and s.pay_type = 7
+
+        union all
+
+        select ifnull(sum(charge_money),0) as chargeMoneySum,ifnull(sum(present_money),0) as presentMoneySum,6 as
+        payType
+        from 1dcq_shop_member_card_bill s
+        where s.shop_id=#{shopId}
+        <if test="startTime != null">
+            <![CDATA[
+				AND Date(s.bill_time) >=#{startTime}
+			]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[
+				AND Date(s.bill_time) <=#{endTime}
+			]]>
+        </if>
+        and s.pay_type = 6
+    </select>
+
+    <select id="getShopMemberStatDetail" resultType="com.idcq.appserver.dto.shop.ShopMemberStatInfo">
+        SELECT
+        COUNT(user_id) AS memberAddNum,
+        <choose>
+            <when test="dateType == 1">
+                DATE_FORMAT(create_time,"%Y-%m-%d")
+            </when>
+            <when test="dateType == 2">
+                DATE_FORMAT(create_time,"%Y-%m")
+            </when>
+            <otherwise>
+                DATE_FORMAT(create_time,"%Y")
+            </otherwise>
+        </choose>
+        AS `date` FROM 1dcq_shop_member WHERE create_time BETWEEN #{startDate} AND #{endDate} AND shop_id
+        =#{shopId} AND (member_status = 1 OR member_status = 2) GROUP BY(
+        DATE(create_time)
+        <choose>
+            <when test="dateType == 1"></when>
+            <when
+                    test="dateType == 2">DIV 100
+            </when>
+            <otherwise>
+                DIV 10000
+            </otherwise>
+        </choose>
+        ) limit #{start},#{end};
+    </select>
+    <select id="countShopMemberStatDetail" resultType="java.lang.Integer">
+        SELECT
+        COUNT(DISTINCT DATE(create_time)
+        <choose>
+            <when test="dateType == 1"></when>
+            <when
+                    test="dateType == 2">DIV 100
+            </when>
+            <otherwise>
+                DIV 10000
+            </otherwise>
+        </choose>
+        ) FROM 1dcq_shop_member WHERE create_time BETWEEN #{startDate} AND #{endDate} AND shop_id
+        =#{shopId} AND (member_status = 1 OR member_status = 2);
+    </select>
+
+    <!-- 查询符合消费次数的会员数量 -->
+    <select id="countMemberByConsumeCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM
+        (
+        SELECT
+        COUNT(op.order_id) AS consumeCount
+        FROM
+        1dcq_order op
+        INNER JOIN 1dcq_shop_member sm ON op.`user_id` = sm.`user_id` AND op.shop_id=sm.shop_id
+        WHERE sm.`shop_id`=#{shopId} AND op.order_status = 3 AND  op.order_finish_time >= sm.create_time GROUP BY op.user_id HAVING
+        <trim prefixOverrides="AND">
+            <if test="from != null and from != -1">
+                AND consumeCount >= #{from}
+            </if>
+            <if test="to != null and to != -1">
+                AND consumeCount <![CDATA[ < ]]> #{to}
+            </if>
+        </trim>
+        )
+        AS t;
+    </select>
+    <!-- 查询符合消费次数的会员 -->
+    <select id="queryMemberByConsumeCount" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        COUNT(op.order_id) AS consumeCount,sm.name, sm.mobile, sm.member_id AS memberId, sm.shop_id AS shopId
+        FROM
+        1dcq_order op
+        INNER JOIN 1dcq_shop_member sm ON op.`user_id` = sm.`user_id` AND op.shop_id=sm.shop_id
+        WHERE sm.`shop_id`=#{shopId} AND op.order_status = 3  AND op.order_finish_time >= sm.create_time GROUP BY op.user_id HAVING
+        <trim prefixOverrides="AND">
+            <if test="from != null and from != -1">
+                AND consumeCount >= #{from}
+            </if>
+            <if test="to != null and to != -1">
+                AND consumeCount <![CDATA[ < ]]> #{to}
+            </if>
+        </trim>
+        ORDER BY consumeCount DESC limit #{start}, #{end};
+    </select>
+    <!-- 查询符合消费金额的会员数量 -->
+    <select id="countMemberByConsumeAmount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM
+        (
+        SELECT
+        SUM(op.settle_price) AS consumeAmout
+        FROM
+        1dcq_order op
+        INNER JOIN 1dcq_shop_member sm ON op.`user_id` = sm.`user_id` AND op.shop_id=sm.shop_id
+        WHERE sm.`shop_id`=#{shopId} AND op.order_status = 3 AND op.order_finish_time >= sm.create_time GROUP BY op.user_id HAVING
+        <trim prefixOverrides="AND">
+            <if test="from != null and from != -1">
+                AND consumeAmout > #{from}
+            </if>
+            <if test="to != null and to != -1">
+                AND consumeAmout <![CDATA[ <= ]]> #{to}
+            </if>
+        </trim>
+        )
+        AS t;
+    </select>
+    <!-- 查询符合消费金额的会员 -->
+    <select id="queryMemberByConsumeAmount" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        SUM(op.settle_price) AS consumeAmout,sm.name, sm.mobile, sm.member_id AS memberId, sm.shop_id AS shopId
+        FROM
+        1dcq_order op
+        INNER JOIN 1dcq_shop_member sm ON op.`user_id` = sm.`user_id` AND op.shop_id=sm.shop_id
+        WHERE sm.`shop_id`=#{shopId} AND op.order_status = 3 AND op.order_finish_time >= sm.create_time GROUP BY op.user_id HAVING
+        <trim prefixOverrides="AND">
+            <if test="from != null and from != -1">
+                AND consumeAmout > #{from}
+            </if>
+            <if test="to != null and to != -1">
+                AND consumeAmout <![CDATA[ <= ]]> #{to}
+            </if>
+        </trim>
+        ORDER BY consumeAmout DESC limit #{start}, #{end};
+    </select>
+    <!-- 查询符合消费时间的会员数量  -->
+    <select id="countMemberBylastConsumeTime" parameterType="java.util.Map"  resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM
+        (
+        SELECT
+        sm.user_id
+        FROM
+        1dcq_order op
+        INNER JOIN 1dcq_shop_member sm ON op.`user_id` = sm.`user_id` AND op.shop_id=sm.shop_id
+        WHERE sm.`shop_id`=#{shopId} AND op.order_status = 3 AND op.order_finish_time >= sm.create_time
+        <if test="from != null">
+            <![CDATA[ AND DATE (op.order_finish_time) >= #{from} ]]>
+        </if>
+        <if test="to != null">
+            <![CDATA[ AND DATE(op.order_finish_time)  <  #{to} ]]>
+        </if>
+        GROUP BY op.user_id
+        )
+        AS t;
+    </select>
+    <!-- 查询符合消费时间的会员 -->
+    <select id="queryMemberBylastConsumeTime" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        sm.name, sm.`mobile`, DATE_FORMAT(MAX(op.order_finish_time), '%Y-%m-%d %H:%m') AS lastConsumeTime , sm.member_id AS memberId, sm.shop_id AS shopId
+        FROM
+        1dcq_order op
+        INNER JOIN 1dcq_shop_member sm ON op.`user_id` = sm.`user_id` AND op.shop_id=sm.shop_id
+        WHERE sm.`shop_id`=#{shopId} AND op.order_status = 3 AND op.order_finish_time >= sm.create_time
+        <if test="from != null">
+            <![CDATA[ AND op.order_finish_time >= #{from} ]]>
+        </if>
+        <if test="to != null">
+            <![CDATA[ AND op.order_finish_time  <  #{to} ]]>
+        </if>
+        GROUP BY sm.`user_id`
+        ORDER BY op.order_finish_time DESC
+        limit #{start},#{end}
+    </select>
+
+
+    <select id="countMemberByWithoutConsumeTime" resultType="java.lang.Integer" parameterType="java.util.Map">
+       SELECT
+        COUNT(DISTINCT (sm1.member_id))
+      FROM
+        1dcq_shop_member sm1
+        INNER JOIN 1dcq_order op1
+          ON op1.user_id = sm1.user_id
+          AND op1.shop_id = sm1.shop_id
+      WHERE   op1.order_status = 3
+        AND op1.order_finish_time >= sm1.create_time AND
+         sm1.shop_id = #{shopId}
+        AND sm1.member_id NOT IN
+        (SELECT
+          sm.member_id
+        FROM
+          1dcq_shop_member sm
+          INNER JOIN 1dcq_order op
+            ON op.user_id = sm.user_id
+            AND op.shop_id = sm.shop_id
+        WHERE op.order_status = 3
+          AND sm.shop_id = #{shopId}
+          AND op.order_finish_time >= sm.create_time
+          AND op.`order_finish_time` > #{to})
+    </select>
+    <select id="queryMemberByWithoutConsumeTime" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT
+        sm1.name, sm1.`mobile`,DATE_FORMAT(MAX(op1.order_finish_time), '%Y-%m-%d %H:%m') AS lastConsumeTime, sm1.member_id AS memberId, sm1.shop_id AS shopId
+        FROM
+        1dcq_shop_member sm1
+         INNER JOIN 1dcq_order op1
+        ON op1.user_id = sm1.user_id
+        AND op1.shop_id = sm1.shop_id
+        WHERE   op1.order_status = 3
+        AND op1.order_finish_time >= sm1.create_time
+        AND  sm1.shop_id = #{shopId}
+        AND sm1.member_id NOT IN
+        (SELECT
+        sm.member_id
+        FROM
+        1dcq_shop_member sm
+        INNER JOIN 1dcq_order op
+        ON op.user_id = sm.user_id
+        AND op.shop_id = sm.shop_id
+        WHERE op.order_status = 3
+        AND op.order_finish_time >= sm.create_time
+        AND sm.shop_id = #{shopId}
+        AND op.`order_finish_time` > #{to})
+        GROUP BY sm1.member_id ORDER BY lastConsumeTime
+        LIMIT #{start}, #{end}
+    </select>
+
+    <select id="countMemberByWithoutConsume" parameterType="java.util.Map" resultType="java.lang.Integer">
+         SELECT COUNT(DISTINCT(sm.member_id))
+      FROM
+	1dcq_shop_member sm
+	WHERE
+	sm.shop_id=#{shopId}
+	AND
+	sm.member_id NOT IN
+	(
+	SELECT sm1.member_id
+	FROM
+		1dcq_shop_member sm1
+	INNER JOIN
+	1dcq_order op1
+	ON
+	op1.user_id = sm1.user_id
+        AND op1.shop_id = sm1.shop_id
+        WHERE op1.order_status = 3
+        AND op1.order_finish_time >= sm1.create_time
+        AND sm1.shop_id = #{shopId})
+    </select>
+    <select id="queryMemberByWithoutConsume" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT sm.name, sm.mobile, sm.member_id AS memberId, sm.shop_id AS shopId
+        FROM
+        1dcq_shop_member sm
+        WHERE
+        sm.shop_id=#{shopId}
+        AND
+        sm.member_id NOT IN
+        (
+        SELECT sm1.member_id
+        FROM
+        1dcq_shop_member sm1
+        INNER JOIN
+        1dcq_order op1
+        ON
+        op1.user_id = sm1.user_id
+        AND op1.shop_id = sm1.shop_id
+        WHERE op1.order_status = 3
+        AND op1.order_finish_time >= sm1.create_time
+        AND sm1.shop_id = #{shopId})
+        GROUP BY sm.member_id
+        LIMIT #{start}, #{end}
+    </select>
+
+
+    <select id="getMemberConsumerStatCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+    	select count(1)
+    	from (
+		SELECT s.member_id 
+    	from 1dcq_order o
+    	inner join 1dcq_shop_member s on o.user_id = s.user_id and <![CDATA[ o.order_finish_time >=s.create_time]]>
+    	<where>
+    		<if test="shopId != null">
+    			and o.shop_id = #{shopId} and s.shop_id = #{shopId}
+    		</if>
+    		<if test="orderStartTime != null">
+    			<![CDATA[
+					AND Date(o.order_finish_time) >=#{orderStartTime}
+				]]>
+    		</if>
+    		<if test="orderEndTime != null">
+    			<![CDATA[
+					AND Date(o.order_finish_time) <=#{orderEndTime}
+				]]>
+    		</if>
+    		<if test="memberJoinStartTime != null">
+    			<![CDATA[
+					AND Date(s.create_time) >=#{memberJoinStartTime}
+				]]>
+    		</if>
+    		<if test="memberJoinEndTime != null">
+    			<![CDATA[
+					AND Date(s.create_time) <=#{memberJoinEndTime}
+				]]>
+    		</if>
+    		<if test="keyword != null">
+    			<if test="searchCondition == 1">
+    				and s.mobile like concat('%',trim(#{keyword}),'%') 
+    			</if>
+    			<if test="searchCondition == 2">
+    				and (
+						s.mobile like concat('%',trim(#{keyword}),'%') 
+						or 
+						s.name like concat('%',trim(#{keyword}),'%') 
+					)
+    			</if>
+    		</if>
+    		<if test="orderStatus != null">
+    			and o.order_status = #{orderStatus}
+    		</if>
+    	</where>
+    	GROUP BY s.member_id) a
+    </select>
+    
+    <select id="getMemberConsumerStat" resultType="java.util.Map" parameterType="java.util.Map">
+    	select * from (
+	    	select s.member_id as memberId,s.user_id as userId,s.name as name,s.mobile as mobile,count(1) as purchaseNum,
+				   sum(ifnull(o.settle_price,0)) as purchaseMoney,truncate(sum(ifnull(o.settle_price,0))/count(1),2) as consumePerPrice,
+				   s.create_time as memberJoinTime
+	    	from 1dcq_order o
+	    	inner join 1dcq_shop_member s on o.user_id = s.user_id and <![CDATA[ o.order_finish_time >=s.create_time]]>
+	    	<where>
+	    		<if test="shopId != null">
+	    			and o.shop_id = #{shopId} and s.shop_id = #{shopId}
+	    		</if>
+	    		<if test="orderStartTime != null">
+	    			<![CDATA[
+						AND Date(o.order_finish_time) >=#{orderStartTime}
+					]]>
+	    		</if>
+	    		<if test="orderEndTime != null">
+	    			<![CDATA[
+						AND Date(o.order_finish_time) <=#{orderEndTime}
+					]]>
+	    		</if>
+	    		<if test="memberJoinStartTime != null">
+	    			<![CDATA[
+						AND Date(s.create_time) >=#{memberJoinStartTime}
+					]]>
+	    		</if>
+	    		<if test="memberJoinEndTime != null">
+	    			<![CDATA[
+						AND Date(s.create_time) <=#{memberJoinEndTime}
+					]]>
+	    		</if>
+	    		<if test="keyword != null">
+	    			<if test="searchCondition == 1">
+	    				and s.mobile like concat('%',trim(#{keyword}),'%') 
+	    			</if>
+	    			<if test="searchCondition == 2">
+	    				and (
+							s.mobile like concat('%',trim(#{keyword}),'%') 
+							or 
+							s.name like concat('%',trim(#{keyword}),'%') 
+						)
+	    			</if>
+	    		</if>
+	    		<if test="orderStatus != null">
+	    			and o.order_status = #{orderStatus}
+	    		</if>
+	    		<if test="memberStatus != null">
+	    			and s.member_status != #{memberStatus}
+	    		</if>
+	    	</where>
+	    	group by memberId
+    	 ) a
+   	 	<if test="orderBy ==0">
+   	 		order by a.purchaseNum
+   	 	</if>
+   	 	<if test="orderBy == 1">
+   	 		order by a.purchaseMoney
+   	 	</if>
+   	 	<if test="orderBy == 2">
+   	 		order by a.consumePerPrice
+   	 	</if>
+    	 <if test="orderByMode != 1">
+   	 		desc
+   	 	 </if>
+   	 	 <if test="orderByMode == 1">
+   	 		asc
+   	 	 </if>
+   		 limit #{pNo},#{pSize}   
+    	
+    </select>
+    
+    <update id="updateShopMemberExceptDelAndCurrentMonth" parameterType="com.idcq.appserver.dto.shop.ShopMemberDto" >
+	    update 1dcq_shop_member set is_send_birthday_sms =#{isSendBirthdaySms} 
+	    where birthday_date is NOT NULL 
+	    AND MONTH(DATE(IF(
+					LENGTH(birthday_date)-LENGTH(REPLACE(birthday_date,'-',''))=2,
+					DATE(CONCAT("2000-",RIGHT(birthday_date,LENGTH(birthday_date)-5))),
+					DATE(CONCAT("2000-",birthday_date))
+					))) != MONTH(NOW())
+	    AND member_status != #{memberStatus}
+	</update>
+	
+	<!-- 查询生日提醒的会员数 -->
+	<select id="queryBirthDayMemberNum" resultType="java.util.Map" parameterType="java.util.Map">
+		select is_send_birthday_sms as isSendBirthdaySms
+		from (
+			select m.is_send_birthday_sms,
+			IF(LENGTH(m.birthday_date)-LENGTH(replace(m.birthday_date,'-',''))=2,DATE(CONCAT("2000-",right(m.birthday_date,LENGTH(m.birthday_date)-5))),DATE(CONCAT("2000-",m.birthday_date))) as birthDay
+			from 1dcq_shop_member m 
+			where m.shop_id = #{shopId} and m.member_status != #{memberStatus}
+		) a
+		<where>
+			<if test="continueStartTime != null"><!-- 跨年查询 -->
+				<![CDATA[
+					AND (
+						(Date(birthDay) >=#{startTime} AND Date(birthDay) <=#{continueStartTime}) 
+						OR
+						(Date(birthDay) >=#{continueEndTime} AND Date(birthDay) <=#{endTime})
+						)
+				]]>
+			</if>
+			<if test="continueStartTime ==null and startTime != null">
+	    		<![CDATA[
+					AND Date(birthDay) >=#{startTime}
+				]]>
+	    	</if>
+	    	<if test="continueStartTime ==null and endTime != null">
+	    		<![CDATA[
+					AND Date(birthDay) <=#{endTime}
+				]]>
+	    	</if>
+    	</where>
+    </select>
+    
+    <!-- 更新店铺等级 -->
+     <!-- <update id="updateShopMemberByLevelEntity" parameterType="com.idcq.appserver.dto.shop.ShopMemberLevelDto">
+        UPDATE 1dcq_shop_member SET shop_member_level_id =#{shopMemberLevelId} 
+        WHERE member_id in(
+			SELECT member_id 
+			from (
+				SELECT SUM(o.settle_price) as totalPrice,member_id,m.shop_member_level_id  
+				from 1dcq_order o 
+				INNER JOIN 1dcq_shop_member m ON o.order_mobile = m.mobile and <![CDATA[o.order_finish_time >= m.create_time]]>
+				<where>
+					<if test="shopId != null">
+						and o.shop_id = #{shopId}
+					</if>
+				</where> 
+				GROUP BY m.member_id
+				) a
+			INNER JOIN 1dcq_shop_member_level sml 
+			ON sml.shop_member_level_id = a.shop_member_level_id 
+			AND sml.is_auto_upgrate = 1 
+			AND <![CDATA[a.totalPrice >=sml.consume_max_amout]]>
+			<where>
+				<if test="consumeMinAmount != null and consumeMinAmount != 0">
+					and <![CDATA[totalPrice >= #{consumeMinAmount}]]>
+				</if>
+				<if test="consumeMaxAmout != null and consumeMaxAmout != 0">
+					and <![CDATA[totalPrice <= #{consumeMaxAmout}]]> 
+				</if>
+			</where>
+			
+			union all
+			
+			SELECT member_id 
+			from (
+				SELECT SUM(o.settle_price) as totalPrice,member_id,m.shop_member_level_id  
+				from 1dcq_order o 
+				INNER JOIN 1dcq_shop_member m ON o.order_mobile = m.mobile and <![CDATA[o.order_finish_time >= m.create_time]]>
+				<where>
+					(m.shop_member_level_id IS NULL or m.shop_member_level_id = 0)
+					<if test="shopId != null">
+						and o.shop_id = #{shopId}
+					</if>
+					 
+				</where> 
+				GROUP BY m.member_id
+				) b
+			<where>
+				<if test="consumeMinAmount != null and consumeMinAmount != 0">
+					and <![CDATA[totalPrice >= #{consumeMinAmount}]]>
+				</if>
+				<if test="consumeMaxAmout != null and consumeMaxAmout != 0">
+					and <![CDATA[totalPrice <= #{consumeMaxAmout}]]> 
+				</if>
+			</where>
+		)
+    </update> -->
+    
+     <!-- 更新店铺会员等级 -->
+     <update id="updateShopMemberByLevelEntity" parameterType="com.idcq.appserver.dto.shop.ShopMemberLevelDto">
+        UPDATE 1dcq_shop_member SET shop_member_level_id =#{shopMemberLevelId}
+        <where>
+			 member_id in
+			(
+				SELECT member_id 
+				from (
+					select m.member_id 
+					from 1dcq_shop_member m
+					left join 1dcq_shop_member_level sml 
+					on m.shop_member_level_id = sml.shop_member_level_id 
+					and m.member_status != 3 
+					and m.shop_id = sml.shop_id 
+					and ((sml.is_auto_upgrate = 1 and sml.is_delete = 0) or sml.is_delete = 1)
+					<where>
+						 <if test="shopId != null">
+							and m.shop_id = #{shopId}
+						</if>
+						 <if test="consumeMinAmount != null and consumeMinAmount != 0">
+							and <![CDATA[m.purchase_money >= #{consumeMinAmount}]]>
+						</if>
+						<if test="consumeMaxAmout != null and consumeMaxAmout != 0">
+							and <![CDATA[m.purchase_money < #{consumeMaxAmout}]]> 
+						</if>
+					</where>
+				) a
+				
+			)
+        </where> 
+    </update>
+    
+</mapper>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.storage.ShopStorageCheckNoteDto">
+
+   
+	<resultMap id="shopStorageCheckNoteMap" type="com.idcq.appserver.dto.storage.ShopStorageCheckNoteDto">
+		<!-- 
+		 `storage_check_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '盘点ID',
+		  `storage_check_no` varchar(100) NOT NULL COMMENT '盘点单号',
+		  `shop_id` int(10) unsigned DEFAULT NULL COMMENT '商铺ID',
+		  `goods_total_price` decimal(12,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '账面总价',
+		  `operater_id` int(10) unsigned DEFAULT NULL COMMENT '经手人ID（店铺管理者=0）',
+		  `operater_name` varchar(1000) DEFAULT NULL COMMENT '经手人',
+		  `storage_check_remark` varchar(50) DEFAULT NULL COMMENT '盘点备注',
+		  `storage_check_time` datetime DEFAULT NULL COMMENT '盘点时间',
+		  `create_time` datetime DEFAULT NULL COMMENT '创建时间', 
+		 -->
+	
+		<result column="storage_check_id" property="storageCheckId" />
+		<result column="storage_check_no" property="storageCheckNo" />
+		<result column="shop_id" property="shopId"/>
+		<result column="goods_total_price" property="goodsTotalPrice" />
+		<result column="operater_id" property="operaterId" />
+		<result column="operater_name" property="operaterName" />
+		<result column="storage_check_remark" property="storageCheckRemark" />
+		<result column="storage_check_time" property="storageCheckTime"  />
+		<result column="create_time" property="createTime"  />
+		
+	</resultMap>
+	
+	<insert id="insertShopStorageCheckNote" useGeneratedKeys="true" keyProperty="storageCheckId" parameterType="com.idcq.appserver.dto.storage.ShopStorageCheckNoteDto">
+		
+		insert into 1dcq_shop_storage_check_note
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="storageCheckId != null">
+			 storage_check_id,
+			</if>
+			<if test="storageCheckNo != null">
+			 storage_check_no,
+			</if>
+			<if test="shopId != null">
+			 shop_id,
+			</if>  
+			<if test="goodsTotalPrice != null">
+			 goods_total_price,
+			</if> 
+			<if test="storageCheckRemark != null">
+			 storage_check_remark,
+			</if>   
+			<if test="operaterId != null">
+			 operater_id,
+			</if>    
+			<if test="operaterName != null">
+			 operater_name,
+			</if>    
+			<if test="createTime != null">
+			  create_time,
+			</if>
+			<if test="storageCheckTime != null">
+			  storage_check_time,
+			</if>     
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="storageCheckId != null">
+			 #{storageCheckId},
+			</if>
+			<if test="storageCheckNo != null">
+			 #{storageCheckNo},
+			</if>
+			<if test="shopId != null">
+			 #{shopId},
+			</if>  
+			<if test="goodsTotalPrice != null">
+			 #{goodsTotalPrice},
+			</if> 
+			<if test="storageCheckRemark != null">
+			 #{storageCheckRemark},
+			</if>   
+			<if test="operaterId != null">
+			 #{operaterId},
+			</if>    
+			<if test="operaterName != null">
+			 #{operaterName},
+			</if>    
+			<if test="createTime != null">
+			 #{createTime},
+			</if>
+			<if test="storageCheckTime != null">
+			  #{storageCheckTime},
+			</if>   
+		</trim>
+		
+	</insert>
+
+	<select id="getShopStorageCheckNoteBeseInfo" resultType="java.util.Map" parameterType="java.util.Map">
+	
+		SELECT
+			sscd.check_detail_id AS checkDetailId,
+			sscn.storage_check_id as storageCheckId,
+			sscn.storage_check_no AS storageCheckNo,
+			sscn.operater_id AS operaterId,
+			sscn.operater_name AS operaterName,
+			sscn.storage_check_time AS storageCheckTime,
+			sscn.storage_check_remark AS storageRemark,
+			g.goods_id AS goodsId
+		FROM
+			1dcq_shop_storage_check_note sscn
+		LEFT JOIN 1dcq_shop_storage_check_detail sscd ON sscn.storage_check_id = sscd.storage_check_id
+		LEFT JOIN 1dcq_goods g ON g.goods_id = sscd.goods_id
+		WHERE
+			sscd.shop_id = #{shopId}
+		<if test="goodsId != null">
+			AND sscd.goods_id = #{goodsId}		
+		</if>
+		<if test="goodsStatus != null">
+		    AND g.goods_status = #{goodsStatus}		
+		</if>
+		<if test="storageCheckNo != null">
+			AND sscn.storage_check_no  LIKE concat('%',#{storageCheckNo},'%') 
+		</if>
+		<if test="storageCheckType != null">
+			AND sscd.storage_check_type = #{storageCheckType}
+		</if>
+		<if test="startTime != null">
+			AND sscn.storage_check_time > #{startTime}
+		</if>
+		<if test="endTime != null">
+		    AND sscn.storage_check_time &lt; #{endTime}
+		</if>
+		<if test="querydata != null">
+				AND 
+				  (
+					g.goods_name LIKE concat('%',#{querydata},'%') 
+					OR g.barcode LIKE concat('%',#{querydata},'%')
+					OR g.pinyinCode LIKE concat('%',#{querydata},'%')
+			      )
+		</if>
+		GROUP BY sscn.storage_check_no
+		ORDER BY
+			sscn.storage_check_time DESC
+		LIMIT #{limit},#{pSize}
+		
+	 </select>	
+
+	<select id="getShopStorageCheckNoteBeseInfoCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+	
+		SELECT
+			COUNT(DISTINCT sscn.storage_check_no)
+		FROM
+			1dcq_shop_storage_check_note sscn
+		LEFT JOIN 1dcq_shop_storage_check_detail sscd ON sscn.storage_check_id = sscd.storage_check_id
+		LEFT JOIN 1dcq_goods g ON g.goods_id = sscd.goods_id
+		WHERE
+			sscd.shop_id = #{shopId}
+		<if test="goodsId != null">
+			AND sscd.goods_id = #{goodsId}		
+		</if>
+		<if test="goodsStatus != null">
+		    AND g.goods_status = #{goodsStatus}		
+		</if>
+		<if test="storageCheckNo != null">
+			AND sscn.storage_check_no  LIKE concat('%',#{storageCheckNo},'%') 
+		</if>
+		<if test="storageCheckType != null">
+			AND sscd.storage_check_type = #{storageCheckType}
+		</if>
+		<if test="startTime != null">
+			AND sscn.storage_check_time > #{startTime}
+		</if>
+		<if test="endTime != null">
+		    AND sscn.storage_check_time &lt; #{endTime}
+		</if>
+		<if test="querydata != null">
+				AND 
+				  (
+					g.goods_name LIKE concat('%',#{querydata},'%') 
+					OR g.barcode LIKE concat('%',#{querydata},'%')
+					OR g.pinyinCode LIKE concat('%',#{querydata},'%')
+			      )
+		</if>
+		ORDER BY
+			sscn.storage_check_time DESC
+	 </select>
+	 
+	 
+	<select id="queryStorageCheckNoExist" resultType="java.lang.Integer" parameterType="java.util.Map">
+	
+		SELECT
+			count(*)
+		FROM
+			1dcq_shop_storage_check_note sscn
+		WHERE
+			sscn.storage_check_no = #{storageCheckNo}
+		
+	 </select>	 	
+	 
+</mapper>

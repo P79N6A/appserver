@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.region.ProvinceDto">
+	<resultMap type="com.idcq.appserver.dto.region.ProvinceDto" id="provinceMap">
+		<result column="province_id" property="provinceId"/>
+		<result column="province_name" property="provinceName"/>
+		<result column="date_created" property="dateCreated"/>
+		<result column="date_updated" property="dateUpdated"/>
+	</resultMap>
+	
+    <select id="getAllProvinces" parameterType="java.util.Map"  resultMap="provinceMap">
+    	select province_id,province_name from 1dcq_province 
+    </select>
+     <select id="getById" parameterType="java.lang.Long"  resultMap="provinceMap">
+    	select province_id,province_name,date_created,date_updated  from 1dcq_province where province_id = #{primaryKeyId}
+    </select>
+</mapper> 
+   

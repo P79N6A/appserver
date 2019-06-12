@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.order.OrderLogDto" >
+	<resultMap type="com.idcq.appserver.dto.order.OrderLogDto" id="BaseResultMap">
+		<id column="order_log_id" property="orderLogId" jdbcType="INTEGER" />
+    	<result column="order_id" property="orderId" jdbcType="VARCHAR" />
+    	<result column="pay_status" property="payStatus" jdbcType="TINYINT" />
+    	<result column="order_status" property="orderStatus" jdbcType="TINYINT" />
+    	<result column="remark" property="remark" jdbcType="VARCHAR" />
+    	<result column="last_update_time" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+    	<result column="user_id" property="userId" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+    order_log_id, order_id, pay_status, order_status, remark, last_update_time, user_id
+  	</sql>
+  	
+  	<select id="getOrderLastStatus" parameterType="java.lang.String" resultMap="BaseResultMap">
+  		select
+  		<include refid="Base_Column_List"></include>
+  		from 1dcq_order_log
+  		order by last_update_time desc limit 1
+  	</select>
+  	<!-- 跳过退单中状态 -->
+	<select id="queryEntityByOrderIdDescLimit1" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+			t.order_log_id,
+			t.order_id,
+			t.pay_status,
+			t.order_status,
+			t.remark,
+			t.last_update_time,
+			t.user_id
+		FROM
+			1dcq_order_log t
+		WHERE
+			t.order_id = #{orderId}
+		AND t.order_status != 4
+		ORDER BY
+			t.last_update_time DESC
+		LIMIT 1
+	</select>
+	<select id="queryEntitysByOrderId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+			t.order_log_id,
+			t.order_id,
+			t.pay_status,
+			t.order_status,
+			t.remark,
+			t.last_update_time,
+			t.user_id
+		FROM
+			1dcq_order_log t
+		WHERE
+			t.order_id = #{orderId}
+		ORDER BY
+			t.last_update_time DESC
+	</select>
+	<insert id="saveOrderLog" parameterType="com.idcq.appserver.dto.order.OrderLogDto">
+		INSERT INTO 1dcq_order_log (
+			order_id,
+			pay_status,
+			order_status,
+			remark,
+			last_update_time,
+			user_id
+		)
+		VALUES
+			(
+				#{orderId},
+				#{payStatus},
+				#{orderStatus},
+				#{remark},
+				#{lastUpdateTime},
+				#{userId}
+			)
+	</insert>
+	<insert id="batchSaveOrderLogs" parameterType="java.util.List">
+		INSERT INTO 1dcq_order_log (
+			order_id,
+			pay_status,
+			order_status,
+			remark,
+			last_update_time,
+			user_id
+		)
+		VALUES
+		<foreach collection="list" item="orderLog" separator=",">
+			(
+				#{orderLog.orderId},
+				#{orderLog.payStatus},
+				#{orderLog.orderStatus},
+				#{orderLog.remark},
+				#{orderLog.lastUpdateTime},
+				#{orderLog.userId}
+			)
+		</foreach>
+	</insert>
+</mapper>

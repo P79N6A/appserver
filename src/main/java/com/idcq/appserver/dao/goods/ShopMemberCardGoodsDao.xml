@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.goods.ShopMemberCardGoods">
+
+	<!-- 通用查询结果列-->
+	<sql id="Base_Column_List">
+		 goods_id goodsId,
+		 card_id cardId,
+		 goods_name goodsName,
+		 price price,
+		 goods_number goodsNumber,
+		 used_times usedTimes
+	</sql>
+	
+	<select id="getMemberCardGoods" parameterType="java.util.Map" resultType="com.idcq.appserver.dto.goods.ShopMemberCardGoods">
+		SELECT 
+  		<include refid="Base_Column_List"/>
+		FROM
+		  1dcq_shop_member_card_goods smcg 
+		WHERE smcg.goods_id=#{goodsId} AND smcg.card_id=#{cardId}
+	</select>
+
+	<!-- 查询（根据主键ID查询） -->
+	<select id="selectByPrimaryKey" resultType="com.idcq.appserver.dto.goods.ShopMemberCardGoods" parameterType="java.lang.Integer">
+		 SELECT
+		 <include refid="Base_Column_List" />
+		 FROM 1dcq_shop_member_card_goods
+		 WHERE goods_id = #{goodsId}
+	</select>
+
+	<!--删除：根据主键ID删除-->
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		 DELETE FROM 1dcq_shop_member_card_goods
+		 WHERE goods_id = #{goodsId}
+	</delete>
+
+	<!-- 添加 （匹配有值的字段）-->
+	<insert id="insertSelective" parameterType="com.idcq.appserver.dto.goods.ShopMemberCardGoods">
+		 INSERT INTO 1dcq_shop_member_card_goods
+		 <trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="goodsId != null">
+				 goods_id,
+			</if>
+			<if test="cardId != null">
+				 card_id,
+			</if>
+			<if test="goodsName != null">
+				 goods_name,
+			</if>
+			<if test="price != null">
+				 price,
+			</if>
+			<if test="goodsNumber != null">
+				 goods_number,
+			</if>
+			<if test="usedTimes != null">
+				 used_times,
+			</if>
+
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="goodsId!=null">
+				 #{goodsId},
+			</if>
+			<if test="cardId!=null">
+				 #{cardId},
+			</if>
+			<if test="goodsName!=null">
+				 #{goodsName},
+			</if>
+			<if test="price!=null">
+				 #{price},
+			</if>
+			<if test="goodsNumber!=null">
+				 #{goodsNumber},
+			</if>
+			<if test="usedTimes!=null">
+				 #{usedTimes},
+			</if>
+		 </trim>
+	</insert>
+	
+	<insert id="batchInsertShopMemberCardGoods" parameterType="java.util.List">
+	    <![CDATA[
+			INSERT INTO 1dcq_shop_member_card_goods(goods_id, card_id, goods_name, price, goods_number)
+			VALUES
+		]]>
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.goodsId,jdbcType=INTEGER,javaType=Long},
+			 #{item.cardId,jdbcType=INTEGER,javaType=Long},
+			 #{item.goodsName,jdbcType=VARCHAR,javaType=String},
+			 #{item.price,jdbcType=DECIMAL,javaType=BigDecimal},
+			 #{item.goodsNumber,jdbcType=INTEGER,javaType=Integer}
+			 )
+		</foreach>
+	</insert>
+	
+
+	<!-- 修 改-->
+	<update id="updateByPrimaryKeySelective" parameterType="com.idcq.appserver.dto.goods.ShopMemberCardGoods">
+		 UPDATE 1dcq_shop_member_card_goods
+ 		 <set> 
+			<if test="cardId != null">
+				 card_id = #{cardId},
+			</if>
+			<if test="goodsName != null">
+				 goods_name = #{goodsName},
+			</if>
+			<if test="price != null">
+				 price = #{price},
+			</if>
+			<if test="goodsNumber != null">
+				 goods_number = #{goodsNumber},
+			</if>
+			<if test="usedTimes != null">
+				 used_times = #{usedTimes},
+			</if>
+
+ 		 </set>
+		 WHERE goods_id = #{goodsId}
+	</update>
+	
+	
+  	<update id="batchUseTimesCard"  parameterType="java.util.Map">
+          <foreach collection="cardGoodsList" item="item" index="index" open="" close="" separator=";">
+                update 1dcq_shop_member_card_goods g
+                set
+                  goods_number=goods_number-1,
+                  used_times=used_times+1
+                where card_id = #{item.cardId} 
+                and goods_id=#{item.goodsId}
+         </foreach>
+          
+    </update>
+</mapper>

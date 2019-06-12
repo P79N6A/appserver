@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.bank.BankDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.bank.BankDto" >
+    
+    <id column="bank_id" property="bankId"  />
+    <result column="bank_name" property="bankName"  />
+    <result column="show_index" property="showIndex"  />
+    <result column="file_url" property="bankLogoUrl"  />
+    <result column="create_time" property="createTime" />
+  </resultMap>
+ 	
+  <select id="getBankList" resultMap="BaseResultMap" parameterType="com.idcq.appserver.dto.common.PageModel">
+  		select bank.bank_id,
+  			   bank.bank_name,
+  			   bank.show_index,
+  			   att.file_url,
+  			   bank.create_time
+  		 from 1dcq_bank bank left join 1dcq_attachment att on bank.bank_logo=att.attachement_id limit #{start},#{limit}
+  </select>
+  
+  <select id="getBankCount" resultType="java.lang.Integer">
+  	select count(*) from 1dcq_bank
+  </select>
+  <select id="getBankLogoByName" resultType="java.lang.Long" parameterType="java.lang.String">
+  	SELECT 
+  		b.bank_logo
+  	FROM
+  		1dcq_bank b 
+  	WHERE
+  	 	b.bank_name = #{bankName}
+  </select>
+</mapper>

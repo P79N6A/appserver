@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.common.UserPermission" >
+  	<resultMap id="userPermissionResultMap" type="com.idcq.appserver.dto.common.UserPermission" >
+    	 <result column="user_id" property="userId" jdbcType="INTEGER" />
+    	  <result column="role_id" property="roleId" jdbcType="INTEGER" />
+    	 <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    	 <result column="permission_id" property="permissionId" jdbcType="INTEGER" />
+    	 <result column="module" property="module" jdbcType="VARCHAR" />
+    	 <result column="controller" property="controller" jdbcType="VARCHAR" />
+    	 <result column="action" property="action" jdbcType="VARCHAR" />
+    	 <result column="shop_url" property="shopUrl" jdbcType="VARCHAR" />
+    	 <result column="p_type" property="permissionType" jdbcType="TINYINT" />
+  	</resultMap>
+  	
+  	<select id="getUserAuthList" parameterType="com.idcq.appserver.dto.common.UserPermission" resultType="java.util.Map">
+	    select 
+		    module as module,
+		    controller as controller,
+		    action as action,
+		    shop_url as shopUrl,
+		    p_type as permissionType
+	    from 1dcq_user_permission
+	    <where>
+	    	<if test="userId != null">
+	    		and user_id = #{userId} 
+	    	</if>
+			<if test="userTypeId != null">
+	    		and user_type_id = #{userTypeId} 
+	    	</if>
+    		<if test="shopId != null">
+	    		and shop_id = #{shopId} 
+	    	</if>
+   			<if test="permissionType != null">
+	    		and p_type = #{permissionType} 
+	    	</if>
+	    </where>
+	</select>
+	
+</mapper>

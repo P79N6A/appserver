@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.user.GoodsCommentDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.user.GoodsCommentDto" >
+	  <result column="comment_time" property="commentTime" />
+	  <result column="comment_id" property="commentId" />
+  </resultMap>
+<!--   商铺评论 -->
+  <insert id="makeGoodsComment"  useGeneratedKeys="true" keyProperty="commentId" parameterType="com.idcq.appserver.dto.user.GoodsCommentDto">
+	INSERT INTO 1dcq_user_goods_comment (
+		goods_id,
+		user_id,
+		service_grade,
+		env_grade,
+		comment_content,
+		comment_time,
+		comment_status
+	)
+	VALUES
+		(
+		#{goodsId},
+		#{userId},
+		#{serviceGrade},
+		#{envGrade},
+		#{commentContent},
+		NOW(),
+		#{commentStatus}
+	)  	
+
+  </insert>
+<!--   获取用户评论最后时间 -->
+  <select id="getGoodsCommentTimeById" parameterType="com.idcq.appserver.dto.user.GoodsCommentDto" resultMap="BaseResultMap">
+  	 SELECT
+		g.comment_time
+	FROM
+		1dcq_user_goods_comment g
+	WHERE
+		g.user_id = #{userId}
+	AND 
+		g.goods_id = #{goodsId}
+	ORDER BY
+		g.comment_time DESC
+  </select>
+  
+    <update id="updateGoosComLogo" parameterType="java.util.Map">
+      update 1dcq_user_goods_comment
+      <set >
+      <if test="usageType == 21" >
+         comment_pic1 = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="usageType == 22 " >
+         comment_pic2 = #{url,jdbcType=VARCHAR},
+      </if>
+       <if test="usageType == 23 " >
+         comment_pic3 = #{url,jdbcType=VARCHAR},
+      </if>
+       <if test="usageType == 24 " >
+         comment_pic4 = #{url,jdbcType=VARCHAR},
+      </if>
+       <if test="usageType == 25 " >
+         comment_pic5 = #{url,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where comment_id = #{commentId}
+  </update>
+    
+  <select id="getGoodSCommentsByMap" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select c.comment_id
+	from 1dcq_user_goods_comment c
+	where c.goods_id=#{bizId}
+	and   c.user_id=#{userId}
+	order by c.comment_time desc
+  </select>
+  
+  <select id="getUserIdByCommentId" resultType="java.lang.Long" parameterType="java.lang.Long">
+  	select user_id from 1dcq_user_goods_comment c where c.comment_id=#{commentId}
+  </select>
+ <select id="getGoodsCommentsTotal" parameterType="java.lang.Long" resultType="int">
+    	select 
+    		count(*) 
+    	from 
+    		1dcq_user_goods_comment c 
+    	where
+    		c.goods_id=#{goodsId}
+    	and
+    		c.comment_status=1
+  </select>  
+</mapper>

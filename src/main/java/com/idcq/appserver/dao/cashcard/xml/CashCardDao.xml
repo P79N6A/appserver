@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.cashcard.CashCardDto">
+
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.cashcard.CashCardDto" >
+    <result column="cash_card_no" property="cashCardNo"  />
+    <result column="cash_card_batch_id" property="cashCardBatchId"  />
+    <result column="card_password" property="cardPassword" />
+    <result column="card_status" property="cardStatus"  />
+    <result column="card_index" property="cardIndex" />
+    <result column="create_time" property="createTime" />
+  </resultMap>
+
+	<!-- 验证充值卡密码是否正确 -->
+    <select id="queryCashCard" parameterType="java.util.Map"  resultMap="BaseResultMap">
+		SELECT
+			cash_card_no,
+		    cash_card_batch_id,
+		    card_password,
+		    card_status,
+		    card_index,
+		    create_time
+		FROM
+			1dcq_cash_card
+		WHERE
+			cash_card_no = #{cashCardNo}
+		<if test="cardPassword != null">
+			and card_password = #{cardPassword} 
+		</if>
+			   
+	</select>
+	<!-- 更新充值卡状态-->
+    <update id="updateCardStatusByNo" parameterType="java.util.Map" >
+		UPDATE 
+			1dcq_cash_card
+		SET
+			card_status = #{cardStatus}
+		WHERE
+			cash_card_no = #{cashCardNo}   
+	</update>
+	<!-- 根据批次id查询充值卡 -->
+    <select id="getCashCardByBatchId" parameterType="java.lang.Long"  resultMap="BaseResultMap">
+		SELECT
+			cash_card_no,
+		    cash_card_batch_id,
+		    card_password,
+		    card_status,
+		    card_index,
+		    create_time
+		FROM
+			1dcq_cash_card
+		WHERE
+			cash_card_batch_id = #{cashCardBatchId}
+		order by card_index
+			   
+	</select>
+
+  <insert id="insertCashCard" parameterType="com.idcq.appserver.dto.cashcard.CashCardDto" >
+    insert into 1dcq_cash_card     
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+		<if test="cashCardNo != null" >
+        	cash_card_no,
+      	</if>
+    	<if test="cashCardBatchId != null" >
+        	cash_card_batch_id,
+      	</if>
+      	<if test="cardPassword != null" >
+        	card_password,
+      	</if>
+      	<if test="cardStatus != null" >
+        	card_status,
+      	</if>
+      	<if test="cardIndex != null" >
+        	card_index,
+      	</if>
+      	<if test="createTime != null" >
+        	create_time,
+      	</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+ 		<if test="cashCardNo != null" >
+        	#{cashCardNo},
+      	</if>
+        <if test="cashCardBatchId != null" >
+        	#{cashCardBatchId},
+      	</if>
+      	    <if test="cardPassword != null" >
+        	#{cardPassword},
+      	</if>
+      	<if test="cardStatus != null" >
+        	#{cardStatus},
+      	</if>
+      	<if test="cardIndex != null" >
+        	#{cardIndex},
+      	</if>
+      	<if test="createTime != null" >
+        	#{createTime},
+      	</if>
+    </trim>
+  </insert>
+  
+  <insert id="batchInsertCashCard" parameterType="java.util.List" >
+    insert into 1dcq_cash_card     
+	(cash_card_no,cash_card_batch_id,cardPassword,cardStatus,card_index,create_time)
+	values
+	<foreach collection="cashCardList" item="cashCard" open="(" close=")" separator=",">
+		#{cashCard.cashCardNo},#{cashCard.cashCardBatchId},#{cashCard.cardPassword},#{cashCard.cardStatus},#{cashCard.cardIndex},#{cashCard.createTime}
+	</foreach>
+  </insert>
+</mapper>

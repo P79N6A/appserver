@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dao.discount.ShopTimeDiscountDaoImpl">
+	<select id="getShopTimeDiscountCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+			SELECT
+				count(1)
+			FROM
+				1dcq_timed_discount td
+			INNER JOIN 1dcq_shop s ON td.shop_id = s.shop_id AND s.shop_status = 0
+			WHERE
+				td.shop_id = #{shopId}
+	</select>
+	<!-- 获取商铺限时折扣信息 -->
+	<select id="getShopTimedDiscount" resultType="java.util.Map" parameterType="java.util.Map">
+			SELECT
+				td.discount_id AS discountId,
+				td.discount_name AS discountName,
+				cast(td.discount_type AS SIGNED) AS discountType,
+				td.discount_period_type AS discountPeriodType,
+				td.discount,
+				cast(
+					td.apply_online_flag AS SIGNED
+				) AS applyOnlineFlag,
+				cast(
+					td.apply_offline_flag AS SIGNED
+				) AS applyOfflineFlag,
+				td.day_from_time AS dayFromTime,
+				td.day_to_time AS dayToTime,
+				td.`week`,
+				td.week_from_time AS weekFromTime,
+				td.week_to_time AS weekToTime,
+				td.custom_from_datetime AS customFromDatetime,
+				td.custom_to_datetime AS customToDatetime,
+				s.shop_id AS shopId,
+				s.shop_name AS shopName
+			FROM
+				1dcq_timed_discount td
+			INNER JOIN 1dcq_shop s ON td.shop_id = s.shop_id AND s.shop_status = 0
+			WHERE
+				td.shop_id = #{shopId}
+			ORDER BY
+				td.create_time DESC
+			LIMIT #{startSize},#{pSize}																								
+	</select>
+	<select id="getShopTimedDiscountGoodsAll" resultType="java.util.Map" parameterType="java.lang.Long">
+		SELECT
+			g.goods_id AS goodsId,
+			g.goods_name AS goodsName,
+			a.file_url AS goodsImg,
+			g.standard_price AS unitPrice,
+			s.shop_id,
+			td.discount_id
+		FROM
+			1dcq_timed_discount td
+		INNER JOIN 1dcq_timed_discount_goods tdg ON tdg.discount_id = td.discount_id
+		AND tdg.shop_id = td.shop_id
+		INNER JOIN 1dcq_goods g ON tdg.goods_id = g.goods_id
+		AND g.goods_status = 1
+		LEFT JOIN 1dcq_attachment a ON g.goods_logo1 = a.attachement_id
+		INNER JOIN 1dcq_shop s ON td.shop_id = s.shop_id AND s.shop_status = 0
+		WHERE
+			td.shop_id = #{shopId}
+		ORDER BY
+			tdg.goods_index ASC
+	</select>
+	<select id="getShopTimedDiscountGoodsAlls" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT
+			g.goods_id AS goodsId,
+			g.goods_name AS goodsName,
+			a.file_url AS goodsImg,
+			g.standard_price AS unitPrice,
+			s.shop_id,
+			td.discount_id
+		FROM
+			1dcq_timed_discount td
+		INNER JOIN 1dcq_timed_discount_goods tdg ON tdg.discount_id = td.discount_id
+		AND tdg.shop_id = td.shop_id
+		INNER JOIN 1dcq_goods g ON tdg.goods_id = g.goods_id
+		AND g.goods_status = 1
+		LEFT JOIN 1dcq_attachment a ON g.goods_logo1 = a.attachement_id
+		INNER JOIN 1dcq_shop s ON td.shop_id = s.shop_id AND s.shop_status = 0
+		WHERE
+			td.shop_id = #{shopId}
+			<if test="discountIds != null">
+				and td.discount_id in
+				<foreach collection="discountIds" item="discountId" open="(" close=")" separator=",">
+					#{discountId}
+				</foreach>
+			</if>
+		ORDER BY
+			tdg.goods_index ASC
+	</select>
+	
+	<!-- 获取限时折扣对应商品信息 -->
+	<select id="getShopTimedDiscountGoods" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT
+			g.goods_id AS goodsId,
+			g.goods_name AS goodsName,
+			g.goods_type AS goodsType,
+			tdg.goods_index AS 'index',
+			g.goods_no AS goodsNo,
+			a.file_url AS goodsUrl,
+			a1.file_url AS goodsLogo1,
+			a2.file_url AS goodsLogo2,
+			g.sold_number AS soldNumber,
+			g.zan_number AS zanNumber,
+			g.standard_price AS standardPrice,
+			g.discount_price AS discountPrice,
+			g.vip_price AS vipPrice,
+			g.final_price AS finalPrice,
+			gu.unit_name AS unit
+		FROM
+			1dcq_timed_discount_goods tdg
+		INNER JOIN 1dcq_timed_discount td ON tdg.discount_id = td.discount_id
+		AND tdg.shop_id = td.shop_id
+		INNER JOIN 1dcq_goods g ON tdg.goods_id = g.goods_id
+		AND g.goods_status = 1
+		LEFT JOIN 1dcq_goods_unit gu ON g.unit_id = gu.unit_id
+		LEFT JOIN 1dcq_attachment a ON g.goods_logo1 = a.attachement_id
+		LEFT JOIN 1dcq_attachment a1 ON g.goods_logo2 = a1.attachement_id
+		LEFT JOIN 1dcq_attachment a2 ON g.goods_logo3 = a2.attachement_id
+		WHERE
+			td.discount_id = #{discountId}
+		ORDER BY
+			tdg.goods_index ASC
+		LIMIT #{startSize},#{pSize}
+	</select>
+	<!-- 获取限时折扣对应商品信息总数 -->
+	<select id="getShopTimedDiscountGoodsCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT
+			count(1)
+		FROM
+			1dcq_timed_discount_goods tdg
+		INNER JOIN 1dcq_timed_discount td ON tdg.discount_id = td.discount_id
+		AND tdg.shop_id = td.shop_id
+		INNER JOIN 1dcq_goods g ON tdg.goods_id = g.goods_id
+		AND g.goods_status = 1
+		LEFT JOIN 1dcq_goods_unit gu ON g.unit_id = gu.unit_id
+		LEFT JOIN 1dcq_attachment a ON g.goods_logo1 = a.attachement_id
+		LEFT JOIN 1dcq_attachment a1 ON g.goods_logo2 = a1.attachement_id
+		LEFT JOIN 1dcq_attachment a2 ON g.goods_logo3 = a2.attachement_id
+		WHERE td.discount_id = #{discountId}
+	</select>
+	<!-- 搜索商铺限时折扣信息 -->
+	<select id="searchShopTimeDiscount" resultType="java.util.Map" parameterType="java.util.List">
+		SELECT
+			td.discount_id AS discountId,
+			td.discount_name AS discountName,
+			cast(td.discount_type AS SIGNED) AS discountType,
+			td.discount_period_type AS discountPeriodType,
+			td.discount,
+			cast(
+				td.apply_online_flag AS SIGNED
+			) AS applyOnlineFlag,
+			cast(
+				td.apply_offline_flag AS SIGNED
+			) AS applyOfflineFlag,
+			td.day_from_time AS dayFromTime,
+			td.day_to_time AS dayToTime,
+			td.`week`,
+			td.week_from_time AS weekFromTime,
+			td.week_to_time AS weekToTime,
+			td.custom_from_datetime AS customFromDatetime,
+			td.custom_to_datetime AS customToDatetime,
+			td.shop_id AS shopId
+		FROM
+			1dcq_timed_discount td
+		WHERE
+			td.shop_id IN 
+			<foreach collection="list" close=")" open="(" separator="," item="shop">
+				#{shop.shopId}
+			</foreach>
+		ORDER BY
+			td.create_time DESC
+	</select>
+	<!-- 获取商铺限时折扣对应商品,只需要商品编号 -->
+	<select id="getShopTimedDiscountGoodsId" resultType="java.util.Map" parameterType="java.util.List">
+		select t.discount_id,t.goods_id as goodsId from 1dcq_timed_discount_goods t where t.discount_id in
+		<foreach collection="list" item="discountId" close=")" open="(" separator=",">
+			#{discountId}
+		</foreach>
+	</select>
+	<insert id="insertTimedDiscountData" parameterType="java.util.List">
+		INSERT INTO 1dcq_timed_discount(
+			shop_id,discount_type,discount_name,discount_status,discount_period_type,
+			day_from_time,day_to_time,`week`,week_from_time,week_to_time,custom_from_datetime,
+			custom_to_datetime,discount,apply_online_flag,apply_offline_flag,create_time
+		)values
+		<foreach collection="list" item="timed" separator=",">
+			(
+				#{timed.shop_id},#{timed.discount_type},#{timed.discount_name},#{timed.discount_status},#{timed.discount_period_type},
+				#{timed.day_from_time},#{timed.day_to_time},#{timed.week},#{timed.week_from_time},#{timed.week_to_time},#{timed.custom_from_datetime},
+				#{timed.custom_to_datetime},#{timed.discount},#{timed.apply_online_flag},#{timed.apply_offline_flag},now()
+			)
+		</foreach>
+	</insert>
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shop.UserShopCommentDto" >
+  <resultMap id="userShopCommentMap" type="com.idcq.appserver.dto.shop.UserShopCommentDto" >
+    <id column="comment_id" property="commentId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="star_level_grade" property="starLevelGrade" jdbcType="DOUBLE" />
+    <result column="comment_content" property="commentContent" jdbcType="VARCHAR" />
+    <result column="comment_time" property="commentTime" jdbcType="TIMESTAMP" />
+    <result column="username" property="userName" jdbcType="VARCHAR" />
+    <result column="big_logo" property="imgBig" jdbcType="VARCHAR" />
+    <result column="small_logo" property="imgSmall" jdbcType="VARCHAR" />
+    <result column="env_grade" property="envGrade" jdbcType="DOUBLE" />
+    <result column="service_grade" property="serviceGrade" jdbcType="DOUBLE" />
+    <result column="logistics_grade" property="logisticsGrade" jdbcType="DOUBLE" />
+  </resultMap>
+  
+  <select id="getShopComments" resultMap="userShopCommentMap" parameterType="java.lang.Long" >
+    SELECT 
+	    c.user_id,
+	    c.star_level_grade,
+	    c.comment_content,
+	    c.comment_time,
+	    u.username,
+	    u.big_logo,
+	    u.small_logo,
+	    env_grade,
+	    service_grade,
+	    logistics_grade
+	FROM 
+		1dcq_user_shop_comment c inner JOIN 1dcq_user u
+	ON 
+		c.user_id=u.user_id
+	WHERE 
+		c.shop_id=#{shopId} and c.comment_status=1
+	ORDER BY
+	    c.comment_time DESC
+	LIMIT #{n},#{m}
+  </select>
+  
+  <select id="getShopCommentsTotal" parameterType="java.lang.Long" resultType="int">
+  	select count(1) from 1dcq_user_shop_comment c inner JOIN 1dcq_user u
+	on c.user_id=u.user_id where c.shop_id=#{shopId}  and c.comment_status=1
+  </select>
+  
+</mapper>

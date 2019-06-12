@@ -1,0 +1,826 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.level.LevelDto" >
+	 <resultMap id="levelResultMap" type="com.idcq.appserver.dto.level.LevelDto">
+	    <result column="level_id" property="levelId" />
+	    <result column="level_type" property="levelType" />
+	    <result column="sort_by" property="sortBy"  />
+	    <result column="level_name" property="levelName" />
+	    <result column="level_condition" property="levelCondition" />
+	    <result column="level_image_id" property="levelImageId"/>
+	     <result column="file_url" property="levelImageUrl" />
+	    <result column="level_description" property="levelDesc"/>
+	    <result column="create_time" property="createTime"/>
+	    <result column="last_update_time" property="lastUpdateTime" />
+	 </resultMap>
+	 
+	 <resultMap id="prerogativeResultMap" type="com.idcq.appserver.dto.level.PrerogativeDto">
+	    <result column="prerogative_id" property="prerogativeId" />
+	    <result column="prerogative_type" property="prerogativeType" />
+	    <result column="prerogative_name" property="prerogativeName"  />
+	    <result column="prerogative_value" property="prerogativeValue" />
+	    <result column="prerogative_image_id" property="prerogativeImageId" />
+	    <result column="file_url" property="prerogativeImageUrl" />
+	    <result column="sort_by" property="sortBy"/>
+	    <result column="prerogative_description" property="prerogativeDesc"/>
+	    <result column="create_time" property="createTime"/>
+	    <result column="last_update_time" property="lastUpdateTime" />
+	 </resultMap>
+	 
+	 <resultMap id="pointsDetailResultMap" type="com.idcq.appserver.dto.level.PointDetailDto">
+	    <result column="point_detail_id" property="pointDtailId" />
+	    <result column="biz_type" property="bizType" />
+	    <result column="biz_id" property="bizId"  />
+	    <result column="point_rule_id" property="pointRuleId" />
+	    <result column="point_source_type" property="pointSourceType" />
+	    <result column="point_source_id" property="pointSourceId" />
+	    <result column="point_detail_title" property="pointDetailTitle"/>
+	    <result column="point_value" property="pointValue"/>
+	    <result column="point_after_value" property="pointAferValue"/>
+	    <result column="create_time" property="createTime" />
+	    
+	    <result column="rule_type" property="ruleType" />
+	    <result column="task_type" property="taskType"/>
+	    <result column="sub_rule_type" property="subRuleType"/>
+	    <result column="rule_name" property="ruleName"/>
+	    <result column="rule_detail" property="ruleDetail" />
+	    
+	     <result column="operater_id" property="operaterId" />
+	     <result column="operater_name" property="operaterName" />
+	     <result column="remark" property="remark" />
+	 </resultMap>
+	 
+	 <resultMap id="pointsRuleResultMap" type="com.idcq.appserver.dto.level.PointRuleDto">
+	    <result column="point_rule_id" property="pointRuleId" />
+	    <result column="rule_type" property="ruleType" />
+	    <result column="task_type" property="taskType"  />
+	    <result column="sub_rule_type" property="subRuleType" />
+	    <result column="rule_name" property="ruleName" />
+	    <result column="rule_detail" property="ruleDetail" />
+	    <result column="point_value" property="pointValue"/>
+	    <result column="is_delete" property="isDelete"/>
+	    <result column="create_time" property="createTime"/>
+	    <result column="last_update_time" property="lastUpdateTime" />
+	 </resultMap>
+	 
+ 	<select id="getLevelDetail" parameterType="java.util.Map" resultMap="levelResultMap">
+	    select l.level_id,l.level_type,l.level_name,l.level_condition,l.level_image_id,
+	    a.file_url,l.level_description,l.create_time,l.last_update_time,l.sort_by
+	    from 1dcq_level l
+	    left join 1dcq_attachment a on a.attachement_id = l.level_image_id
+	    <where>
+	    	<if test="levelId != null">
+	    		and l.level_id = #{levelId}
+	    	</if>
+	    	<if test="levelType !=null">
+	    		and l.level_type = #{levelType}
+	    	</if>
+	    	<if test="startLevelCondition != null">
+	    		<![CDATA[and l.level_condition >= #{startLevelCondition}]]>
+	    	</if>
+	    	<if test="endLevelCondition != null">
+	    		<![CDATA[and l.level_condition <= #{endLevelCondition}]]>
+	    	</if>
+	    	<if test="levelCondition != null">
+	    		and l.level_condition = #{levelCondition}
+	    	</if>
+	    	<if test="levelName != null">
+	    		and l.level_name = #{levelName}
+	    	</if>
+	    	<if test="sortBy != null">
+	    		and sort_by = #{sortBy}
+	    	</if>
+	    	<if test="isDelete != null">
+	    		 and l.is_delete=#{isDelete}
+	    	</if>
+	    </where>
+	    
+	    <if test="pNo != null">
+	    	order by l.sort_by asc
+	    	limit #{pNo},#{pSize}
+	    </if>
+	</select>
+	
+	<select id="getPrerogativeList" parameterType="java.util.Map" resultMap="prerogativeResultMap">
+	    select DISTINCT(p.prerogative_id),p.prerogative_type,p.prerogative_name,p.prerogative_value, 
+	    p.prerogative_image_id,a.file_url,p.prerogative_description,p.sort_by,p.last_update_time
+	    from 1dcq_prerogative p
+	    <if test="levelId != null">
+	    	left join 1dcq_level_prerogative lp on p.prerogative_id = lp.prerogative_id
+	    </if>
+	    left join 1dcq_attachment a on a.attachement_id = p.prerogative_image_id
+	    <where>
+	    	<if test="levelId != null">
+	    		and lp.level_id = #{levelId}
+	    	</if>
+	    	<if test="prerogativeType != null">
+	    		and p.prerogative_type in
+		    	<foreach item="prerogativeType1" index="id" collection="prerogativeType" open="("
+					separator="," close=")">
+					#{prerogativeType1}
+				</foreach>
+	    	</if>
+	    	<if test="isDelete != null">
+	    		and p.is_delete = #{isDelete}
+	    	</if>
+	    </where>
+	    order by p.sort_by asc
+	    <if test="isPaging != null ">
+	    	limit #{pNo},#{pSize}
+	    </if>
+	</select>
+	
+	<select id="getPrerogativeListCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+	    select count(*)
+	    from(
+	    select DISTINCT(p.prerogative_id),p.prerogative_type,p.prerogative_name,p.prerogative_value, 
+	    p.prerogative_image_id,a.file_url,p.prerogative_description,p.sort_by,p.last_update_time
+	    from 1dcq_prerogative p
+	    <if test="levelId != null">
+	    	left join 1dcq_level_prerogative lp on p.prerogative_id = lp.prerogative_id
+	    </if>
+	    left join 1dcq_attachment a on a.attachement_id = p.prerogative_image_id
+	    <where>
+	    	<if test="levelId != null">
+	    		and lp.level_id = #{levelId}
+	    	</if>
+	    	<if test="prerogativeType != null">
+	    		and p.prerogative_type in
+		    	<foreach item="prerogativeType1" index="id" collection="prerogativeType" open="("
+					separator="," close=")">
+					#{prerogativeType1}
+				</foreach>
+	    	</if>
+	    	<if test="isDelete != null">
+	    		and p.is_delete = #{isDelete}
+	    	</if>
+	    </where>
+	    ) a
+	</select>
+	
+	<select id="getPointDetail" parameterType="com.idcq.appserver.dto.level.PointDetailDto" resultMap="pointsDetailResultMap">
+	    select p.point_detail_id,p.biz_type,p.biz_id,p.point_rule_id, 
+	    p.point_source_type,p.point_source_id,p.point_detail_title,p.point_value,
+	    p.point_after_value,p.create_time,pr.rule_type,pr.task_type,
+	    pr.sub_rule_type,pr.rule_name,pr.rule_detail,
+	    p.operater_id,p.operater_name,p.remark
+	    from 1dcq_point_detail p
+	    inner join 1dcq_point_rule pr on p.point_rule_id = pr.point_rule_id
+	    <where>
+	    	<if test="bizType != null">
+	    		and p.biz_type = #{bizType}
+	    	</if>
+	    	<if test="bizId != null">
+	    		and p.biz_id = #{bizId}
+	    	</if>
+	    	<if test="pointRuleId != null">
+	    		and p.point_rule_id = #{pointRuleId}
+	    	</if>
+	    	<if test="pointSourceType != null">
+	    		and p.point_source_type = #{pointSourceType}
+	    	</if>
+	    	<if test="pointSourceId != null">
+	    		and p.point_source_id = #{pointSourceId}
+	    	</if>
+	    	<if test="lowerPointValue != null">
+				<![CDATA[and p.point_value >= #{lowerPointValue}]]>
+			</if>
+			<if test="upperPointValue != null">
+				<![CDATA[and p.point_value <= #{upperPointValue}]]>
+			</if>
+	    	<if test="startTime != null">
+				<![CDATA[and p.create_time >= #{startTime}]]>
+			</if>
+			<if test="endTime != null">
+				<![CDATA[and p.create_time <= #{endTime}]]>
+			</if>
+			<if test="taskType != null">
+				and pr.task_type = #{taskType}
+			</if>
+	    </where>
+	    order by p.create_time desc
+	    limit #{pNo},#{pSize}
+	</select>
+	
+	<select id="getPointDetailByMap" parameterType="java.util.Map" resultMap="pointsDetailResultMap">
+	    select p.point_detail_id,p.biz_type,p.biz_id,p.point_rule_id, 
+	    p.point_source_type,p.point_source_id,p.point_detail_title,p.point_value,
+	    p.point_after_value,p.create_time,pr.rule_type,pr.task_type,
+	    pr.sub_rule_type,pr.rule_name,pr.rule_detail,
+	    p.operater_id,p.operater_name,p.remark
+	    from 1dcq_point_detail p
+	    inner join 1dcq_point_rule pr on p.point_rule_id = pr.point_rule_id
+	    <where>
+	    	<if test="bizType != null">
+	    		and p.biz_type = #{bizType}
+	    	</if>
+	    	<if test="bizIds != null">
+	    		and p.biz_id in
+		    	<foreach item="bizId" index="bizId" collection="bizIds" open="("
+					separator="," close=")">
+					#{bizId}
+				</foreach>
+	    	</if>
+	    	<if test="pointRuleId != null">
+	    		and p.point_rule_id = #{pointRuleId}
+	    	</if>
+	    	<if test="pointSourceType != null">
+	    		and p.point_source_type = #{pointSourceType}
+	    	</if>
+	    	<if test="pointSourceId != null">
+	    		and p.point_source_id = #{pointSourceId}
+	    	</if>
+	    	<if test="lowerPointValue != null">
+				<![CDATA[and p.point_value >= #{lowerPointValue}]]>
+			</if>
+			<if test="upperPointValue != null">
+				<![CDATA[and p.point_value <= #{upperPointValue}]]>
+			</if>
+	    	<if test="startTime != null">
+				<![CDATA[and p.create_time >= #{startTime}]]>
+			</if>
+			<if test="endTime != null">
+				<![CDATA[and p.create_time <= #{endTime}]]>
+			</if>
+			<if test="taskType != null">
+				and pr.task_type = #{taskType}
+			</if>
+	    </where>
+	    order by p.create_time desc
+	    limit #{pNo},#{pSize}
+	</select>
+	
+	<select id="getPointDetailCount" parameterType="com.idcq.appserver.dto.level.PointDetailDto" resultType="java.lang.Integer">
+	    select count(*)
+	    from 1dcq_point_detail p
+	    inner join 1dcq_point_rule pr on p.point_rule_id = pr.point_rule_id
+	    <where>
+	    	<if test="bizType != null">
+	    		and p.biz_type = #{bizType}
+	    	</if>
+	    	<if test="bizId != null">
+	    		and p.biz_id = #{bizId}
+	    	</if>
+	    	<if test="pointRuleId != null">
+	    		and p.point_rule_id = #{pointRuleId}
+	    	</if>
+	    	<if test="pointSourceType != null">
+	    		and p.point_source_type = #{pointSourceType}
+	    	</if>
+	    	<if test="pointSourceId != null">
+	    		and p.point_source_id = #{pointSourceId}
+	    	</if>
+	    	<if test="lowerPointValue != null">
+				<![CDATA[and p.point_value >= #{lowerPointValue}]]>
+			</if>
+			<if test="upperPointValue != null">
+				<![CDATA[and p.point_value <= #{upperPointValue}]]>
+			</if>
+	    	<if test="startTime != null">
+				<![CDATA[and p.create_time >= #{startTime}]]>
+			</if>
+			<if test="endTime != null">
+				<![CDATA[and p.create_time <= #{endTime}]]>
+			</if>
+			<if test="taskType != null">
+				and pr.task_type = #{taskType}
+			</if>
+	    </where>
+	</select>
+	
+	<select id="getPointDetailCountByMap" parameterType="java.util.Map" resultType="java.lang.Integer">
+	    select count(*)
+	    from 1dcq_point_detail p
+	    inner join 1dcq_point_rule pr on p.point_rule_id = pr.point_rule_id
+	    <where>
+	    	<if test="bizType != null">
+	    		and p.biz_type = #{bizType}
+	    	</if>
+	    	<if test="bizIds != null">
+	    		and p.biz_id in
+		    	<foreach item="bizId" index="bizId" collection="bizIds" open="("
+					separator="," close=")">
+					#{bizId}
+				</foreach>
+	    	</if>
+	    	<if test="pointRuleId != null">
+	    		and p.point_rule_id = #{pointRuleId}
+	    	</if>
+	    	<if test="pointSourceType != null">
+	    		and p.point_source_type = #{pointSourceType}
+	    	</if>
+	    	<if test="pointSourceId != null">
+	    		and p.point_source_id = #{pointSourceId}
+	    	</if>
+	    	<if test="lowerPointValue != null">
+				<![CDATA[and p.point_value >= #{lowerPointValue}]]>
+			</if>
+			<if test="upperPointValue != null">
+				<![CDATA[and p.point_value <= #{upperPointValue}]]>
+			</if>
+	    	<if test="startTime != null">
+				<![CDATA[and p.create_time >= #{startTime}]]>
+			</if>
+			<if test="endTime != null">
+				<![CDATA[and p.create_time <= #{endTime}]]>
+			</if>
+			<if test="taskType != null">
+				and pr.task_type = #{taskType}
+			</if>
+	    </where>
+	</select>
+	
+	<select id="getLevelDetailCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+	    select  count(*)
+	    from 1dcq_level l
+	    left join 1dcq_attachment a on a.attachement_id = l.level_image_id
+	    <where>
+	    	<if test="levelId != null">
+	    		and l.level_id = #{levelId}
+	    	</if>
+	    	<if test="levelType !=null">
+	    		and l.level_type = #{levelType}
+	    	</if>
+	    	<if test="startLevelCondition != null">
+	    		<![CDATA[and l.level_condition >= #{startLevelCondition}]]>
+	    	</if>
+	    	<if test="endLevelCondition != null">
+	    		<![CDATA[and l.level_condition <= #{endLevelCondition}]]>
+	    	</if>
+	    	<if test="isDelete != null">
+	    		 and l.is_delete=#{isDelete}
+	    	</if>
+	    </where>
+	</select>
+	
+	<select id="getPointRuleListCount" parameterType="com.idcq.appserver.dto.level.PointRuleDto" resultType="java.lang.Integer">
+	    select count(DISTINCT(rule_name))
+	    from 1dcq_point_rule p
+	    <where>
+	    	<if test="ruleType != null">
+	    		and p.rule_type = #{ruleType}
+	    	</if>
+	    	<if test="taskType != null">
+	    		and p.task_type = #{taskType}
+	    	</if>
+	    	<if test="isDelete != null">
+	    		and is_delete = #{isDelete}
+	    	</if>
+	    </where>
+	</select>
+	
+	<select id="getPointRuleList" parameterType="com.idcq.appserver.dto.level.PointRuleDto" resultMap="pointsRuleResultMap">
+	    select *
+	    from 1dcq_point_rule p
+	    <where>
+	    	<if test="ruleType != null">
+	    		and p.rule_type = #{ruleType}
+	    	</if>
+	    	<if test="subRuleType != null">
+	    		and p.sub_rule_type = #{subRuleType}
+	    	</if>
+	    	<if test="taskType != null">
+	    		and p.task_type = #{taskType}
+	    	</if>
+	    	<if test="isDelete != null">
+	    		and is_delete = #{isDelete}
+	    	</if>
+	    </where>
+	    group by p.rule_name
+	    <if test="pageNo != null">
+	    	order by p.last_update_time desc
+	    	limit #{pageNo},#{pageSize}
+	    </if>
+	</select>
+	
+	<select id="getPrerogativeDetail" parameterType="java.util.Map" resultMap="prerogativeResultMap">
+	    select p.prerogative_id,p.prerogative_type,p.prerogative_name,p.prerogative_value, 
+	    p.prerogative_image_id,a.file_url,p.sort_by,p.create_time,p.last_update_time,p.prerogative_description
+	    from 1dcq_prerogative p
+	    left join 1dcq_attachment a on a.attachement_id = p.prerogative_image_id
+	    <where>
+	    	<if test="prerogativeId != null">
+	    		and p.prerogative_id = #{prerogativeId}
+	    	</if>
+	    	<if test="isDelete != null">
+	    		and p.is_delete = #{isDelete}
+	    	</if>
+	    </where>
+	</select>
+	<update id="delLevelInfoByConditions" parameterType="java.util.Map">
+	  	update 1dcq_level set is_delete = #{isDelete} where level_id = #{levelId}
+	</update>
+	
+	 <update id="updateLevelInfo" parameterType="com.idcq.appserver.dto.level.LevelValidDto">
+	  	update 1dcq_level
+	  	<set>
+	  		<if test="levelType != null">
+		  		level_type = #{levelType},
+		  	</if>
+		  	<if test="levelName != null">
+		  		level_name = #{levelName},
+		  	</if>
+		  	<if test="levelCondition != null">
+		  		level_condition = #{levelCondition},
+		  	</if>
+		  	<if test="sortBy != null">
+		  		sort_by = #{sortBy},
+		  	</if>
+		  	<if test="levelImageId != null">
+		  		level_image_id = #{levelImageId},
+		  	</if>
+		  	<if test="levelDesc != null">
+		  		level_description = #{levelDesc},
+		  	</if>
+		  	<if test="isDelete != null">
+		  		is_delete = #{isDelete},
+		  	</if>
+		  	last_update_time = now() 
+	  	</set>
+	  	where level_id = #{levelId}
+	</update>
+	
+	 <insert id="addLevelInfo" parameterType="com.idcq.appserver.dto.level.LevelValidDto" useGeneratedKeys="true" keyProperty="levelId" >
+   		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="levelId">
+           SELECT LAST_INSERT_ID() AS levelId
+  		</selectKey>
+	    insert into 1dcq_level
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="levelType != null" >
+	        level_type,
+	      </if>
+	      <if test="levelName != null" >
+	        level_name,
+	      </if>
+	      <if test="levelCondition != null" >
+	        level_condition,
+	      </if>
+	      <if test="sortBy != null" >
+	        sort_by,
+	      </if>
+	      <if test="levelImageId != null" >
+	        level_image_id,
+	      </if>
+	      <if test="levelDesc != null" >
+	        level_description,
+	      </if>
+	      create_time
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="levelType != null" >
+	        #{levelType},
+	      </if>
+	       <if test="levelName != null" >
+	        #{levelName},
+	      </if> 
+	       <if test="levelCondition != null" >
+	        #{levelCondition},
+	      </if>
+	       <if test="sortBy != null" >
+	        #{sortBy},
+	      </if>
+	       <if test="levelImageId != null" >
+	        #{levelImageId},
+	      </if>
+	       <if test="levelDesc != null" >
+	        #{levelDesc},
+	      </if>
+	      now()
+	    </trim>
+	  </insert> 
+	
+	
+	<update id="delPrerogativeInfoByConditions" parameterType="java.util.Map">
+	  	update 1dcq_prerogative set is_delete = #{isDelete} where prerogative_id = #{prerogativeId}
+	</update>
+	<delete id="delLevelPrerogativeInfo" parameterType="java.util.Map">
+		DELETE FROM 1dcq_level_prerogative
+		<where>
+			<if test="prerogativeId != null">
+				and prerogative_id = #{prerogativeId} 
+			</if>
+			<if test="levelId != null">
+				and level_id =#{levelId}
+			</if>
+		</where>
+	</delete>
+	
+	<insert id="addLevelPrerogativeInfo" parameterType="java.util.Map">
+		    insert into 1dcq_level_prerogative 
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="levelId != null" >
+	        level_id,
+	      </if>
+	      <if test="prerogativeId != null" >
+	        prerogative_id,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="levelId != null" >
+	        #{levelId,jdbcType=INTEGER},
+	      </if>
+	      <if test="prerogativeId != null" >
+	        #{prerogativeId,jdbcType=INTEGER},
+	      </if>
+	    </trim>
+	</insert>
+	
+	<insert id="insertPointDetail" parameterType="com.idcq.appserver.dto.level.PointDetailDto" useGeneratedKeys="true" keyProperty="point_detail_id">
+ 				 insert into 1dcq_point_detail     
+			    <trim prefix="(" suffix=")" suffixOverrides="," >
+					<if test="bizType != null" >
+			        	biz_type,
+			      	</if>
+			    	<if test="bizId != null" >
+			        	biz_id,
+			      	</if>
+			      	<if test="pointRuleId != null" >
+			        	point_rule_id,
+			      	</if>
+			      	<if test="pointSourceType != null" >
+			        	point_source_type,
+			      	</if>
+			      	<if test="pointSourceId != null" >
+			        	point_source_id,
+			      	</if>
+			      	<if test="pointDetailTitle != null" >
+			        	point_detail_title,
+			      	</if>
+			      	<if test="pointValue != null" >
+			        	point_value,
+			      	</if>
+			      	<if test="pointAferValue != null" >
+			        	point_after_value,
+			      	</if>
+			      	<if test="createTime != null" >
+			        	create_time,
+			      	</if>
+					<if test="operaterId != null" >
+			        	operater_id,
+			      	</if>
+			      	<if test="operaterName != null" >
+			        	operater_name,
+			      	</if>
+			      	<if test="remark != null" >
+			        	remark,
+			      	</if>
+			    </trim>
+			    <trim prefix="values (" suffix=")" suffixOverrides="," >
+					<if test="bizType != null" >
+			        	#{bizType},
+			      	</if>
+			    	<if test="bizId != null" >
+			        	#{bizId},
+			      	</if>
+			      	<if test="pointRuleId != null" >
+			        	#{pointRuleId},
+			      	</if>
+			      	<if test="pointSourceType != null" >
+			        	#{pointSourceType},
+			      	</if>
+			      	<if test="pointSourceId != null" >
+			        	#{pointSourceId},
+			      	</if>
+			      	<if test="pointDetailTitle != null" >
+			        	#{pointDetailTitle},
+			      	</if>
+			      	<if test="pointValue != null" >
+			        	#{pointValue},
+			      	</if>
+			      	<if test="pointAferValue != null" >
+			        	#{pointAferValue},
+			      	</if>
+			      	<if test="createTime != null" >
+			        	#{createTime},
+			      	</if>
+			      	<if test="operaterId != null" >
+			        	#{operaterId},
+			      	</if>
+			      	<if test="operaterName != null" >
+			        	#{operaterName},
+			      	</if>
+			      	<if test="remark != null" >
+			        	#{remark},
+			      	</if>
+			   </trim>
+	</insert>
+	 <update id="updatePrerogativeInfo" parameterType="com.idcq.appserver.dto.level.PrerogativeValidDto">
+	  	update 1dcq_prerogative
+	  	<set>
+	  		<if test="prerogativeType != null">
+		  		prerogative_type = #{prerogativeType},
+		  	</if>
+		  	<if test="prerogativeName != null">
+		  		prerogative_name = #{prerogativeName},
+		  	</if>
+		  	<if test="prerogativeValue != null">
+		  		prerogative_value = #{prerogativeValue},
+		  	</if>
+		  	<if test="prerogativeImageId != null">
+		  		prerogative_image_id = #{prerogativeImageId},
+		  	</if>
+		  	<if test="sortBy != null">
+		  		sort_by = #{sortBy},
+		  	</if>
+		  	<if test="prerogativeDesc != null">
+		  		prerogative_description = #{prerogativeDesc},
+		  	</if>
+		  	<if test="isDelete != null">
+		  		is_delete = #{isDelete},
+		  	</if>
+		  	last_update_time = now() 
+	  	</set>
+	  	where prerogative_id = #{prerogativeId}
+	</update>
+	
+	 <insert id="addPrerogativeInfo" parameterType="com.idcq.appserver.dto.level.PrerogativeValidDto" useGeneratedKeys="true" keyProperty="prerogativeId" >
+   		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="prerogativeId">
+           SELECT LAST_INSERT_ID() AS prerogativeId
+  		</selectKey>
+	    insert into 1dcq_prerogative
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="prerogativeType != null" >
+	        prerogative_type,
+	      </if>
+	      <if test="prerogativeName != null" >
+	        prerogative_name,
+	      </if>
+	      <if test="prerogativeValue != null" >
+	        prerogative_value,
+	      </if>
+	      <if test="sortBy != null" >
+	        sort_by,
+	      </if>
+	      <if test="prerogativeImageId != null" >
+	        prerogative_image_id,
+	      </if>
+	      <if test="prerogativeDesc != null" >
+	        prerogative_description,
+	      </if>
+	       <if test="isDelete != null">
+	       	is_delete,
+	       </if>
+	      create_time,
+	      last_update_time
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="prerogativeType != null" >
+	        #{prerogativeType},
+	      </if>
+	       <if test="prerogativeName != null" >
+	        #{prerogativeName},
+	      </if>
+	       <if test="prerogativeValue != null" >
+	        #{prerogativeValue},
+	      </if>
+	       <if test="sortBy != null" >
+	        #{sortBy},
+	      </if>
+	       <if test="prerogativeImageId != null" >
+	        #{prerogativeImageId},
+	      </if>
+	       <if test="prerogativeDesc != null" >
+	        #{prerogativeDesc},
+	      </if>
+	      <if test="isDelete != null">
+	      	#{isDelete},
+	      </if>
+	      now(),now()
+	    </trim>
+	  </insert>
+	  
+	  <update id="updatePointRule" parameterType="com.idcq.appserver.dto.level.PointRuleValidDto">
+	  	update 1dcq_point_rule
+	  	<set>
+	  		<if test="ruleType != null">
+		  		rule_type = #{ruleType},
+		  	</if>
+		  	<if test="taskType != null">
+		  		task_type = #{taskType},
+		  	</if>
+		  	<if test="subRuleType != null">
+		  		sub_rule_type = #{subRuleType},
+		  	</if>
+		  	<if test="ruleName != null">
+		  		rule_name = #{ruleName},
+		  	</if>
+		  	<if test="pointValue != null">
+		  		point_value = #{pointValue},
+		  	</if>
+		  	<if test="isDelete != null">
+		  		is_delete = #{isDelete},
+		  	</if>
+		  	<if test="ruleDetail != null">
+		  		rule_detail = #{ruleDetail},
+		  	</if>
+		  	last_update_time = now() 
+	  	</set>
+	  	where point_rule_id = #{pointRuleId}
+	</update>
+	
+	<insert id="addPointRule" parameterType="com.idcq.appserver.dto.level.PointRuleValidDto" useGeneratedKeys="true" keyProperty="pointRuleId" >
+   		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="pointRuleId">
+           SELECT LAST_INSERT_ID() AS pointRuleId
+  		</selectKey>
+	    insert into 1dcq_point_rule
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="ruleType != null" >
+	        rule_type,
+	      </if>
+	      <if test="taskType != null" >
+	        task_type,
+	      </if>
+	      <if test="subRuleType != null" >
+	        sub_rule_type,
+	      </if>
+	      <if test="ruleName != null" >
+	        rule_name,
+	      </if>
+	      <if test="pointValue != null" >
+	        point_value,
+	      </if>
+	       <if test="isDelete != null">
+	       	is_delete,
+	       </if>
+	       <if test="ruleDetail != null">
+	       	rule_detail,
+	       </if>
+	      create_time,
+	      last_update_time
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="ruleType != null" >
+	        #{ruleType},
+	      </if>
+	       <if test="taskType != null" >
+	        #{taskType},
+	      </if>
+	       <if test="subRuleType != null" >
+	        #{subRuleType},
+	      </if>
+	       <if test="ruleName != null" >
+	        #{ruleName},
+	      </if>
+	       <if test="pointValue != null" >
+	        #{pointValue},
+	      </if>
+	      <if test="isDelete != null">
+	      	#{isDelete},
+	      </if>
+	       <if test="ruleDetail != null">
+	      	#{ruleDetail},
+	      </if>
+	      now(),now()
+	    </trim>
+	  </insert>
+	  
+	  <select id="getPrerogativeByMap" parameterType="java.util.Map" resultMap="prerogativeResultMap">
+		    select p.prerogative_id,p.prerogative_type,p.prerogative_name,p.prerogative_value, 
+		    p.prerogative_image_id,a.file_url,p.sort_by,p.create_time,p.last_update_time,p.prerogative_description
+		    from 1dcq_prerogative p
+		    inner join 1dcq_level_prerogative lp on p.prerogative_id = lp.prerogative_id
+		    inner join 1dcq_shop s on s.level_id = lp.level_id
+		    left join 1dcq_attachment a on a.attachement_id = p.prerogative_image_id
+		    <where>
+		    	<if test="isDelete != null">
+		    		and p.is_delete = #{isDelete}
+		    	</if>
+		    	<if test="shopId != null ">
+		    		and s.shop_id=#{shopId}
+		    	</if>
+		    </where>
+	   </select>
+	   
+	   <select id="getLevelIdByPrerogativeId" parameterType="java.util.Map" resultType="java.lang.Integer">
+		    select p.level_id
+		    from 1dcq_level_prerogative p
+		    <where>
+		    	<if test="prerogativeId != null ">
+		    		and p.prerogative_id=#{prerogativeId}
+		    	</if>
+		    </where>
+	   </select>
+	   
+	   <select id="getPointDetailValueSum" parameterType="com.idcq.appserver.dto.level.PointDetailDto" resultType="java.lang.Integer">
+			SELECT IFNULL(SUM(point_value),0) 
+			FROM 1dcq_point_detail
+			<where>
+		    	<if test="bizType != null ">
+		    		and biz_type=#{bizType}
+		    	</if>
+		    	<if test="bizId != null ">
+		    		and biz_id=#{bizId}
+		    	</if>
+		    	<if test="pointRuleId != null ">
+		    		and point_rule_id=#{pointRuleId}
+		    	</if>
+		    	<if test="startTime != null ">
+		    		and create_time &gt;= #{startTime}
+		    	</if>
+		    	<if test="endTime != null ">
+		    		and create_time &lt; #{endTime}
+		    	</if>
+		    </where>
+	   </select>
+		
+</mapper>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.activity.BusinessAreaModelDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.activity.BusinessAreaModelDto" >
+    <id column="model_id" property="modelId" jdbcType="INTEGER" />
+    <result column="model_name" property="modelName" jdbcType="VARCHAR" />
+    <result column="model_desc" property="modelDesc" jdbcType="VARCHAR" />
+    <result column="activity_desc_model" property="activityDescModel" jdbcType="VARCHAR" />
+    <result column="activity_protocol_model" property="activityProtocolModel" jdbcType="VARCHAR" />
+    <result column="activity_title_model" property="activityTitleModel" jdbcType="VARCHAR" />
+    <result column="activity_share_title_model" property="activityShareTitleModel" jdbcType="VARCHAR" />
+    <result column="valid_day" property="validDay" jdbcType="SMALLINT" />
+    <result column="activity_rule_modle" property="activityRuleModle" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    model_id, model_name, model_desc, activity_desc_model, activity_protocol_model, activity_title_model, 
+    activity_share_title_model, valid_day,activity_rule_modle, create_time
+  </sql>
+  <select id="getBusinessAreaModelList" resultMap="BaseResultMap" parameterType="com.idcq.appserver.dto.activity.BusinessAreaModelDto" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from 1dcq_business_area_model
+    limit #{n},#{m}
+  </select>
+  <select id="getBusinessAreaModelById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from 1dcq_business_area_model
+    where model_id = #{modelId,jdbcType=INTEGER}
+  </select>
+  <delete id="delBusinessAreaModelById" parameterType="java.lang.Integer" >
+    delete from 1dcq_business_area_model
+    where model_id = #{modelId,jdbcType=INTEGER}
+  </delete>
+  <insert id="addBusinessAreaModel" parameterType="com.idcq.appserver.dto.activity.BusinessAreaModelDto" >
+    insert into 1dcq_business_area_model
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="modelId != null" >
+        model_id,
+      </if>
+      <if test="modelName != null" >
+        model_name,
+      </if>
+      <if test="modelDesc != null" >
+        model_desc,
+      </if>
+      <if test="activityDescModel != null" >
+        activity_desc_model,
+      </if>
+      <if test="activityProtocolModel != null" >
+        activity_protocol_model,
+      </if>
+      <if test="activityTitleModel != null" >
+        activity_title_model,
+      </if>
+      <if test="activityShareTitleModel != null" >
+        activity_share_title_model,
+      </if>
+      <if test="validDay != null" >
+        valid_day,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="modelId != null" >
+        #{modelId,jdbcType=INTEGER},
+      </if>
+      <if test="modelName != null" >
+        #{modelName,jdbcType=VARCHAR},
+      </if>
+      <if test="modelDesc != null" >
+        #{modelDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="activityDescModel != null" >
+        #{activityDescModel,jdbcType=VARCHAR},
+      </if>
+      <if test="activityProtocolModel != null" >
+        #{activityProtocolModel,jdbcType=VARCHAR},
+      </if>
+      <if test="activityTitleModel != null" >
+        #{activityTitleModel,jdbcType=VARCHAR},
+      </if>
+      <if test="activityShareTitleModel != null" >
+        #{activityShareTitleModel,jdbcType=VARCHAR},
+      </if>
+      <if test="validDay != null" >
+        #{validDay,jdbcType=SMALLINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateBusinessAreaModelById" parameterType="com.idcq.appserver.dto.activity.BusinessAreaModelDto" >
+    update 1dcq_business_area_model
+    <set >
+      <if test="modelName != null" >
+        model_name = #{modelName,jdbcType=VARCHAR},
+      </if>
+      <if test="modelDesc != null" >
+        model_desc = #{modelDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="activityDescModel != null" >
+        activity_desc_model = #{activityDescModel,jdbcType=VARCHAR},
+      </if>
+      <if test="activityProtocolModel != null" >
+        activity_protocol_model = #{activityProtocolModel,jdbcType=VARCHAR},
+      </if>
+      <if test="activityTitleModel != null" >
+        activity_title_model = #{activityTitleModel,jdbcType=VARCHAR},
+      </if>
+      <if test="activityShareTitleModel != null" >
+        activity_share_title_model = #{activityShareTitleModel,jdbcType=VARCHAR},
+      </if>
+      <if test="validDay != null" >
+        valid_day = #{validDay,jdbcType=SMALLINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where model_id = #{modelId,jdbcType=INTEGER}
+  </update>
+</mapper>

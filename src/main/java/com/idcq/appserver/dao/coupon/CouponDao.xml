@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.coupon.CouponDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.coupon.CouponDto" >
+    <id column="coupon_id" property="couponId" jdbcType="BIGINT" />
+    <result column="coupon_name" property="couponName" jdbcType="VARCHAR" />
+    <result column="coupon_status" property="couponStatus" jdbcType="TINYINT" />
+    <result column="coupon_desc" property="couponDesc" jdbcType="VARCHAR" />
+    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
+    <result column="goods_id" property="goodsId" jdbcType="BIGINT" />
+    <result column="coupon_img_id" property="couponImgId" jdbcType="BIGINT" />
+    <result column="total_number" property="totalNumber" jdbcType="INTEGER" />
+    <result column="available_number" property="availableNumber" jdbcType="INTEGER" />
+    <result column="used_number" property="usedNumber" jdbcType="INTEGER" />
+    <result column="heat_degree" property="heatDegree" jdbcType="INTEGER" />
+    <result column="city_id" property="cityId" jdbcType="BIGINT" />
+    <result column="value" property="value" jdbcType="INTEGER" />
+    <result column="price" property="price" jdbcType="INTEGER" />
+    <result column="issue_from_date" property="issueFromDate" jdbcType="TIMESTAMP" />
+    <result column="issue_to_date" property="issueToDate" jdbcType="TIMESTAMP" />
+    <result column="obtain_number_per_day_per_person" property="obtainNumberPerDayPerPerson" jdbcType="INTEGER" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="stop_time" property="stopTime" jdbcType="TIMESTAMP" />
+    <!-- 追加关联表字段 -->
+    <result column="shopName" property="shopName" jdbcType="VARCHAR" />
+    <result column="goodsName" property="goodsName" jdbcType="VARCHAR" />
+    <result column="couponImg" property="couponImg" jdbcType="VARCHAR" />
+  </resultMap>
+ 
+  
+  <sql id="Base_Column_List" >
+    coupon_id, coupon_name, coupon_status, coupon_desc, shop_id, goods_id, coupon_img_id, 
+    total_number, available_number, used_number, heat_degree, city_id, value, price, 
+    issue_from_date, issue_to_date, obtain_number_per_day_per_person, start_time, stop_time
+  </sql>
+  
+  <sql id="Alias_Column_List" >
+    t1.coupon_id as coupon_id, t1.coupon_name as coupon_name, 
+    t1.coupon_status as coupon_status, t1.coupon_desc as coupon_desc, 
+    t1.shop_id as shop_id, t1.goods_id as goods_id, 
+    t1.coupon_img_id as coupon_img_id, t1.total_number as total_number, 
+    t1.available_number as available_number, t1.used_number as used_number, 
+    t1.heat_degree as heat_degree, t1.city_id as city_id, 
+    t1.value as value, t1.price as price, 
+    t1.issue_from_date as issue_from_date, 
+    t1.issue_to_date as issue_to_date, t1.obtain_number_per_day_per_person as obtain_number_per_day_per_person, 
+    t1.start_time as start_time, t1.stop_time as stop_time, 
+    t2.goods_name as goodsName,
+    t3.shop_name as shopName, 
+    t4.file_url as couponImg
+  </sql>
+
+  <select id="getCouponList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    <include refid="Alias_Column_List" />
+    from 1dcq_coupon t1
+    inner join  1dcq_goods t2 on t1.goods_id = t2.goods_id
+    and t1.shop_id = #{coupon.shopId,jdbcType=INTEGER}
+    and t1.coupon_status = 1
+    inner join 1dcq_shop t3 on t1.shop_id = t3.shop_id 
+    left join 1dcq_attachment t4 on t1.coupon_img_id = t4.attachement_id
+    order by t1.coupon_id limit #{n},#{m}
+  </select>
+  
+  <select id="getCouponListCount" resultType="java.lang.Integer" parameterType="com.idcq.appserver.dto.coupon.CouponDto" >
+    select count(1)
+    from 1dcq_coupon
+    where shop_id = #{shopId,jdbcType=INTEGER}
+    and coupon_status = 1
+  </select>
+  
+  <select id="getGrapNumByDateRange" resultType="java.lang.Integer" parameterType="java.util.Map" >
+    select count(1)
+    from 1dcq_user_coupon
+    where user_id = #{userId} and coupon_id = #{cpId} and obtain_time > #{startDate} and obtain_time &lt; #{endDate}
+  </select>
+
+  <select id="getCouponDtoById" parameterType="java.util.Map"  resultMap="BaseResultMap">
+    	select 
+    	<include refid="Base_Column_List" />
+    	from 
+    	1dcq_coupon 
+    	where coupon_id=#{couponId}
+    	and start_time &lt;=#{curDate}
+    	and stop_time &gt;=#{curDate}
+  </select>
+  <select id="getCouponById" parameterType="java.lang.Long"  resultMap="BaseResultMap">
+    	select 
+    	<include refid="Base_Column_List" />
+    	from 
+    	1dcq_coupon 
+    	where coupon_id=#{cpId}
+    	and coupon_status = 1
+  </select>
+  <select id="queryCouponExists" parameterType="java.lang.Long"  resultType="java.lang.Long">
+    	select count(1)
+    	from 
+    	1dcq_coupon 
+    	where coupon_id=#{cpId}
+    	and coupon_status = 1
+  </select>
+  
+  	<update id="delCouponAvailNum" parameterType="java.util.Map">
+  		update 1dcq_coupon set available_number = #{num} where coupon_id = #{cpId}
+  	</update>
+  	
+  	<update id="incrCouponUsedNum" parameterType="java.util.Map">
+  		update 1dcq_coupon set used_number = #{num} where coupon_id = #{cpId}
+  	</update>
+  
+  <insert id="insertSelective" parameterType="com.idcq.appserver.dto.coupon.CouponDto" >
+    <!--
+      WARNING - @mbggenerated
+      This element is automatically generated by MyBatis Generator, do not modify.
+      This element was generated on Mon Mar 30 10:36:42 CST 2015.
+    -->
+    insert into 1dcq_coupon
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="couponId != null" >
+        coupon_id,
+      </if>
+      <if test="couponName != null" >
+        coupon_name,
+      </if>
+      <if test="couponStatus != null" >
+        coupon_status,
+      </if>
+      <if test="couponDesc != null" >
+        coupon_desc,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+      <if test="goodsId != null" >
+        goods_id,
+      </if>
+      <if test="couponImgId != null" >
+        coupon_img_id,
+      </if>
+      <if test="totalNumber != null" >
+        total_number,
+      </if>
+      <if test="availableNumber != null" >
+        available_number,
+      </if>
+      <if test="usedNumber != null" >
+        used_number,
+      </if>
+      <if test="heatDegree != null" >
+        heat_degree,
+      </if>
+      <if test="cityId != null" >
+        city_id,
+      </if>
+      <if test="value != null" >
+        value,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="issueFromDate != null" >
+        issue_from_date,
+      </if>
+      <if test="issueToDate != null" >
+        issue_to_date,
+      </if>
+      <if test="obtainNumberPerDayPerPerson != null" >
+        obtain_number_per_day_per_person,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="stopTime != null" >
+        stop_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="couponId != null" >
+        #{couponId,jdbcType=INTEGER},
+      </if>
+      <if test="couponName != null" >
+        #{couponName,jdbcType=VARCHAR},
+      </if>
+      <if test="couponStatus != null" >
+        #{couponStatus,jdbcType=TINYINT},
+      </if>
+      <if test="couponDesc != null" >
+        #{couponDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="couponImgId != null" >
+        #{couponImgId,jdbcType=INTEGER},
+      </if>
+      <if test="totalNumber != null" >
+        #{totalNumber,jdbcType=INTEGER},
+      </if>
+      <if test="availableNumber != null" >
+        #{availableNumber,jdbcType=INTEGER},
+      </if>
+      <if test="usedNumber != null" >
+        #{usedNumber,jdbcType=INTEGER},
+      </if>
+      <if test="heatDegree != null" >
+        #{heatDegree,jdbcType=INTEGER},
+      </if>
+      <if test="cityId != null" >
+        #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="value != null" >
+        #{value},
+      </if>
+      <if test="price != null" >
+        #{price},
+      </if>
+      <if test="issueFromDate != null" >
+        #{issueFromDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="issueToDate != null" >
+        #{issueToDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="obtainNumberPerDayPerPerson != null" >
+        #{obtainNumberPerDayPerPerson,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stopTime != null" >
+        #{stopTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <select id="getUserCouponCountBy" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(1) 
+    	from   1dcq_coupon c
+		inner join  1dcq_user_coupon u
+		  on   c.coupon_id = u.coupon_id
+		where  u.user_id= #{userId,jdbcType=INTEGER}
+		and    u.coupon_status= #{useStatus,jdbcType=INTEGER}
+		and    c.coupon_status = #{couponStatus,jdbcType=INTEGER}
+  </select>
+  
+</mapper>

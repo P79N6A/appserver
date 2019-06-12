@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.region.DistrictDto">
+	<resultMap type="com.idcq.appserver.dto.region.DistrictDto" id="regionMap">
+		<result column="district_id" property="districtId"/>
+		<result column="district_name" property="districtName"/>
+		<result column="city_id" property="cityId"/>
+		<result column="date_created" property="dateCreated"/>
+		<result column="date_updated" property="dateUpdated"/>
+	</resultMap>
+	
+    <select id="getDistricts" parameterType="java.util.Map"  resultMap="regionMap">
+    	select 
+    		district_id, district_name,city_id, date_created, date_updated 
+    	from 1dcq_district 
+    	where 
+    	1=1
+    	<if test="cityId != null">
+    		and city_id = #{cityId}
+    	</if>
+    	<if test="limit != null and pageSize != null">
+    	    	 limit #{limit},#{pageSize}
+    	</if>
+    </select>
+    
+    <select id="getDistrictsTotal" parameterType="java.util.Map" resultType="int">
+    	select count(1) from 1dcq_district
+    	where 
+    	1=1
+    	<if test="cityId != null">
+    		and city_id = #{cityId}
+    	</if>
+  </select>
+  
+    <select id="getById" parameterType="java.lang.Long"  resultMap="regionMap">
+    	select district_id, district_name, city_id, date_created, date_updated from 1dcq_district 
+    	where district_id = #{primaryKeyId}
+    </select>
+    <select id="getAllDistricts" resultType="java.util.Map">
+    	select district_id AS districtId, district_name AS districtName,city_id AS cityId from 1dcq_district 
+    </select>
+    
+    <select id="getDistrictByIdList" resultMap="regionMap">
+    	select district_id,district_name from 1dcq_district 
+    	where district_id in
+    	<foreach collection="districtIdList" item="item" open="(" close=")" separator=",">
+    		#{item}
+    	</foreach>
+    </select>
+</mapper> 
+   

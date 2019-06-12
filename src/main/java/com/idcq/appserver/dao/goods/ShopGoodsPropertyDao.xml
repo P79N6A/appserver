@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.goods.ShopGoodsPropertyDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.goods.ShopGoodsPropertyDto" >
+    <id column="shop_property_id" property="shopPropertyId" />
+    <result column="shop_property_name" property="shopPropertyName" />
+    <result column="sub_property_name" property="subPropertyName" />
+    <result column="shop_id" property="shopId"  />
+    <result column="parent_shop_property_id" property="parentShopPropertyId" />
+    <result column="property_order" property="propertyOrder"  />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    shop_property_id, shop_property_name, sub_property_name, shop_id,parent_shop_property_id,property_order
+  </sql>
+  
+    <select id="getShopGoodsProperty" resultMap="BaseResultMap" parameterType="com.idcq.appserver.dto.goods.ShopGoodsPropertyDto" >
+		    select 
+		  	  <include refid="Base_Column_List" />
+		    from 1dcq_shop_goods_property
+		    where 
+		    (shop_id is null or shop_id = #{shopId})
+	        <if test="shopPropertyId != null">
+	    		and shop_property_id = #{shopPropertyId}
+		    </if>
+		    <if test="shopPropertyName != null">
+			    and shop_property_name = #{shopPropertyName}
+			</if>
+  	</select>
+  	
+  	<insert id="addShopGoodsProperty" parameterType="com.idcq.appserver.dto.goods.ShopGoodsPropertyDto" useGeneratedKeys="true" keyProperty="shopPropertyId">
+	    insert into 1dcq_shop_goods_property
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="shopPropertyName != null" >
+	        shop_property_name,
+	      </if>
+	      <if test="subPropertyName != null" >
+	        sub_property_name,
+	      </if>
+	      <if test="shopId != null" >
+	        shop_id,
+	      </if>
+	      <if test="parentShopPropertyId != null" >
+	        parent_shop_property_id,
+	      </if>
+	      <if test="propertyOrder != null" >
+	        property_order,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="shopPropertyName != null" >
+	        #{shopPropertyName},
+	      </if>
+	      <if test="subPropertyName != null" >
+	        #{subPropertyName},
+	      </if>
+	      <if test="shopId != null" >
+	        #{shopId},
+	      </if>
+	      <if test="parentShopPropertyId != null" >
+	        #{parentShopPropertyId},
+	      </if>
+	      <if test="propertyOrder != null" >
+	        #{propertyOrder},
+	      </if>
+	    </trim>
+  </insert>
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.order.OrderGoodsServiceTech" >
+	<insert id="batchAddOrderGoodsServiceTech" parameterType="java.util.List" >
+		<![CDATA[
+		    insert into 1dcq_order_goods_service_tech (order_goods_id,tech_id)
+			VALUES
+		]]>
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.orderGoodsId,jdbcType=INTEGER,javaType=Integer},
+			 #{item.techID,jdbcType=INTEGER,javaType=Integer})
+		</foreach>
+  </insert>
+  	
+  	<!-- 查询出goods对应的技师服务列表 -->
+  	<select id="getGoodTechs" parameterType="java.lang.String" resultType="com.idcq.appserver.dto.shop.ShopTechnicianDto">
+  		SELECT 
+		  st.technician_id techId,
+		  st.technician_name techName,
+		  st.work_number workNumber
+		FROM
+		  1dcq_order_goods_service_tech ogst,
+		  1dcq_shop_technician st 
+		  WHERE st.technician_id=ogst.tech_id
+		  AND ogst.order_goods_id=#{goodsId}
+		ORDER BY st.technician_id DESC
+  	</select>
+  
+</mapper>

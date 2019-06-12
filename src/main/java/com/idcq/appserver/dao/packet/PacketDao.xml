@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.packet.RedPacket" >
+    <resultMap type="com.idcq.appserver.dto.packet.RedPacket" id="RedPacketMap">
+		<result column="red_packet_id" property="redPacketId"/>
+		<result column="user_id" property="userId"/>
+		<result column="amount" property="amount"/>
+		<result column="price" property="price"/>
+		<result column="give_user_id" property="giveUserId"/>
+		<result column="create_time" property="createTime"/>
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="status" property="status"/>
+		<result column="obtain_desc" property="obtainDesc"/>
+		<result column="begin_date" property="beginDate"/>
+		<result column="end_date" property="endDate"/>
+		<result column="shop_id" property="shopId"/>
+		<result column="business_area_activity_id" property="businessAreaActivityId"/>
+		<result column="client_system_type" property="clientSystemType"/>
+	</resultMap>
+     <sql id="Base_Column_List" >
+        rp.red_packet_id,
+	    rp.user_id, 
+	    rp.amount, 
+	    rp.price, 
+	    rp.give_user_id,
+	    rp.create_time, 
+	    rp.source_order_id, 
+	    rp.status,
+	    rp.obtain_desc,
+	    rp.begin_date, 
+	    rp.end_date, 
+	    rp.shop_id, 
+	    rp.business_area_activity_id, 
+	    rp.client_system_type
+  	</sql>
+    
+	<!-- 根据编号获取红包信息 -->
+	<select id="queryRedPacketById" resultMap="RedPacketMap" parameterType="java.lang.Long">
+		SELECT
+		 <include refid="Base_Column_List" />
+		FROM
+			1dcq_red_packet rp
+		WHERE
+			red_packet_id =#{redPacketId}
+	</select>
+	
+  <select id="getRedPacketByIds" parameterType="java.util.Map" >
+   	SELECT
+		 <include refid="Base_Column_List" />
+		FROM
+			1dcq_red_packet
+     where red_packet_id IN 
+        <foreach collection="redPacketIds" open="(" close=")" separator="," item="item">
+	        #{item}
+	    </foreach>
+	 ORDER BY end_date ASC
+  </select>
+  
+	<!-- 根据红包编号集合查询红包信息 -->
+	<select id="queryRedPacketByIds" resultType="java.util.Map" parameterType="java.util.List">
+		SELECT
+			rp.red_packet_id,
+			rp.amount,
+			rp.owner_id,
+			rp.use_flag,
+			rp.start_time,
+			rp.stop_time,
+			s.shop_status,
+			s.shop_id
+		FROM
+			1dcq_red_packet rp
+		LEFT JOIN 1dcq_shop s ON rp.shop_id = s.shop_id
+		WHERE
+			rp.red_packet_id in
+		<foreach collection="list" index="redPacketId" close=")" open="(" separator=",">
+			#{redPacketId}
+		</foreach>
+	</select>
+	<!-- 查询用户是否存在 -->
+	<select id="queryUserInfo" resultType="java.lang.Integer" parameterType="java.lang.Long">
+		SELECT
+			COUNT(1)
+		FROM
+			1dcq_user u
+		WHERE
+			u.user_id = #{userId} AND u.`status` = 1
+	</select>
+	<select id="queryOrderIsExists" resultType="java.util.Map" parameterType="java.util.Map">
+<!-- 		select count(1) from 1dcq_order where order_id = #{orderId} and user_id = #{userId} -->
+<!-- 		select pay_status,cast(order_status as signed) as order_status from 1dcq_order where order_id = #{orderId} and user_id = #{userId} -->
+		SELECT
+			o.order_id,
+			o.shop_id,
+			o.pay_status,
+			o.order_title,
+			cast(o.order_status AS signed) AS order_status,
+			s.shop_status
+		FROM
+			1dcq_order o
+		INNER JOIN 1dcq_shop s on o.shop_id = s.shop_id
+		WHERE
+			o.order_id = #{orderId}
+		AND o.user_id = #{userId}
+	</select>
+	
+	<!-- 查询订单实际需要支付金额 -->
+	<select id="queryOrderAmount" resultType="java.math.BigDecimal" parameterType="java.lang.String">
+		select ifnull(round(settle_price,2),0) settle_price from 1dcq_order where order_id = #{orderId}
+	</select>
+	
+	<!-- 查询非会员订单实际需要支付金额  -->
+	<select id="queryXorderAmount" resultType="java.math.BigDecimal" parameterType="java.lang.String">
+		select ifnull(round(settle_price,2),0) settle_price from 1dcq_xorder where xorder_id = #{orderId}
+	</select>
+	
+	<!-- 查询订单已经实际支付金额 -->
+	<select id="queryOrderPayAmount" resultType="java.math.BigDecimal" parameterType="java.util.Map">
+		select ifnull(round(sum(pay_amount),2),0) as pay_amount from 1dcq_order_pay 
+		where order_id = #{orderId}
+		<if test="orderPayType != null">
+			and order_pay_type=#{orderPayType}
+		</if>
+		AND pay_status = 1
+	</select>
+	
+	<!-- 查询非会员订单已经实际支付金额 -->
+	<select id="queryXorderPayAmount" resultType="java.math.BigDecimal" parameterType="java.util.Map">
+		select ifnull(round(sum(pay_amount),2),0) as xpay_amount from 1dcq_xorder_pay 
+		where xorder_id = #{orderId}
+		<if test="orderPayType != null">
+			and order_pay_type=#{orderPayType}
+		</if>
+	</select>
+	
+	<!-- 用户获取红包，将红包的持有者修改为当前用户 -->
+	<update id="obtainRedPacket" parameterType="java.util.Map">
+		update 1dcq_red_packet rp set rp.owner_id = #{userId},rp.obtain_time = #{obtainTime} where rp.red_packet_id = #{redPacketId} and rp.red_packet_batch_no = #{batchNo}
+	</update>
+	<!-- 修改红包使用标记 -->
+	<update id="updateRedPacketFlag" parameterType="java.util.Map">
+		update 1dcq_red_packet rp 
+		set <if test="status != null">
+		     rp.status = #{status}, 
+		   </if>
+		amount = amount + #{payAmount} 
+		where rp.red_packet_id = #{redPacketId}
+	</update>
+	<!-- 如果使用红包支付时，订单已经完成支付，更新订单支付状态 -->
+	<update id="updateOrderStatus" parameterType="java.util.Map">
+		update 1dcq_order set pay_status = 1 where order_id = #{orderId}
+	</update>
+	<update id="updateOrderStatusByOrderId" parameterType="java.lang.String">
+		update 1dcq_order set pay_status = 1 where order_id = #{orderId}
+	</update>
+	<insert id="insertOrderPay" parameterType="java.util.Map">
+		insert into 1dcq_order_pay(order_id,pay_type,pay_id,pay_amount,order_pay_type,order_pay_time,last_update_time,payee_type) 
+		values(#{orderId},#{payType},#{redPacketId},#{amount},#{orderPayType},#{orderPayTime},#{lastUpdateTime},#{payeeType})
+	</insert>
+	<!-- 根据用户id和状态查询红包数量 -->
+	<select id="getPacketCountBy" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select  count(1) from 1dcq_red_packet where user_id = #{userId} and status = #{status}
+	</select>
+	<select id="queryShopRedPacketsByGroup" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			rp.shop_id AS shopId,
+			rp.amount,
+			count(1) AS number
+		FROM
+			1dcq_red_packet rp
+		WHERE
+			rp.owner_id = #{userId} 
+		AND rp.use_flag = #{useFlag}
+		GROUP BY
+			rp.shop_id,
+			rp.amount
+		ORDER BY
+			rp.obtain_time DESC
+		LIMIT #{stNo},#{pSize}
+	</select>
+	<select id="queryShopRedPacketsByGroupCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) as number from (
+			select 
+				1
+			from 1dcq_red_packet rp 
+			where rp.owner_id = #{userId} 
+			and rp.use_flag = #{useFlag} 
+			group by rp.shop_id,rp.amount
+		) tmp
+	</select>
+	<!-- 查询用户所有可用红包 -->
+	<select id="queryRedPackets" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			rp.red_packet_id as redPacketId,
+			rp.obtain_time as obtainTime,
+			rp.red_packet_batch_no as redPacketBatchNo,
+			rp.shop_id,rp.amount
+		from 1dcq_red_packet rp 
+		<where>
+			<if test="shopIds != null">
+				(rp.shop_id in
+				<foreach collection="shopIds" item="shopId" open="(" close=")" separator=",">
+					#{shopId}
+				</foreach>
+				or rp.shop_id is null)
+			</if>
+			and rp.owner_id = #{userId} 
+			and rp.use_flag = #{useFlag} 
+		</where>
+	</select>
+	<!-- 根据用户id和状态查询红包总金额 -->
+	<select id="getPacketAmountBy" resultType="java.lang.Double" parameterType="java.util.Map">
+		select ifnull(sum(amount),0) from 1dcq_red_packet where owner_id = #{userId} and use_flag = #{status}
+	</select>
+	
+	<!-- 红包支付 -->
+	<!-- 查询红包支持商铺，为空则支持所有 -->
+	<select id="queryPacketApplyShopByPacketId" resultType="java.lang.Integer" parameterType="java.lang.Long">
+		select rps.shop_id from 1dcq_red_packet rp 
+		left join 1dcq_red_packet_shop rps on rps.red_packet_id = rp.red_packet_id
+		where rp.red_packet_id = #{redPacketId}
+	</select>
+	<!-- 查询订单组中订单商品来源商铺 -->
+	<select id="queryShopByOrderGroupId" resultType="java.util.Map" parameterType="java.lang.String">
+		select s.shop_id,ogs.goods_id,ogs.goods_settle_price from 1dcq_order_group og
+		inner join 1dcq_order o on og.order_id = o.order_id
+		inner join 1dcq_order_goods ogs on ogs.order_id = o.order_id
+		inner join 1dcq_shop s on ogs.shop_id = s.shop_id
+		where order_group_id = #{groupId}
+	</select>
+	<select id="queryRedPacketIdByBatchNo" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT
+			rp.red_packet_id,
+			rp.amount,
+			rp.owner_id,
+			rp.use_flag,
+			rp.start_time,
+			rp.stop_time,
+			rp.shop_id
+		FROM
+			1dcq_red_packet rp
+		WHERE
+			rp.red_packet_batch_no = #{batchNo}
+		AND rp.owner_id IS NULL
+		LIMIT 1
+	</select>
+	
+	<!-- 查询商铺红包 -->
+	<select id="queryShopRedPackets" resultType="java.util.Map" parameterType="java.util.Map">
+		<![CDATA[
+			SELECT
+				rp.amount,
+				rp.red_packet_batch_no AS redPacketBatchNo
+			FROM
+				1dcq_red_packet rp
+			WHERE
+				rp.shop_id = #{shopId}
+			AND rp.owner_id IS NULL
+			AND rp.start_time <= #{nowTime}
+			AND rp.stop_time >= #{nowTime}
+			GROUP BY
+				rp.red_packet_batch_no
+			LIMIT #{stNo},#{pSize}
+		]]>
+	</select>
+	<select id="queryShopRedPacketsCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		<![CDATA[
+			SELECT
+				count(1)
+			FROM
+				(
+					SELECT
+						1
+					FROM
+						1dcq_red_packet rp
+					WHERE
+						rp.shop_id = #{shopId}
+					AND rp.owner_id IS NULL
+					AND rp.start_time <= #{nowTime}
+					AND rp.stop_time >= #{nowTime}
+					GROUP BY
+						rp.red_packet_batch_no
+				) tmp
+		]]>
+	</select>
+	<insert id="insertRedPacket" parameterType="java.util.List">
+		INSERT INTO 1dcq_red_packet(amount,owner_id,obtain_time,use_flag,obtain_desc,red_packet_batch_no,start_time,stop_time,shop_id) VALUES
+		<foreach collection="list" item="red" close="" open="" separator=",">
+			(#{red.amount},#{red.owner_id},#{red.obtain_time},#{red.use_flag},#{red.obtain_desc},
+			#{red.red_packet_batch_no},#{red.start_time},#{red.stop_time},#{red.shop_id})
+		</foreach>
+	</insert>
+	
+	<insert id="addRedPacket" parameterType="com.idcq.appserver.dto.packet.RedPacket" useGeneratedKeys="true">
+	<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="redPacketId">
+            SELECT LAST_INSERT_ID() AS redPacketId
+   </selectKey>
+    insert into 1dcq_red_packet
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="giveUserId != null" >
+        give_user_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="sourceOrderId != null" >
+        source_order_id,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="obtainDesc != null" >
+        obtain_desc,
+      </if>
+      <if test="beginDate != null" >
+        begin_date,
+      </if>
+      <if test="endDate != null" >
+        end_date,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+      <if test="businessAreaActivityId != null" >
+        business_area_activity_id,
+      </if>
+        <if test="clientSystemType != null" >
+        client_system_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId},
+      </if>
+      <if test="amount != null" >
+        #{amount},
+      </if>
+      <if test="price != null" >
+        #{price},
+      </if>
+      <if test="giveUserId != null" >
+        #{giveUserId},
+      </if>
+      <if test="createTime != null" >
+        #{createTime},
+      </if>
+      <if test="sourceOrderId != null" >
+        #{sourceOrderId},
+      </if>
+      <if test="status != null" >
+        #{status},
+      </if>
+      <if test="obtainDesc != null" >
+        #{obtainDesc},
+      </if>
+      <if test="beginDate != null" >
+        #{beginDate},
+      </if>
+      <if test="endDate != null" >
+        #{endDate},
+      </if>
+      <if test="shopId != null" >
+        #{shopId},
+      </if>
+      <if test="businessAreaActivityId != null" >
+        #{businessAreaActivityId},
+      </if>
+      <if test="clientSystemType != null" >
+        #{clientSystemType},
+      </if>
+    </trim>
+  </insert>
+  
+	<select id="getRedPacketBy" resultMap="RedPacketMap" parameterType="java.util.Map">
+	    SELECT <include refid="Base_Column_List" /> 
+	    FROM 1dcq_red_packet rp 
+	    INNER JOIN 1dcq_business_area_shop bas ON rp.business_area_activity_id = bas.business_area_activity_id
+	    WHERE bas.shop_id = #{shopId} 
+	    AND rp.user_id = #{userId} 
+	    AND rp.status = #{status} 
+	</select>
+	
+	<select id="getRedPacketAmountBy" resultType="java.lang.Double" parameterType="java.util.Map">
+	    SELECT IFNULL(SUM(amount),0) 
+	    FROM 1dcq_red_packet rp 
+	    INNER JOIN 1dcq_business_area_shop bas 
+	    ON rp.business_area_activity_id = bas.business_area_activity_id
+	    WHERE bas.shop_id = #{shopId} 
+	    AND rp.user_id = #{userId} 
+	    AND rp.status = #{status} 
+	    order by end_date
+	</select>
+	
+	<select id="getRedPacketByOrderId" resultMap="RedPacketMap" parameterType="java.lang.String">
+		SELECT
+		 <include refid="Base_Column_List" />
+		FROM
+			1dcq_red_packet rp
+		WHERE
+			source_order_id =#{orderId}
+		limit 1
+	</select>
+</mapper>

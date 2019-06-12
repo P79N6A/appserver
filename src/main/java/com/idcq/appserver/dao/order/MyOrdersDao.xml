@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.order.MyOrdersDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.order.MyOrdersDto" >
+    <id column="order_id" property="orderId" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="order_type" property="orderType" jdbcType="INTEGER" />
+    <result column="order_time" property="orderTime" jdbcType="TIMESTAMP" />
+    <result column="pay_status" property="payStatus" jdbcType="TINYINT" />
+    <result column="order_total_price" property="orderTotalPrice" jdbcType="DECIMAL" />
+    <result column="settle_price" property="settlePrice" jdbcType="DECIMAL" />
+    <result column="order_service_type" property="orderServiceType" jdbcType="BIT" />
+    <result column="distribution_type" property="distributionType" jdbcType="BIT" />
+    <result column="distribution_time" property="distributionTime" jdbcType="TIMESTAMP" />
+    <result column="pay_time_type" property="payTimeType" jdbcType="BIT" />
+    <result column="address_id" property="addressId" jdbcType="INTEGER" />
+    <result column="prepay_money" property="prepayMoney" jdbcType="DECIMAL" />
+    <result column="service_time_from" property="serviceTimeFrom" jdbcType="TIMESTAMP" />
+    <result column="service_time_to" property="serviceTimeTo" jdbcType="TIMESTAMP" />
+     <result column="order_title" property="orderTitle" jdbcType="VARCHAR" />
+     <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+      <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+     <result column="order_scene_type" property="orderSceneType" jdbcType="INTEGER" />
+     <result column="logistics_price" property="logisticsPrice" jdbcType="DECIMAL" />
+     <result column="user_remark" property="userRemark" jdbcType="VARCHAR" />
+      <result column="order_status" property="orderStatus" jdbcType="INTEGER" />
+        <result column="goods_price_before_discount" property="goodsPriceBeforeDiscount" jdbcType="DECIMAL" />
+   <result column="goods_price" property="goodsPrice" jdbcType="DECIMAL" />
+     <result column="order_goods_number" property="goodsNumber" jdbcType="INTEGER" />
+      <result column="is_comment" property="isComment" jdbcType="INTEGER" />
+           <result column="refuse_reason" property="refuseReason" jdbcType="VARCHAR" />
+       <result column="orderOriginalPrice" property="orderOriginalPrice" />
+   
+    <!-- by 4.27 我的订单不需要展示商品信息
+    <collection property="goods" ofType="com.idcq.appserver.dto.order.OrderShopGoodsDto" column="order_id" >
+	     <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+	    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+	    <result column="goods_number" property="goodsNumber" jdbcType="DOUBLE" />
+	    <result column="goods_index" property="goodsIndex" jdbcType="INTEGER" />
+	    <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+	    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+	    <result column="standard_price" property="unitPrice" jdbcType="DECIMAL" />
+	    <result column="file_url" property="goodsImg" jdbcType="VARCHAR" />
+      </collection> 
+      -->
+  </resultMap>
+  
+  <resultMap id="OrderShopGoodsMap" type="com.idcq.appserver.dto.order.OrderShopGoodsDto" >
+    <id column="order_id" property="orderId" jdbcType="VARCHAR" />
+    <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="goods_number" property="goodsNumber" jdbcType="DOUBLE" />
+    <result column="goods_index" property="goodsIndex" jdbcType="INTEGER" />
+    <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+    <result column="standard_price" property="unitPrice" jdbcType="DECIMAL" />
+    <result column="file_url" property="goodsImg" jdbcType="VARCHAR" />
+   
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    o.order_id, o.user_id, o.order_type, o.order_time, o.pay_status, o.order_total_price, o.order_service_type,
+    o.distribution_type, o.distribution_time, o.pay_time_type, o.address_id, o.prepay_money, o.service_time_from, 
+    o.service_time_to, o.order_title,o.shop_id,o.order_scene_type,o.logistics_price,o.user_remark,o.order_status,
+    o.goods_price,o.goods_price_before_discount,o.settle_price,o.order_goods_number,o.is_comment,o.refuse_reason,
+    o.goods_price_before_discount + o.logistics_price as orderOriginalPrice
+  </sql>
+ 
+ 
+  <select id="getMyOrders" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from 1dcq_order o 
+    where o.user_id = #{userId}
+    <if test="queryStatus == 0">
+      and o.order_status in (0, 8, 9)
+    </if>
+    <if test="queryStatus == 1">
+         and o.order_status in (1, 2) 
+    </if>
+     <if test="queryStatus == 2">
+         and o.order_status = 3 
+         and o.is_comment = 0
+    </if>
+	<if test="queryStatus == 3">
+	     and o.order_status in (4, 5)
+	</if>
+	<if test="queryStatus == 5">
+	     and
+	     	o.order_status in (0,1,2,9)
+	     and
+	     	o.pay_status = 0
+	</if>
+	<if test="orderStatus != null">
+ 		    AND order_status IN 
+ 		    <foreach collection="orderStatus" open="(" close=")" separator="," item="item">
+ 		        #{item}
+ 		    </foreach>
+ 	</if>
+ 	<if test="pay_status != null">
+ 		    AND pay_status IN 
+ 		  <foreach collection="payStatus" open="(" close=")" separator="," item="item">
+ 		        #{item}
+ 		  </foreach>
+ 	</if>
+ 	<if test="deleteType != null">
+ 		    AND o.delete_type IN 
+ 		    <foreach collection="deleteType" open="(" close=")" separator="," item="item">
+ 		        #{item}
+ 		    </foreach>
+ 	</if>
+ 		<if test="queryPayCodeFlag == 1">
+ 		    AND o.pay_code is null
+ 		    AND o.order_type not in (3,4,5,6,7) 
+ 	</if>
+   order by o.last_update_time desc
+    limit #{n},#{m}
+  </select>     
+    <select id="getMyOrdersCount" resultType="int" parameterType="java.util.Map" >
+   select count(1)
+    from 1dcq_order o 
+    where o.user_id = #{userId}
+    <if test="queryStatus == 0">
+      and o.order_status in (0, 8, 9)
+    </if>
+    <if test="queryStatus == 1">
+         and o.order_status in (1, 2) 
+    </if>
+     <if test="queryStatus == 2">
+         and o.order_status = 3 
+         and o.is_comment = 0
+    </if>
+	<if test="queryStatus == 3">
+	     and o.order_status in (4, 5)
+	</if>
+	<if test="queryStatus == 5">
+	     and
+	     	o.order_status in (0,1,2,9)
+	     and
+	     	o.pay_status = 0
+	</if>
+	<if test="orderStatus != null">
+ 		    AND order_status IN 
+ 		    <foreach collection="orderStatus" open="(" close=")" separator="," item="item">
+ 		        #{item}
+ 		    </foreach>
+ 	</if>
+ 	<if test="pay_status != null">
+ 		    AND pay_status IN 
+ 		  <foreach collection="payStatus" open="(" close=")" separator="," item="item">
+ 		        #{item}
+ 		  </foreach>
+ 	</if>
+ 	<if test="deleteType != null">
+ 		    AND o.delete_type IN 
+ 		    <foreach collection="deleteType" open="(" close=")" separator="," item="item">
+ 		        #{item}
+ 		    </foreach>
+ 	</if>
+ 	<if test="queryPayCodeFlag == 1">
+ 		    AND o.pay_code is null 
+ 		    AND o.order_type not in (3,4,5,6,7) 
+ 	</if>
+  </select>
+  
+  <!-- 采用联合查询替换
+    <select id="getMyOrders" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from 1dcq_order o 
+    inner join 1dcq_order_goods og
+      on o.order_id = og.order_id
+    where o.user_id = #{userId}
+      and o.order_status = #{orderStatus}
+   group by o.order_id    
+   order by o.order_time desc
+    limit #{n},#{m}
+  </select>     
+  <select id="getMyOrdersCount" resultType="int" parameterType="java.util.Map" >
+   select count(1)
+   from (
+   select 1
+    from 1dcq_order o 
+   inner join 1dcq_order_goods og
+      on o.order_id = og.order_id
+    where o.user_id = #{userId}
+      and o.order_status = #{orderStatus}
+   group by o.order_id ) a
+  </select>
+   -->
+  <sql id="Base_OrderShopGoods_Column_List" >
+   og.shop_id, og.goods_id, og.goods_number, og.goods_index, s.shop_name, g.goods_name, g.standard_price, a.file_url
+  </sql>
+  
+  <select id="getShopGoodsByOrderId" resultMap="OrderShopGoodsMap" parameterType="java.lang.String" >
+   select
+    <include refid="Base_OrderShopGoods_Column_List" />
+    from 1dcq_order_goods og
+    inner join 1dcq_shop s
+      on s.shop_id = og.shop_id
+    inner join 1dcq_goods g
+      on g.goods_id = og.goods_id
+    left join 1dcq_attachment a
+      on g.unit_id = a.attachement_id
+    where og.order_id = #{orderId}
+  </select>    
+  
+  <select id="getShopNameByShopId" resultType="java.util.Map" parameterType="java.lang.Long">
+  select shop_name as shopName, ifnull(member_discount,0) as memberDiscount, column_id as columnId from 1dcq_shop where shop_id = #{shopId}
+  </select> 
+  
+  <select id="getMyOrderNumber" resultType="java.util.Map" parameterType="java.lang.Long">
+     select cast(o.order_status as signed) as orderStatus,
+            count(1) as number
+      from 1dcq_order o 
+     where o.user_id = #{userId} 
+       and o.delete_type in (0, 2)
+       and o.is_comment <![CDATA[ <> 1]]>
+     group by o.order_status
+  </select> 
+  
+  <!-- 不需要展示给用户的订单个数 -->
+  <select id="getFiterOrderNum" resultType="java.lang.Integer" parameterType="java.lang.Long">
+ select count(1)
+   from 1dcq_order 
+  where user_id = #{userId}
+    and pay_status != 1 
+    and prepay_money <![CDATA[ >0]]>
+    and order_scene_type = 1 
+    and order_status = 0 
+    and order_type = 0 
+  </select> 
+  
+  <select id="getOrderGoodsNum" resultType="java.lang.Integer" parameterType="java.lang.String">
+     select ifnull(sum(o.goods_number), 0) from 1dcq_order_goods o where o.order_id = #{orderId} 
+  </select> 
+  
+</mapper>

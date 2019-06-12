@@ -1,0 +1,663 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.goods.ShopGoodsDto">
+	<resultMap type="com.idcq.appserver.dto.goods.ShopGoodsDto" id="shopGoodsMap">
+		<result column="goods_id" property="goodsId"/>
+		<result column="goods_name" property="goodsName"/>
+		<result column="goods_type" property="goodsType"/>
+		<result column="goods_no" property="goodsNo"/>
+		<result column="sequence" property="index"/>
+		<result column="goodsLogo1" property="goodsLogo1"/>
+		<result column="goodsLogo2" property="goodsLogo2"/>
+		<result column="sold_number" property="soldNumber"/>
+		<result column="zan_number" property="zanNumber"/>
+		<result column="standard_price" property="standardPrice"/>
+		<result column="discount_price" property="discountPrice"/>
+		<result column="vip_price" property="vipPrice"/>
+		<result column="final_price" property="finalPrice"/>
+		<result column="unit" property="unit"/>
+		<!-- added -->
+		<result column="goods_category_id" property="goodsCategoryId"/>
+		<result column="category_name" property="goodsCategoryName"/>
+		<result column="goods_desc" property="goodsDesc"/>
+		<result column="goods_detail_desc" property="goodsDetailDesc"/>
+		<result column="taste" property="taste"/>
+		<result column="spiciness" property="spiciness"/>
+		<result column="is_expert" property="isExpert"/>
+		<result column="expert_ids" property="expertIds"/>
+		<result column="goods_settle_flag" property="goodsSettleFlag"/>
+		<result column="goods_server_mode" property="goodsServerMode"/>
+		<result column="takeout" property="takeout"/>
+		<result column="use_time" property="useTime"/>
+		<result column="keep_time" property="keepTime"/>
+		<result column="goods_group_id" property="goodsGroupId"/>
+		<result column="goods_status" property="goodsStatus"/>
+		<result column="member_discount" property="memberDiscount"/>
+		<result column="is_support_market_prices" property="isSupportMarketPrices"/>
+		<result column="specs_desc" property="specsDesc"/>
+		<result column="unit" property="unitName"/>
+		<result column="storage_total_number" property="storageTotalNumber"/>
+		<result column="alarm_number_max" property="alarmNumberMax"/>
+		<result column="alarm_number_min" property="alarmNumberMin"/>
+		<result column="pinyinCode" property="pinyinCode"/>
+		<result column="barcode" property="barcode"/>
+		<result column="digit_scale" property="digitScale"/>
+		<result column="unit_id" property="unitId"/>
+		<!-- 添加 20160719 -->
+		<result column="min_price" property="minPrice"/>
+		<result column="max_price" property="maxPrice"/>
+		<result column="cost_price" property="costPrice"/>
+		<result column="goods_price_spec" property="goodsPriceSpec"/>
+		<result column="goods_pro_values_ids" property="goodsProValuesIds"/>
+		<result column="goods_pro_values_names" property="goodsProValuesNames" />
+         <result column="is_order_discount" property="isOrderDiscount"/>
+         <result column="shop_id" property="shopId" />
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+    	a.goods_id,a.barcode, a.goods_type,a.sequence, a.goods_name, a.pinyinCode,
+    	a.standard_price, a.discount_price, a.vip_price, a.final_price, 
+    	a.goods_no, a.zan_number, a.sold_number,
+    	a.unit_name as unit,c.file_url as goodsLogo1,d.file_url as goodsLogo2,a.goods_settle_flag,a.goods_server_mode,a.takeout,a.goods_group_id,a.goods_status,
+    	a.is_support_market_prices,a.storage_total_number, a.alarm_number_max, a.alarm_number_min, g.category_name,g.goods_category_id
+  	</sql>
+	<sql id="Base_Column_List_Detail" >
+    	a.goods_id, a.goods_type,a.sequence, a.goods_name, 
+    	a.standard_price, a.discount_price, a.vip_price, a.final_price, 
+    	a.goods_no, a.zan_number, a.sold_number,a.goods_category_id,a.goods_desc,
+    	a.goods_detail_desc,a.taste,a.spiciness,a.is_expert,a.expert_ids,
+    	a.unit_name as unit, a.shop_id,
+    	a.storage_total_number, a.alarm_number_max, a.alarm_number_min,
+    	e.category_name,a.goods_settle_flag,a.use_time,a.keep_time,a.goods_server_mode,
+    	a.is_support_market_prices,a.specs_desc,a.goods_status,
+    	a.cost_price,goods_pro_values_ids,goods_pro_values_names,
+    	a.goods_price_spec,a.is_order_discount
+  	</sql>
+	
+	
+   <!--  <select id="getListShopGoods" parameterType="java.util.Map"  resultMap="shopGoodsMap">
+    	select 
+    	<include refid="Base_Column_List" />,ifnull(b.digit_scale,0) as digit_scale,a.unit_id as unit_id
+    	from 1dcq_goods a
+    	left join 1dcq_goods_unit b
+    	on a.unit_id=b.unit_id
+    	left join 1dcq_attachment c
+    	on a.goods_logo1=c.attachement_id
+    	left join 1dcq_attachment d
+    	on a.goods_logo2=d.attachement_id
+    	left join 1dcq_goods_category g
+    	on a.goods_category_id=g.goods_category_id
+    	where a.shop_id = #{shopId} and a.is_show=1 and (a.goods_group_id is null or a.goods_group_id = 0)
+    	<if test='goodsCategoryId!=null'>
+    	and a.goods_category_id in (${goodsCategoryId})
+    	</if>
+    	<if test='goodsServerMode!=null'>
+    	and a.goods_server_mode in (${goodsServerMode})
+    	</if>
+    	<if test="goodsType!=0">
+    		and a.goods_type=#{goodsType}
+    	</if>
+    	<if test="goodsName!=null">
+    		and (a.goods_name like concat('%',#{goodsName},'%') or a.pinyinCode like concat('%',#{goodsName},'%'))
+    	</if>
+    	<if test="goodsStatus==99">
+    		and ( a.goods_status=0 OR a.goods_status=1)
+    	</if>
+    	<if test="goodsStatus!=99">
+    		and a.goods_status=#{goodsStatus}
+    	</if>
+    	<if test="isNeedCheck!=null">
+    		and a.is_need_check=#{isNeedCheck}
+    	</if>
+    	<if test="null != pinyinCode">
+    		and a.pinyinCode like concat('%',#{pinyinCode},'%')
+    	</if>
+    	<if test="storageAlarmType == 1">
+    	    <![CDATA[ and if(a.alarm_number_max is null,0,a.alarm_number_max) < if(a.storage_total_number is null,0,a.storage_total_number) ]]>
+    	</if> 
+    	<if test="storageAlarmType == 2">
+    	   <![CDATA[ and if(a.alarm_number_min is null,0,a.alarm_number_min) > if(a.storage_total_number is null,0,a.storage_total_number) ]]>
+    	</if>
+    	<if test="storageAlarmType == 3">
+    		<![CDATA[ and ((if(a.alarm_number_max is null,0,a.alarm_number_max) < if(a.storage_total_number is null,0,a.storage_total_number))
+    			or (if(a.alarm_number_min is null,0,a.alarm_number_min) > if(a.storage_total_number is null,0,a.storage_total_number)))
+    		 ]]>
+    	</if>
+    	<if test="storageNum != null">
+    		<![CDATA[ and ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+    	</if>  
+    	<if test="queryData != NULL">
+				and (
+					a.goods_name like concat('%',#{queryData},'%')
+					or 
+					a.pinyinCode like concat('%',#{queryData},'%')
+					or 
+					a.goods_no like concat('%',#{queryData},'%')
+					or 
+					a.barcode = #{queryData}
+				)
+		</if>
+		<if test="barcode != null">
+			and a.barcode = #{barcode}
+		</if>
+    	<if test='orderBy==0'> 热门
+    	order by hot_flag desc
+    	</if>
+    	<if test='orderBy==1'> 推荐
+    	order by recommend_flag  desc
+    	</if>
+    	<if test="orderBy==2">
+    		order by a.sequence desc, a.create_time  desc
+    	</if>
+    	<if test="orderBy == 3 ">按商品名称
+    		order by CONVERT(a.goods_name USING gbk )
+    	</if>
+    	<if test="orderBy == 4 ">商品销量
+    		order by a.sold_number
+    	</if>
+    	<if test="orderBy == 5 ">商品库存
+    		order by a.storage_total_number
+    	</if>
+    	<if test="orderBy == 6 ">最后修改时间
+    		order by a.last_update_time
+    	</if>
+    	<if test="orderBy == 3 or orderBy ==4 or orderBy == 5 or orderBy == 6">
+    		<if test="orderByMode == 0">
+    			desc
+    		</if>
+    		<if test="orderByMode == 1">
+    			asc
+    		</if>
+    	</if>
+    	limit #{n},#{m}
+    </select> -->
+    
+    <!-- TODO 查询商品族以及商品列表信息 -->
+     <select id="getListShopGoods" parameterType="java.util.Map"  resultMap="shopGoodsMap">
+    	select * from 
+    	(
+    		<if test="searchRange != null and (searchRange == 2 or  searchRange == 3 )">
+		    	select gp.goods_group_id,gp.goods_name,gp.min_price,gp.max_price,
+		    		a.goods_status,a.goods_server_mode,a.goods_settle_flag,a.goods_type,
+		    		ifnull(b.digit_scale,0) as digit_scale,a.unit_id as unit_id,a.unit_name as unit,
+		    		sum(ifnull(a.sold_number,0)) as sold_number,sum(ifnull(a.storage_total_number,0)) as storage_total_number,
+		    		gp.create_time,gp.last_update_time,
+		    		null as goods_pro_values_ids,null as goods_pro_values_names,
+		    		null as goods_id,null as barcode,null as sequence,null as pinyinCode,
+		    		null as standard_price,null as discount_price, null as vip_price, null as final_price, 
+		    		null as goods_no, null as zan_number, 
+		    		null as takeout,null as is_support_market_prices, null as alarm_number_max, 
+		    		null as alarm_number_min, null as category_name,null as goods_category_id,
+		    		null as goods_price_spec, null as is_order_discount,a.recommend_flag
+		    	from 1dcq_goods a
+		    	inner join 1dcq_goods_group gp on a.goods_group_id = gp.goods_group_id
+		    	left join 1dcq_goods_unit b on a.unit_id=b.unit_id
+		    	left join 1dcq_goods_category g on a.goods_category_id=g.goods_category_id
+		    	where a.shop_id = #{shopId} and a.is_show=1 and a.goods_group_id  > 0
+		    	<if test='goodsCategoryId!=null'>
+		    		and a.goods_category_id in (${goodsCategoryId})
+		    	</if>
+		    	<if test='goodsServerMode!=null'>
+		    		and a.goods_server_mode in (${goodsServerMode})
+		    	</if>
+		    	<if test="goodsType!=0">
+		    		and a.goods_type=#{goodsType}
+		    	</if>
+		    	<if test="goodsName!=null">
+		    		and (gp.goods_name like concat('%',#{goodsName},'%') or gp.pinyinCode like concat('%',#{goodsName},'%'))
+		    	</if>
+		    	<if test="goodsStatus==99">
+		    		and ( a.goods_status=0 OR a.goods_status=1)
+		    	</if>
+		    	<if test="goodsStatus!=99">
+		    		and a.goods_status=#{goodsStatus}
+		    	</if>
+		    	<if test="isNeedCheck!=null">
+		    		and a.is_need_check=#{isNeedCheck}
+		    	</if>
+		    	<if test="null != pinyinCode">
+		    		and a.pinyinCode like concat('%',#{pinyinCode},'%')
+		    	</if>
+		    	<if test="storageAlarmType == 1">
+		    	   and (<![CDATA[ if(a.alarm_number_max is null,0,a.alarm_number_max) < if(a.storage_total_number is null,0,a.storage_total_number) ]]>
+		    	   	<if test="storageNum != null">
+		    	   		<![CDATA[ or ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+		    	   	</if>
+		    	   )
+		    	</if> 
+		    	<if test="storageAlarmType == 2">
+		    	  and( <![CDATA[ if(a.alarm_number_min is null,0,a.alarm_number_min) > if(a.storage_total_number is null,0,a.storage_total_number) ]]>
+		    		<if test="storageNum != null">
+		    	   		<![CDATA[ or ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+		    	   	</if>
+		    	   	)
+		    	</if>
+		    	<if test="storageAlarmType == 3">
+		    		and (<![CDATA[ ((if(a.alarm_number_max is null,0,a.alarm_number_max) < if(a.storage_total_number is null,0,a.storage_total_number))
+		    			or (if(a.alarm_number_min is null,0,a.alarm_number_min) > if(a.storage_total_number is null,0,a.storage_total_number)))
+		    		 ]]>
+		    		 <if test="storageNum != null">
+		    	   		<![CDATA[ or ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+		    	   	</if>
+		    	   	)
+		    	</if>
+		    	<if test="storageNum != null and storageAlarmType != 1 and storageAlarmType != 2 and storageAlarmType != 3">
+		    		<![CDATA[ and ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+		    	</if>  
+		    	<if test="queryData != NULL">
+						and (
+							a.goods_name like concat('%',#{queryData},'%')
+							or 
+							a.pinyinCode like concat('%',#{queryData},'%')
+							or 
+							a.goods_no like concat('%',#{queryData},'%')
+							or 
+							a.barcode = #{queryData}
+							or
+							gp.goods_name like concat('%',#{queryData},'%')
+							or
+							gp.pinyinCode like concat('%',#{queryData},'%')
+						)
+				</if>
+				<if test="barcode != null">
+					and a.barcode = #{barcode}
+				</if>
+				group by a.goods_group_id
+				
+			</if>
+			<if test="searchRange != null and  searchRange == 3 ">
+				union all
+			</if>
+			<if test="searchRange != null and (searchRange == 1 or searchRange == 3 or  searchRange == 4)">
+				select a.goods_group_id as goods_group_id,a.goods_name,null as min_price,null as max_price,
+					a.goods_status,a.goods_server_mode,a.goods_settle_flag,a.goods_type,
+					ifnull(b.digit_scale,0) as digit_scale,a.unit_id as unit_id,a.unit_name as unit,
+					a.sold_number,a.storage_total_number,
+		    		a.create_time,a.last_update_time,
+		    		goods_pro_values_ids,goods_pro_values_names,
+		    		a.goods_id,a.barcode,a.sequence, a.pinyinCode,
+		    		a.standard_price, a.discount_price, a.vip_price, a.final_price, 
+		    		a.goods_no, a.zan_number, 
+		    		a.takeout,a.is_support_market_prices, a.alarm_number_max, 
+		    		a.alarm_number_min, g.category_name,g.goods_category_id,
+		    		a.goods_price_spec, a.is_order_discount,a.recommend_flag
+		    	from 1dcq_goods a
+		    	left join 1dcq_goods_unit b on a.unit_id=b.unit_id
+		    	left join 1dcq_goods_category g on a.goods_category_id=g.goods_category_id
+		    	where a.shop_id = #{shopId} and a.is_show=1 
+		    	<if test="searchRange != 1">
+					<choose>
+						<when test="searchRange == 4"> and a.goods_type != 3000  </when>
+						<otherwise>and (a.goods_group_id is null or a.goods_group_id = 0)</otherwise>
+					</choose>
+		    	</if>
+		    	<if test='goodsCategoryId!=null'>
+		    		and a.goods_category_id in (${goodsCategoryId})
+		    	</if>
+		    	<if test='goodsServerMode!=null'>
+		    		and a.goods_server_mode in (${goodsServerMode})
+		    	</if>
+		    	<if test="goodsType!=0">
+		    		and a.goods_type=#{goodsType}
+		    	</if>
+		    	<if test="goodsName!=null">
+		    		and (a.goods_name like concat('%',#{goodsName},'%') or a.pinyinCode like concat('%',#{goodsName},'%'))
+		    	</if>
+		    	<if test="goodsStatus==99">
+		    		and ( a.goods_status=0 OR a.goods_status=1)
+		    	</if>
+		    	<if test="goodsStatus!=99">
+		    		and a.goods_status=#{goodsStatus}
+		    	</if>
+		    	<if test="isNeedCheck!=null">
+		    		and a.is_need_check=#{isNeedCheck}
+		    	</if>
+		    	<if test="null != pinyinCode">
+		    		and a.pinyinCode like concat('%',#{pinyinCode},'%')
+		    	</if>
+		    	<if test="storageAlarmType == 1">
+		    	    and (<![CDATA[ if(a.alarm_number_max is null,0,a.alarm_number_max) < if(a.storage_total_number is null,0,a.storage_total_number) ]]>
+		    		<if test="storageNum != null">
+		    	   		<![CDATA[ or ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+		    	   	</if>
+		    	   )
+		    	</if> 
+		    	<if test="storageAlarmType == 2">
+		    		and (<![CDATA[ if(a.alarm_number_min is null,0,a.alarm_number_min) > if(a.storage_total_number is null,0,a.storage_total_number) ]]>
+		    		<if test="storageNum != null">
+		    	   		<![CDATA[ or ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+		    	   	</if>
+		    	   )
+		    	</if>
+		    	<if test="storageAlarmType == 3">
+		    		and (<![CDATA[ ((if(a.alarm_number_max is null,0,a.alarm_number_max) < if(a.storage_total_number is null,0,a.storage_total_number))
+		    			or (if(a.alarm_number_min is null,0,a.alarm_number_min) > if(a.storage_total_number is null,0,a.storage_total_number)))
+		    		 ]]>
+		    		 <if test="storageNum != null">
+		    	   		<![CDATA[ or ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+		    	   	</if>
+		    	   )
+		    	</if>
+		    	<if test="storageNum != null  and storageAlarmType != 1 and storageAlarmType != 2 and storageAlarmType != 3">
+		    		<![CDATA[ and ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+		    	</if>  
+		    	<if test="queryData != NULL">
+						and (
+							a.goods_name like concat('%',#{queryData},'%')
+							or 
+							a.pinyinCode like concat('%',#{queryData},'%')
+							or 
+							a.goods_no like concat('%',#{queryData},'%')
+							or 
+							a.barcode = #{queryData}
+						)
+				</if>
+				<if test="barcode != null">
+					and a.barcode = #{barcode}
+				</if>
+			</if>
+		) a
+    	<if test='orderBy==0'> <!-- 热门 -->
+    	order by hot_flag desc
+    	</if>
+    	<if test='orderBy==1'> <!-- 推荐 -->
+    	order by recommend_flag  desc
+    	</if>
+    	<if test="orderBy==2">
+    		order by a.sequence desc, a.create_time  desc
+    	</if>
+    	<if test="orderBy == 3 "><!-- 按商品名称 -->
+    		order by CONVERT(a.goods_name USING gbk )
+    	</if>
+    	<if test="orderBy == 4 "><!-- 商品销量 -->
+    		order by a.sold_number
+    	</if>
+    	<if test="orderBy == 5 "><!-- 商品库存 -->
+    		order by a.storage_total_number
+    	</if>
+    	<if test="orderBy == 6 "><!-- 最后修改时间 -->
+    		order by a.last_update_time
+    	</if>
+    	<if test="orderBy == 3 or orderBy ==4 or orderBy == 5 or orderBy == 6">
+    		<if test="orderByMode == 0">
+    			desc
+    		</if>
+    		<if test="orderByMode == 1">
+    			asc
+    		</if>
+    	</if>
+    	limit #{n},#{m}
+    </select>
+    
+    
+    
+    <select id="getCountShopGoods" parameterType="java.util.Map" resultType="int">
+    	select count(1) from
+    	(
+    		<if test="searchRange != null and (searchRange == 2 or  searchRange == 3 )">
+		    	select gp.goods_group_id,gp.goods_name,gp.min_price,gp.max_price,
+		    		a.goods_status,a.goods_server_mode,a.goods_settle_flag,a.goods_type,
+		    		ifnull(b.digit_scale,0) as digit_scale,a.unit_id as unit_id,a.unit_name as unit,
+		    		sum(ifnull(a.sold_number,0)) as sold_number,sum(ifnull(a.storage_total_number,0)) as storage_total_number,
+		    		c.file_url as goodsLogo1,d.file_url as goodsLogo2,gp.create_time,gp.last_update_time,
+		    		
+		    		null as goods_id,null as barcode,null as sequence,null as pinyinCode,
+		    		null as standard_price,null as discount_price, null as vip_price, null as final_price, 
+		    		null as goods_no, null as zan_number, 
+		    		null as takeout,null as is_support_market_prices, null as alarm_number_max, 
+		    		null as alarm_number_min, null as category_name,null as goods_category_id
+		    	from 1dcq_goods a
+		    	inner join 1dcq_goods_group gp on a.goods_group_id = gp.goods_group_id
+		    	left join 1dcq_goods_unit b on a.unit_id=b.unit_id
+		    	left join 1dcq_attachment c on a.goods_logo1=c.attachement_id
+		    	left join 1dcq_attachment d on a.goods_logo2=d.attachement_id
+		    	left join 1dcq_goods_category g on a.goods_category_id=g.goods_category_id
+		    	where a.shop_id = #{shopId} and a.is_show=1 and a.goods_group_id  > 0
+		    	<if test='goodsCategoryId!=null'>
+		    		and a.goods_category_id in (${goodsCategoryId})
+		    	</if>
+		    	<if test='goodsServerMode!=null'>
+		    		and a.goods_server_mode in (${goodsServerMode})
+		    	</if>
+		    	<if test="goodsType!=0">
+		    		and a.goods_type=#{goodsType}
+		    	</if>
+		    	<if test="goodsName!=null">
+		    		and (gp.goods_name like concat('%',#{goodsName},'%') or gp.pinyinCode like concat('%',#{goodsName},'%'))
+		    	</if>
+		    	<if test="goodsStatus==99">
+		    		and ( a.goods_status=0 OR a.goods_status=1)
+		    	</if>
+		    	<if test="goodsStatus!=99">
+		    		and a.goods_status=#{goodsStatus}
+		    	</if>
+		    	<if test="isNeedCheck!=null">
+		    		and a.is_need_check=#{isNeedCheck}
+		    	</if>
+		    	<if test="null != pinyinCode">
+		    		and a.pinyinCode like concat('%',#{pinyinCode},'%')
+		    	</if>
+		    	<if test="storageAlarmType == 1">
+		    	   and ( <![CDATA[ if(a.alarm_number_max is null,0,a.alarm_number_max) < if(a.storage_total_number is null,0,a.storage_total_number) ]]>
+			    		<if test="storageNum != null">
+				    		<![CDATA[ or ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+				    	</if> 
+			    	)
+		    	</if> 
+		    	<if test="storageAlarmType == 2">
+		    	   and(<![CDATA[ if(a.alarm_number_min is null,0,a.alarm_number_min) > if(a.storage_total_number is null,0,a.storage_total_number) ]]>
+			    		<if test="storageNum != null">
+				    		<![CDATA[ or ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+				    	</if> 
+			    	)
+		    	</if>
+		    	<if test="storageAlarmType == 3">
+		    		and (<![CDATA[ ((if(a.alarm_number_max is null,0,a.alarm_number_max) < if(a.storage_total_number is null,0,a.storage_total_number))
+		    			or (if(a.alarm_number_min is null,0,a.alarm_number_min) > if(a.storage_total_number is null,0,a.storage_total_number)))
+		    		 ]]>
+		    		 <if test="storageNum != null">
+				    		<![CDATA[ or ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+				    	</if> 
+			    	)
+		    	</if>
+		    	<if test="storageNum != null and storageAlarmType != 1 and storageAlarmType != 2 and storageAlarmType!= 3">
+		    		<![CDATA[ and ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+		    	</if>  
+		    	<if test="queryData != NULL">
+						and (
+							a.goods_name like concat('%',#{queryData},'%')
+							or 
+							a.pinyinCode like concat('%',#{queryData},'%')
+							or 
+							a.goods_no like concat('%',#{queryData},'%')
+							or 
+							a.barcode = #{queryData}
+							or
+							gp.goods_name like concat('%',#{queryData},'%')
+							or
+							gp.pinyinCode like concat('%',#{queryData},'%')
+						)
+				</if>
+				<if test="barcode != null">
+					and a.barcode = #{barcode}
+				</if>
+				group by a.goods_group_id
+			</if>
+			<if test="searchRange != null and  searchRange == 3 ">
+			union all
+			</if>
+			<if test="searchRange != null and (searchRange == 1 or searchRange == 3 or searchRange == 4)">
+			
+				select a.goods_group_id as goods_group_id,a.goods_name,null as min_price,null as max_price,
+					a.goods_status,a.goods_server_mode,a.goods_settle_flag,a.goods_type,
+					ifnull(b.digit_scale,0) as digit_scale,a.unit_id as unit_id,a.unit_name as unit,
+					a.sold_number,a.storage_total_number,
+		    		c.file_url as goodsLogo1,d.file_url as goodsLogo2,a.create_time,a.last_update_time,
+		    		a.goods_id,a.barcode,a.sequence, a.pinyinCode,
+		    		a.standard_price, a.discount_price, a.vip_price, a.final_price, 
+		    		a.goods_no, a.zan_number, 
+		    		a.takeout,a.is_support_market_prices, a.alarm_number_max, 
+		    		a.alarm_number_min, g.category_name,g.goods_category_id
+		    	from 1dcq_goods a
+		    	left join 1dcq_goods_unit b on a.unit_id=b.unit_id
+		    	left join 1dcq_attachment c on a.goods_logo1=c.attachement_id
+		    	left join 1dcq_attachment d on a.goods_logo2=d.attachement_id
+		    	left join 1dcq_goods_category g on a.goods_category_id=g.goods_category_id
+		    	where a.shop_id = #{shopId} and a.is_show=1 
+		    	<if test="searchRange != 1">
+-- 		    		and (a.goods_group_id is null or a.goods_group_id = 0)
+					<choose>
+						<when test="searchRange == 4"> and a.goods_type != 3000  </when>
+						<otherwise>and (a.goods_group_id is null or a.goods_group_id = 0)</otherwise>
+					</choose>
+		    	</if>
+		    	<if test='goodsCategoryId!=null'>
+		    		and a.goods_category_id in (${goodsCategoryId})
+		    	</if>
+		    	<if test='goodsServerMode!=null'>
+		    		and a.goods_server_mode in (${goodsServerMode})
+		    	</if>
+		    	<if test="goodsType!=0">
+		    		and a.goods_type=#{goodsType}
+		    	</if>
+		    	<if test="goodsName!=null">
+		    		and (a.goods_name like concat('%',#{goodsName},'%') or a.pinyinCode like concat('%',#{goodsName},'%'))
+		    	</if>
+		    	<if test="goodsStatus==99">
+		    		and ( a.goods_status=0 OR a.goods_status=1)
+		    	</if>
+		    	<if test="goodsStatus!=99">
+		    		and a.goods_status=#{goodsStatus}
+		    	</if>
+		    	<if test="isNeedCheck!=null">
+		    		and a.is_need_check=#{isNeedCheck}
+		    	</if>
+		    	<if test="null != pinyinCode">
+		    		and a.pinyinCode like concat('%',#{pinyinCode},'%')
+		    	</if>
+		    	<if test="storageAlarmType == 1">
+		    	    and(<![CDATA[ if(a.alarm_number_max is null,0,a.alarm_number_max) < if(a.storage_total_number is null,0,a.storage_total_number) ]]>
+		    		 <if test="storageNum != null">
+				    		<![CDATA[ or ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+				    	</if> 
+			    	)
+		    	</if> 
+		    	<if test="storageAlarmType == 2">
+		    	   and(<![CDATA[ if(a.alarm_number_min is null,0,a.alarm_number_min) > if(a.storage_total_number is null,0,a.storage_total_number) ]]>
+		    		 <if test="storageNum != null">
+				    		<![CDATA[ or ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+				    	</if> 
+			    	)
+		    	</if>
+		    	<if test="storageAlarmType == 3">
+		    		and(<![CDATA[ ((if(a.alarm_number_max is null,0,a.alarm_number_max) < if(a.storage_total_number is null,0,a.storage_total_number))
+		    			or (if(a.alarm_number_min is null,0,a.alarm_number_min) > if(a.storage_total_number is null,0,a.storage_total_number)))
+		    		 ]]>
+		    		 <if test="storageNum != null">
+				    		<![CDATA[ or ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+				    	</if> 
+			    	)
+		    	</if>
+		    	<if test="storageNum != null  and storageAlarmType != 1 and storageAlarmType != 2 and storageAlarmType!= 3">
+		    		<![CDATA[ and ifnull(a.storage_total_number,0) <= #{storageNum}]]>
+		    	</if>  
+		    	<if test="queryData != NULL">
+						and (
+							a.goods_name like concat('%',#{queryData},'%')
+							or 
+							a.pinyinCode like concat('%',#{queryData},'%')
+							or 
+							a.goods_no like concat('%',#{queryData},'%')
+							or 
+							a.barcode = #{queryData}
+						)
+				</if>
+				<if test="barcode != null">
+					and a.barcode = #{barcode}
+				</if>
+			</if>
+		) a
+    </select>
+    
+     <select id="getShopGoodsStatisticsByCondition" parameterType="java.util.Map" resultType="java.util.Map">
+    	select 
+    	sum(ifnull(standard_price,0)*ifnull(storage_total_number,0)) as storageSumMoney,
+    	sum(ifnull(storage_total_number,0) ) as storageTotalNum
+    	from 1dcq_goods a
+    	where a.shop_id = #{shopId} and a.is_show=1
+    	and <![CDATA[a.storage_total_number >= 0 ]]>
+    	<if test='goodsCategoryId!=null'>
+    		and a.goods_category_id in (${goodsCategoryId})
+    	</if>
+    	<if test="goodsType!=0">
+    		and a.goods_type=#{goodsType}
+    	</if>
+    	<if test='goodsServerMode!=null'>
+    		and a.goods_server_mode in (${goodsServerMode})
+    	</if>
+    	<if test="goodsName!=null">
+    		and (a.goods_name like concat('%',#{goodsName},'%') or a.pinyinCode like concat('%',#{goodsName},'%'))
+    	</if>
+    	<if test="goodsStatus==99">
+    		and ( a.goods_status=0 OR a.goods_status=1)
+    	</if>
+    	<if test="goodsStatus!=99">
+    		and a.goods_status=#{goodsStatus}
+    	</if>
+    	<if test="isNeedCheck!=null">
+    		and a.is_need_check=#{isNeedCheck}
+    	</if>
+    	<if test="null != pinyinCode">
+    		and a.pinyinCode like concat('%',#{pinyinCode},'%')
+    	</if>
+    	<if test="storageAlarmType == 1">
+    	    <![CDATA[ and if(a.alarm_number_max is null,0,a.alarm_number_max) < if(a.storage_total_number is null,0,a.storage_total_number) ]]>
+    	</if> 
+    	<if test="storageAlarmType == 2">
+    	   <![CDATA[ and if(a.alarm_number_min is null,0,a.alarm_number_min) > if(a.storage_total_number is null,0,a.storage_total_number) ]]>
+    	</if>
+    	<if test="storageAlarmType == 3">
+    		<![CDATA[ and ((if(a.alarm_number_max is null,0,a.alarm_number_max) < if(a.storage_total_number is null,0,a.storage_total_number))
+    			or (if(a.alarm_number_min is null,0,a.alarm_number_min) > if(a.storage_total_number is null,0,a.storage_total_number)))
+    		 ]]>
+    	</if>  
+    	<if test="queryData != null">
+				and (
+					a.goods_name like concat('%',#{queryData},'%')
+					or 
+					a.pinyinCode like concat('%',#{queryData},'%')
+					or 
+					a.goods_no like concat('%',#{queryData},'%')
+					or 
+					a.barcode = #{queryData}
+				)
+		</if> 
+		<if test="barcode != null">
+			and a.barcode = #{barcode}
+		</if>
+		<if test="storageNum != null">
+    		<![CDATA[ and a.storage_total_number <= #{storageNum}]]>
+    	</if> 
+    </select>
+    
+    
+    <select id="getDtoShopGoods" parameterType="java.lang.Long"  resultMap="shopGoodsMap">
+    	select
+    	<include refid="Base_Column_List_Detail" />,
+    	f.member_discount,b.digit_scale
+    	from 1dcq_goods a
+    	left join 1dcq_goods_unit b
+    	on a.unit_id=b.unit_id
+    	left join 1dcq_goods_category e
+    	on a.goods_category_id=e.goods_category_id
+    	left join 1dcq_shop f on a.shop_id=f.shop_id
+    	where goods_id = #{goodsId} 
+    </select>
+    
+   <select id="getDtoProValueName" parameterType="java.lang.String"  resultType="java.lang.String">
+    	SELECT pro_value FROM 1dcq_goods_group_pro_values
+    	where pro_values_id = #{proValuesId} 
+    </select> 
+    
+</mapper> 
+   

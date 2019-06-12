@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.plugin.PluginDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.plugin.PluginDto" >
+    <id column="plugin_id" property="id" jdbcType="BIGINT" />
+    <result column="plugin_name" property="pluginName" jdbcType="VARCHAR" />
+    <result column="plugin_desc" property="pluginDesc" jdbcType="VARCHAR" />
+    <result column="package_name" property="packageName" jdbcType="VARCHAR" />
+    <result column="column_id" property="columnId" jdbcType="VARCHAR" />
+    <result column="last_approved_version" property="lastApprovedVersion" jdbcType="INTEGER" />
+    <result column="last_approved_url" property="lastApprovedUrl" jdbcType="VARCHAR" />
+    <result column="charge_way" property="charge_way" jdbcType="TINYINT" />
+    <result column="free_value" property="free_value" jdbcType="INTEGER" />
+    <result column="money" property="money" jdbcType="DOUBLE" />
+    <result column="developer_user_id" property="developer_user_id" jdbcType="INTEGER" />
+    <result column="developer_rate" property="developer_rate" jdbcType="DOUBLE" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    plugin_id, 
+    plugin_name, 
+    plugin_desc, 
+    package_name,
+    column_id, 
+    last_approved_version,
+    last_approved_url,
+    charge_way, 
+    free_value, 
+    money, 
+    developer_user_id, 
+    developer_rate,
+    status,
+    create_time
+  </sql>
+  
+    <select id="queryPluginIsExist" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM
+			1dcq_plugin
+		WHERE
+			plugin_id = #{pluginId}
+	</select>
+	
+   <select id="getPluginByPluginId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from 1dcq_plugin
+    where plugin_id = #{pluginId}
+  </select>
+  
+	<!-- 获取已发布平台插件 -->
+	<select id="getPlugins" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT
+		p.plugin_id as pluginId,
+		p.plugin_name as pluginName,
+		p.plugin_desc as pluginDesc,
+		p.last_approved_version as lastApprovedVersion,
+		p.last_approved_url as lastApprovedUrl,
+		p.charge_way as chargeWay,
+		p.free_value as freeValue,
+		p.money as money,
+		p.plugin_brief_desc AS pluginBriefDesc,
+		p.logo_id AS  logoAttachmentId,
+		p.download_count AS installCount,
+		p.package_name AS pluginPackage,
+		pv.attachment_id AS lastAttachmentId,
+		pv.physics_size AS attachmentSize,
+		pv.version_desc AS versionInfo
+		FROM
+			1dcq_plugin p
+		INNER JOIN
+			1dcq_plugin_version pv
+		ON
+			p.plugin_id = pv.plugin_id AND  p.last_approved_version = pv.version_num
+		WHERE
+			1=1
+		<if test="columnId  != null">
+			and INSTR(p.column_id, #{columnId})>0
+		</if>
+		<if test="pluginPackages != null">
+			AND
+			<foreach collection="pluginPackages" item="items" open="package_name IN ( " close=")" separator=",">
+				#{items}
+			</foreach>
+		</if>
+		<if test="columnId  != null">
+			and INSTR(p.column_id, #{columnId})>0
+		</if>
+			and p.status = 1
+		ORDER BY 
+			p.priority ASC
+		limit #{limit},#{pSize}
+	</select>
+
+	<!-- 获取插件详情 -->
+	<select id="getPluginDetail" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT
+		p.plugin_id as pluginId,
+		p.plugin_name as pluginName,
+		p.plugin_desc as pluginDesc,
+		pv.version_num as lastApprovedVersion,
+		aa.file_url as lastApprovedUrl,
+		<!--p.charge_way as chargeWay,
+		p.free_value as freeValue,
+		p.money as money,-->
+		p.plugin_brief_desc AS pluginBriefDesc,
+		p.logo_id AS  logoAttachmentId,
+		p.download_count AS installCount,
+		p.package_name AS pluginPackage,
+		p.developer_name AS developer,
+		p.banner_attachment_ids AS bannerIds,
+		p.allow_cache AS  allowCache,
+		p.base_system AS baseSystem,
+		p.point_id AS pointId,
+		p.point_code AS pointCode,
+		p.point_type AS pointType,
+		p.implement_interface AS implementInterface,
+		p.function_type AS functionType,
+		pv.min_sys_version AS minSysVersion,
+		pv.attachment_id AS lastAttachmentId,
+		pv.physics_size AS attachmentSize,
+		pv.create_time AS lastUpdateTime,
+		pv.version_desc AS versionInfo
+		FROM
+		1dcq_plugin p
+		INNER JOIN
+		1dcq_plugin_version pv
+		ON
+		p.plugin_id = pv.plugin_id
+		<if test="versionNum == null">
+			AND  p.last_approved_version = pv.version_num
+		</if>
+		LEFT JOIN
+		 1dcq_attachment aa
+		ON pv.attachment_id  = aa.attachement_id
+		WHERE
+		p.plugin_id = #{pluginId}
+		<if test="versionNum != null">
+			AND  pv.version_num = #{versionNum}
+		</if>
+
+	</select>
+	<!-- 根据attachmentId或者<pluginId与version_num>获取插件版本详情 -->
+	<select id="getPluginVersionInfo" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT
+		pv.plugin_id AS pluginId,
+		pv.version_num AS versionNum,
+		pv.attachment_id AS attachmentId,
+		pv.version_desc AS versionDesc,
+		pv.version_status AS versionStatus,
+		pv.audit_user_id AS auditUserId,
+		pv.create_time AS createTime,
+		pv.audit_time AS auditTime,
+		pv.audit_desc AS auditDesc,
+		pv.min_sys_version AS minSysVersion,
+		pv.physics_size AS physicsSize
+		FROM
+		1dcq_plugin_version pv
+		WHERE
+		<trim prefixOverrides="AND">
+			<if test="attachmentId != null"> AND pv.attachment_id = #{attachmentId} </if>
+			<if test="pluginId != null"> AND pv.plugin_id = #{pluginId} </if>
+			<if test="versionNum != null"> AND pv.version_num = #{versionNum} </if>
+		</trim>
+
+	</select>
+	<!-- 向1dcq_shop_plugin中插入插件下载记录 -->
+	<insert id="insertPluginUseRecord"   parameterType="java.util.Map">
+		INSERT INTO
+		1dcq_shop_plugin
+		(shop_id,
+		 plugin_id,
+		 <if test="buyNumber != null">
+		 buy_number,
+		 </if>
+		<if test="money != null">
+		 money,
+		</if>
+		<if test="orderTime != null">
+		 order_time,
+		</if>
+		<if test="beginTime != null">
+		 begin_time,
+		</if>
+		<if test="endTime != null">
+		end_time,
+		</if>
+		<if test="isPaid != null">
+		 is_paid,
+		</if>
+		<if test="isSettled != null">
+		 is_settled,
+		</if>
+		<if test="isActive != null">
+		 is_active,
+		</if>
+		version_num,
+		 sn_id)
+		VALUES
+		(#{shopId},
+		#{pluginId},
+		<if test="buyNumber != null">
+			#{buyNumber},
+		</if>
+		<if test="money != null">
+			#{money},
+		</if>
+		<if test="orderTime != null">
+			#{orderTime},
+		</if>
+		<if test="beginTime != null">
+			#{beginTime},
+		</if>
+		<if test="endTime != null">
+			#{endTime},
+		</if>
+		<if test="isPaid != null">
+			#{isPaid},
+		</if>
+		<if test="isSettled != null">
+			#{isSettled},
+		</if>
+		<if test="isActive != null">
+			#{isActive},
+		</if>
+		#{versionNum},
+		#{sn})
+
+	</insert>
+
+	<!-- 获取平台插件总数 -->
+	<select id="getPluginsCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT
+		   count(*)
+		FROM
+			1dcq_plugin p
+		WHERE
+			1=1
+		<if test="columnId  != null">
+			and INSTR(p.column_id, #{columnId})>0
+		</if>
+		<if test="pluginPackages != null">
+			AND
+			<foreach collection="pluginPackages" item="items" open="package_name IN ( " close=")" separator=",">
+				#{items}
+			</foreach>
+		</if>
+		and status = 1
+	</select>
+	<!-- 获取平台插件总数 -->
+	<select id="incrementDownloadCount" parameterType="java.lang.Integer">
+		UPDATE
+		1dcq_plugin p
+		SET
+		p.download_count = p.download_count + 1
+		WHERE
+		p.plugin_id = #{pluginId}
+	</select>
+	<!-- 获取商铺插件 -->
+	<select id="getShopPlugins" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT
+		   DISTINCT(p.plugin_id ) as pluginId,
+		   p.plugin_name as pluginName,
+		   p.plugin_desc as pluginDesc,
+		   p.last_approved_version as lastApprovedVersion,
+		   p.last_approved_url as tApprovedUrl,
+		   p.charge_way as chargeWay,
+		   sp.buy_number as buyNumber,
+		   sp.money as money,
+		   sp.begin_time as beginTime,
+		   sp.end_time as endTime, 
+		   sp.is_paid as isPaid,
+		   sp.is_active as isActive    
+		FROM
+			1dcq_plugin p
+		RIGHT JOIN
+			1dcq_shop_plugin sp
+		ON
+			p.plugin_id = sp.plugin_id
+		WHERE
+			sp.shop_id =#{shopId}
+		<if test="isPaid != null">
+			and sp.is_paid = #{isPaid}
+		</if>
+		limit #{limit},#{pSize}
+	</select>
+	<!-- 获取商铺插件记录数 -->
+	<select id="getShopPluginsCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT
+		  count(DISTINCT(p.plugin_id ))    
+		FROM
+			1dcq_plugin p
+		RIGHT JOIN
+			1dcq_shop_plugin sp
+		ON
+			p.plugin_id = sp.plugin_id
+		WHERE
+			sp.shop_id =#{shopId}
+		<if test="isPaid != null">
+			and sp.is_paid = #{isPaid}
+		</if>
+	</select>
+</mapper>

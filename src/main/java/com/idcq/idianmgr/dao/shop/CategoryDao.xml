@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.idianmgr.dto.shop.CategoryDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.idianmgr.dto.shop.CategoryDto" >
+   
+  </resultMap>
+ 
+  <insert id="insertCategory" parameterType="com.idcq.idianmgr.dto.shop.CategoryDto" useGeneratedKeys="true" keyProperty="categoryId">
+   		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="categoryId">
+	            SELECT LAST_INSERT_ID() AS categoryId
+	   </selectKey>
+    insert into 1dcq_goods_category 
+    (
+    	shop_id, 
+    	category_name, 
+    	parent_category_id, 
+     	category_key,
+     	category_index, 
+     	category_remark, 
+     	status, 
+     	create_time
+     )
+    values 
+    (
+    	#{shopId}, 
+    	#{categoryName}, 
+    	#{parentCategoryId}, 
+        #{keywords}, 
+        #{categoryIndex},
+        #{remark},  
+        1,  
+        now()
+     )
+  </insert>
+ 
+ 
+  <update id="updateCategory" parameterType="com.idcq.idianmgr.dto.shop.CategoryDto" >
+    update 1dcq_goods_category
+    <set >
+      <if test="categoryName != null" >
+        category_name = #{categoryName},
+      </if>
+      <if test="keywords != null" >
+        category_key = #{keywords},
+      </if>
+      <if test="remark != null" >
+        category_remark = #{remark},
+      </if>
+      <if test="status != null" >
+        status = #{status},
+      </if>
+      <if test="soldNumber != null" >
+        sold_number = #{soldNumber},
+      </if>
+      <if test="zanNumber != null" >
+        zan_number = #{zanNumber},
+      </if>
+      <if test="stopDate != null" >
+        stop_date = #{stopDate},
+      </if>
+      <if test="categoryIndex != null" >
+        category_index = #{categoryIndex},
+      </if>
+    </set>
+  		where goods_category_id = #{categoryId}
+  </update>
+  
+  <!-- 删除图片的关联关系 -->
+   <delete id="delAttachmentRelation" parameterType="java.util.Map" >
+    delete from 1dcq_attachment_relation
+    where biz_id = #{bizId} and biz_type = #{bizType} and pic_type = #{picType} 
+    <if test="bizIndex != null">
+    	and biz_index=#{bizIndex}
+    </if>
+  </delete>
+  
+  <!-- 新增图片的关联关系 -->
+  <insert id="insertAttachmentRelation" parameterType="java.util.Map" >
+    insert into 1dcq_attachment_relation 
+    (
+    	attachement_id, 
+   		biz_id,
+    	biz_type,
+   	 	pic_type,
+   	 	biz_index
+   	 )
+    values 
+    (
+    	#{attachementId}, 
+    	#{bizId}, 
+    	#{bizType}, 
+      	#{picType},
+      	#{bizIndex}
+     )
+  </insert>
+  
+  <update id="updateAttachmentRelation" parameterType="java.util.Map">
+      update 1dcq_attachment_relation
+         set attachement_id = #{attachementId}
+      where  biz_id = #{bizId}
+        and  biz_type = #{bizType}
+        and  pic_type = #{picType}
+  </update>
+  <!-- 查询分类列表(通用) 可以扩展条件-->
+   <select id="selectCategorys" resultMap="BaseResultMap" parameterType="com.idcq.idianmgr.dto.shop.CategoryDto" >
+    select 
+    	goods_category_id as categoryId,
+    	shop_id as shopId,
+		category_name as categoryName,
+		parent_category_id as parentCategoryId,    
+		category_key as keywords,
+		category_remark as remark,
+		status as status,
+		stop_date as stopDate
+    from 1dcq_goods_category	
+    <where>   
+        <if test="categoryId != null">   
+           goods_category_id = #{categoryId}    
+        </if>   
+        <if test="parentCategoryId !=null">   
+            AND parent_category_id = #{parentCategoryId}    
+        </if>   
+          
+    </where>   
+</select>   
+<select id="getParentCategoryIdByChildId" parameterType="java.lang.Long" resultType="java.lang.Long">
+    SELECT
+		gc.parent_category_id AS parentCategoryId
+	FROM
+		1dcq_goods_category gc
+	WHERE
+		gc.goods_category_id = #{categoryId}
+</select>
+<!-- 根据分类编号查询子分类编号 -->
+<select id="getChildCategoryIdByCategoryId" parameterType="java.lang.Long" resultType="java.lang.Long">
+    SELECT
+		gc.goods_category_id AS childCategoryId
+	FROM
+		1dcq_goods_category gc
+	WHERE
+		gc.parent_category_id = #{categoryId}
+</select>
+ <!-- 新增技师级别 -->
+  <insert id="insertTechType" parameterType="com.idcq.idianmgr.dto.shop.TechTypeDto" >
+  <selectKey resultType="java.lang.String" order="AFTER" keyProperty="techTypeId">
+	            SELECT LAST_INSERT_ID() AS techTypeId
+	   </selectKey>
+    insert into 1dcq_shop_technician_type 
+    (
+    	technician_type_name, 
+   		shop_id,
+    	type_order,
+   	 	parent_technician_type_id,
+   	 	create_time,
+   	 	last_update_time,
+   	 	is_valid
+   	 )
+    values 
+    (
+    	#{techTypeName}, 
+    	#{shopId}, 
+    	#{typeOrder}, 
+      	#{parentTechTypeId},
+      	now(),
+      	now(),
+      	#{isValid}
+     )
+  </insert>
+  
+   <!-- 修改技师级别 -->
+   <update id="updateTechType" parameterType="com.idcq.idianmgr.dto.shop.TechTypeDto" >
+    update 1dcq_shop_technician_type
+    <set >
+      <if test="techTypeName != null" >
+        technician_type_name = #{techTypeName},
+      </if>
+      <if test="typeOrder != null" >
+        type_order = #{typeOrder},
+      </if>
+      <if test="parentTechTypeId != null" >
+        parent_technician_type_id = #{parentTechTypeId},
+      </if>
+      <if test="lastUpdateTime != null" >
+        last_update_time = #{lastUpdateTime},
+      </if>
+       <if test="isValid != null" >
+        is_valid = #{isValid},
+      </if>
+    </set>
+  		where technician_type_id = #{techTypeId}
+  </update>
+  
+   
+  <!-- 查询技师类别(通用) 可以扩展条件-->
+   <select id="selectTechTypes" resultType="com.idcq.idianmgr.dto.shop.TechTypeDto" parameterType="java.util.Map" >
+    select 
+    	technician_type_id as techTypeId,
+    	technician_type_name as techTypeName,
+		type_order as typeOrder,
+		parent_technician_type_id as parentTechTypeId,    
+		shop_id as shopId,
+		create_time as createTime,
+		last_update_time as lastUpdateTime,
+		is_valid as isValid
+    from 1dcq_shop_technician_type	
+    where is_valid = 1  
+     <if test="shopId != null">   
+           AND shop_id = #{shopId}    
+     </if>   
+     <if test="parentTechTypeId !=null">   
+         AND parent_technician_type_id = #{parentTechTypeId}    
+     </if>    
+     	limit #{n},#{m}  
+</select>  
+ <!-- 查询技师类别个数-->
+   <select id="selectTechTypeCount" resultType="java.lang.Integer" parameterType="java.util.Map" >
+    select 
+    	count(*)
+    from 1dcq_shop_technician_type	
+    where is_valid = 1 
+    <if test="shopId != null">   
+         AND shop_id = #{shopId}    
+    </if>   
+    <if test="parentTechTypeId !=null">   
+         AND parent_technician_type_id = #{parentTechTypeId}    
+     </if>   
+	</select> 
+ 
+ 	<!-- 查询技师列表是否被使用-->
+   <select id="isTechTypeUsed" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select 
+    	count(*)
+    from 1dcq_shop_technician	
+    where    
+          technician_type_id = #{techTypeId}    
+    
+	</select>
+	
+   <!-- 技师级别名称是否被使用-->
+   <select id="isTechTypeNameUsed" resultType="java.lang.Integer" parameterType="com.idcq.idianmgr.dto.shop.TechTypeDto" >
+    select 
+    	count(*)
+    from 1dcq_shop_technician_type	
+    where technician_type_name =#{techTypeName}  AND shop_id=#{shopId}	
+    AND is_valid=1 
+    <if test="techTypeId != null">
+         AND technician_type_id != #{techTypeId}  
+    </if>
+   <if test="parentTechTypeId != null">
+        AND parent_technician_type_id=#{parentTechTypeId}   
+    </if>
+    
+	</select>
+	
+     <!-- 服务分类名称是否被使用-->
+   <select id="isGoodCategoryNameUsed" resultType="java.lang.Integer" parameterType="com.idcq.idianmgr.dto.shop.CategoryDto" >
+    select 
+    	count(*)
+    from 1dcq_goods_category	
+    where category_name =#{categoryName}  AND shop_id = #{shopId}	
+    <if test="categoryId != null">
+         AND goods_category_id != #{categoryId}  
+    </if>
+   <if test="parentCategoryId != null">
+        AND parent_category_id=#{parentCategoryId}   
+    </if>
+    
+	</select>
+   
+	
+	<!-- 删除分类关联关系 -->
+  <delete id="deleteCategoryRelation" parameterType="java.lang.String" >
+    delete from 1dcq_goods_group_category_relation
+    	where group_category_id = #{categoryId}
+  </delete>
+  <!-- 删除分类 -->
+  <delete id="deleteCategoryById" parameterType="java.lang.String" >
+    delete from 1dcq_goods_category
+    	where goods_category_id = #{categoryId}
+  </delete>
+  
+  <!-- 更新分类对应的商品族状态 -->
+   <update id="updateGroupGoodsOfCatgory" parameterType="java.util.Map">
+   	 UPDATE 
+   	 	1dcq_goods_group gg LEFT JOIN `1dcq_goods_group_category_relation` ggc ON gg.`goods_group_id` = ggc.`goods_group_id` 
+   	 SET gg.`goods_status`= #{status} WHERE ggc.`group_category_id`= #{categoryId}
+   </update>
+   <!-- 更新分类对应的商品族下的商品的状态 -->
+   <update id="updateGoodsOfGroupGoods" parameterType="java.util.Map">
+   	 UPDATE 
+   	 	1dcq_goods gg LEFT JOIN `1dcq_goods_group_category_relation` ggc ON gg.`goods_group_id` = ggc.`goods_group_id` 
+   	 SET gg.`goods_status`= #{status} WHERE ggc.`group_category_id`= #{categoryId}
+   </update>
+   
+    <!-- 更新分类对应的商品族名称 -->
+   <update id="updateGroupGoodsNameByCategoryId" parameterType="java.util.Map">
+   	 UPDATE 
+   	 	1dcq_goods_group gg LEFT JOIN `1dcq_goods_group_category_relation` ggc ON gg.`goods_group_id` = ggc.`goods_group_id` 
+   	 SET gg.`goods_name`= #{name} WHERE ggc.`group_category_id`= #{categoryId}
+   </update>
+   	
+   <select id="getCategoryIndexBy" parameterType="java.util.Map" resultType="java.lang.Integer">
+     SELECT MAX(category_index) 
+     FROM 1dcq_goods_category 
+     WHERE 1=1
+    <if test="shopId != null">
+         AND shop_id = #{shopId}  
+    </if>
+   <if test="parentCategoryId != null">
+        AND parent_category_id = #{parentCategoryId}   
+    </if>
+   </select>
+</mapper>

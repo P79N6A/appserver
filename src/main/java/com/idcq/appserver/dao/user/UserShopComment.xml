@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.user.ShopCommentDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.user.ShopCommentDto" >
+	  <result column="comment_time" property="commentTime" />
+	  <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+	  <result column="user_id" property="userId" jdbcType="INTEGER" />
+	  <result column="comment_id" property="commentId" jdbcType="INTEGER" />
+  </resultMap>
+<!--   商铺评论 -->
+  <insert id="makeCommentShop"  useGeneratedKeys="true" keyProperty="commentId" parameterType="com.idcq.appserver.dto.user.ShopCommentDto">
+	INSERT INTO 1dcq_user_shop_comment (
+		shop_id,
+		user_id,
+		service_grade,
+		env_grade,
+		logistics_grade,
+		comment_content,
+		comment_time,
+		order_id,
+		comment_status
+	)
+	VALUES
+		(
+		#{shopId},
+		#{userId},
+		#{serviceGrade},
+		#{envGrade},
+		#{logisticsGrade},
+		#{commentContent},
+		NOW(),
+		#{orderId},
+		#{commentStatus}
+	)  	
+  </insert> 
+<!--   获取用户评论最后时间 -->
+  <select id="getShopCommentTimeById" parameterType="com.idcq.appserver.dto.user.ShopCommentDto" resultMap="BaseResultMap">
+  	 SELECT
+		s.comment_time
+	FROM
+		1dcq_user_shop_comment s
+	WHERE
+		s.user_id = #{userId}
+	AND 
+		s.shop_id = #{shopId}
+	AND 
+		s.order_id = #{orderId}
+	ORDER BY
+		s.comment_time DESC
+  </select>  
+  
+    <update id="updateShopComLogo" parameterType="java.util.Map">
+      update 1dcq_user_shop_comment
+      <set >
+      <if test="usageType == 31" >
+         comment_pic1 = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="usageType == 32 " >
+         comment_pic2 = #{url,jdbcType=VARCHAR},
+      </if>
+       <if test="usageType == 33 " >
+         comment_pic3 = #{url,jdbcType=VARCHAR},
+      </if>
+       <if test="usageType == 34 " >
+         comment_pic4 = #{url,jdbcType=VARCHAR},
+      </if>
+       <if test="usageType == 35 " >
+         comment_pic5 = #{url,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where comment_id = #{commentId}
+  </update>
+  
+   <select id="getShopCommentsByMap" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    SELECT
+		s.comment_time,
+		s.comment_id,
+		s.shop_id,
+		s.user_id
+	FROM
+		1dcq_user_shop_comment s
+	where s.shop_id=#{bizId}
+	and   s.user_id=#{userId}
+	order by s.comment_time desc
+  </select>
+  
+  <select id="getUserIdByCommentId" resultType="java.lang.Long" parameterType="java.lang.Long">
+  	select user_id from 1dcq_user_goods_comment c where c.comment_id=#{commentId}
+  </select>
+  <select id="getShopCommentsTotal" parameterType="java.lang.Integer" resultType="int">
+  	select
+  	 	count(*) 
+  	 from 
+  	 	1dcq_user_shop_comment c 
+  	 where 
+  	 	c.shop_id=#{shopId}
+    and
+    	c.comment_status=1
+  </select>  
+  <select id="getGradeById" resultType="java.util.Map" parameterType="java.lang.Long" >
+	SELECT 
+	 	AVG(env_grade) as envGrade,
+	 	AVG(service_grade) as serviceGrade,
+	 	AVG(logistics_grade) as logisticsGgrade
+	FROM 
+		1dcq_user_shop_comment
+	where 
+		shop_id=#{shopId}
+  </select>  
+</mapper>

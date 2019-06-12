@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.common.SendSmsRecordDto">
+	<resultMap type="com.idcq.appserver.dto.common.SendSmsRecordDto" id="baseMap">
+ 		<result column="send_id" property="sendId"/>
+ 		<result column="send_usage" property="sendUsage"/>
+ 		<result column="send_code" property="sendCode"/>
+ 		<result column="send_mobile" property="sendMobile"/>
+ 		<result column="send_content" property="sendContent"/>
+ 		<result column="send_channle" property="sendChannle"/>
+ 		<result column="send_time" property="sendTime"/>
+ 		<result column="send_status" property="sendStatus"/>
+ 		<result column="msg_id" property="msgId"/>
+ 		<result column="create_time" property="createTime"/>
+ 	</resultMap>
+ 	
+	<sql id="Base_Column_List">
+ 		send_id,send_usage,send_code,send_mobile,send_content,send_channle,send_time,send_status, msg_id
+ 	</sql>
+ 	<insert id="saveSendSmsRecord" parameterType="com.idcq.appserver.dto.common.SendSmsRecordDto">
+ 		INSERT INTO 1dcq_send_sms_record (
+ 			send_usage,
+ 			send_code,
+			send_mobile,
+			send_content,
+			send_channle,
+			send_time,
+			send_status,
+			msg_id
+		)
+		VALUES
+		(
+			#{sendUsage},
+			#{sendCode},
+			#{sendMobile},
+			#{sendContent},
+			#{sendChannle},
+			#{sendTime},
+			#{sendStatus},
+			#{msgId}
+		)
+ 	</insert>
+ 	
+ 	<select id="getSmsListByMobile" parameterType="java.lang.String" resultMap="baseMap">
+ 		SELECT
+			<include refid="Base_Column_List"/> 
+		FROM
+			1dcq_send_sms_record
+		WHERE
+			send_mobile = #{mobile} and  send_time >= DATE_ADD(NOW(),INTERVAL -1 DAY)
+ 	</select>
+ 	
+ 	<!-- 根据手机号码和场景查询验证码 -->
+ 	<select id="getSendContentByMobileAndUsage" parameterType="java.util.Map" resultMap="baseMap">
+		SELECT
+			<include refid="Base_Column_List"/>
+		FROM
+			1dcq_send_sms_record s
+		WHERE
+			s.send_mobile = #{mobile}
+			<if test="null != usage">
+			    AND s.send_usage = #{usage}
+			</if>
+	    AND s.send_status = 0
+		ORDER BY
+			s.send_time DESC
+		LIMIT 1
+ 	</select>
+ 	
+ 	<select id="getSendSmsRecordDtoByMobileAndUsage" parameterType="java.util.Map" resultMap="baseMap">
+ 	    SELECT
+			<include refid="Base_Column_List"/>
+		FROM
+			1dcq_send_sms_record s
+		WHERE
+			s.send_mobile = #{mobile}
+			<if test="null != usage">
+			    AND s.send_usage = #{usage}
+			</if>
+		AND s.send_status = 0
+		AND s.send_code IS NOT NULL
+		ORDER BY
+			s.send_time DESC
+		LIMIT 1
+ 	</select>
+ 	<update id="updateSendStatusExpire" parameterType="java.lang.String">
+ 	    UPDATE 1dcq_send_sms_record s
+		SET s.send_status = 1
+		WHERE
+			s.send_mobile = #{mobile}
+		AND s.send_status = 0
+		AND s.send_code IS NOT NULL
+ 	</update>
+ 		<!-- 查询几个小时前的短信数 -->
+ 	 <select id="getSmsCountBy" parameterType="java.util.Map" resultType="java.lang.Integer">
+ 		SELECT
+			count(1)
+		FROM
+			1dcq_send_sms_record
+		WHERE
+			send_mobile = #{mobile} 
+		and  
+			(send_usage = #{usage} or send_usage = CONCAT(#{usage},'1'))
+			<if test="null != hour">
+	        <![CDATA[and send_time >= DATE_SUB(NOW(),INTERVAL #{hour} HOUR)]]> 
+	        </if>
+ 	</select>
+
+	<select id="countRemainMsg" parameterType="com.idcq.appserver.dto.common.SendSmsRecordDto" resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		 FROM 1dcq_send_sms_record
+		 <where>
+			 <trim prefixOverrides="AND">
+			 <if test="sendId != null"> AND send_id = #{sendId} </if>
+			 <if test="sendCode != null"> AND send_code = #{sendCode} </if>
+			 <if test="sendUsage != null"> AND send_usage = #{sendUsage} </if>
+			 <if test="sendMobile != null"> AND send_mobile = #{sendMobile} </if>
+			 <if test="sendChannle != null"> AND send_channle = #{sendChannle} </if>
+			 <if test="sendTime != null"> AND send_time > #{sendTime} </if>
+			 <if test="sendStatus != null"> AND send_status = #{sendStatus} </if>
+			 <if test="msgId != null"> AND msg_id = #{msgId} </if>
+			 <if test="createTime != null"> AND create_time > #{createTime} </if>
+			 </trim>
+		 </where>
+	</select>
+
+	<select id="getRemainMsg" parameterType="com.idcq.appserver.dto.common.SendSmsRecordDto" resultMap="baseMap">
+		SELECT *
+		FROM 1dcq_send_sms_record
+		<where>
+			<trim prefixOverrides="AND">
+				<if test="sendId != null"> AND send_id = #{sendId} </if>
+				<if test="sendCode != null"> AND send_code = #{sendCode} </if>
+				<if test="sendUsage != null"> AND send_usage = #{sendUsage} </if>
+				<if test="sendMobile != null"> AND send_mobile = #{sendMobile} </if>
+				<if test="sendChannle != null"> AND send_channle = #{sendChannle} </if>
+				<if test="sendTime != null"> AND send_time > #{sendTime} </if>
+				<if test="sendStatus != null"> AND send_status = #{sendStatus} </if>
+				<if test="msgId != null"> AND msg_id = #{msgId} </if>
+				<if test="createTime != null"> AND create_time > #{createTime} </if>
+			</trim>
+		</where>
+	</select>
+
+	<update id="updateStatusById" parameterType="com.idcq.appserver.dto.common.SendSmsRecordDto">
+		UPDATE  1dcq_send_sms_record
+		SET send_status = #{sendStatus}
+		<if test="sendTime != null">, send_time=#{sendTime}</if>
+		WHERE
+		send_id=#{sendId}
+	</update>
+</mapper>

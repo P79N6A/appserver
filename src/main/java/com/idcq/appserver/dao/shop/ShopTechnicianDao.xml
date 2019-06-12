@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shop.ShopTechnicianDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.shop.ShopTechnicianDto" >
+    <id column="technician_id" property="techId" jdbcType="INTEGER" />
+    <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    <result column="server_mode" property="serverMode" jdbcType="INTEGER" />
+    <result column="technician_order" property="technicianOrder" jdbcType="SMALLINT" />
+    <result column="work_status" property="workStatus" jdbcType="TINYINT" />
+    <result column="technician_name" property="techName" jdbcType="VARCHAR" />
+    <result column="technician_type_id" property="techTypeId" jdbcType="INTEGER" />
+    <result column="skill" property="skill" jdbcType="VARCHAR" />
+    <result column="working_time" property="workLife" jdbcType="DECIMAL" />
+    <result column="sex" property="sex" jdbcType="TINYINT" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="last_update_time" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="reception_number" property="receptionNumber" jdbcType="INTEGER" />
+    <result column="is_valid" property="isValid" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    technician_id, shop_id, server_mode, technician_order, work_status, technician_name, 
+    technician_type_id, skill, working_time, sex, description, create_time, 
+    last_update_time, reception_number, is_valid
+  </sql>
+  <update id="statisTechnicianOrderNumExecute" parameterType="java.util.Map">
+  	 {call sp_technician_order_num_statis(#{startTime,mode=IN},#{endTime,mode=IN})}  
+  </update>
+  <select id="getTechnicianName" parameterType="java.lang.Long" resultType="java.lang.String">
+  	select technician_name from 1dcq_shop_technician where technician_id = #{id} 
+  </select>
+  <!-- 验证技师存在 -->
+  <select id="queryTechnicianExists" parameterType="java.lang.Long" resultType="java.lang.Integer">
+  	select count(1) from 1dcq_shop_technician where technician_id = #{id} and is_valid = 1
+  </select>
+  <!-- 查询当天排班为休息的技师 -->
+  <select id="getTechIdList" parameterType="java.util.Map" resultType="java.lang.Long">
+    <if test="operateType == 0">
+        <!-- 将当天排班为休息的技师查询出来 -->
+        SELECT
+			st.technician_id AS techId
+		FROM
+			1dcq_shop_technician st
+		INNER JOIN 1dcq_shop_technician_classes stc ON stc.technician_id = st.technician_id
+		WHERE
+			stc.classes_date = #{classesDate}
+		AND stc.classes_type = #{classesType}
+		AND st.work_status &lt;&gt; 3
+		LIMIT #{startNo},#{pSize}  
+	</if>
+	<if test="operateType == 1">
+	    <!-- 将昨天休息，但今天正常上班的技师查询出来 -->
+	    SELECT
+			stc.technician_id AS techId
+		FROM
+			1dcq_shop_technician_classes stc
+		WHERE
+			stc.classes_type &lt;&gt; #{classesType}
+		AND stc.classes_date = DATE_ADD(#{classesDate}, INTERVAL 1 DAY)
+		AND stc.technician_id IN (
+			SELECT
+				t.technician_id
+			FROM
+				1dcq_shop_technician_classes t
+			INNER JOIN 1dcq_shop_technician st ON t.technician_id = st.technician_id
+			WHERE
+				t.classes_type = #{classesType}
+			AND t.classes_date = #{classesDate}
+			AND st.is_valid = 1
+			AND st.work_status = 3
+		)
+	</if>
+	<!-- 
+	SELECT
+		st.technician_id AS techId
+	FROM
+		1dcq_shop_technician st
+	INNER JOIN 1dcq_shop_technician_classes stc ON stc.technician_id = st.technician_id
+	WHERE
+		stc.classes_date = #{classesDate}
+		<if test="operateType == 0">
+		    AND stc.classes_type = #{classesType}
+		    AND st.work_status &lt;&gt; 3  
+		</if>
+		<if test="operateType == 1">
+			AND stc.classes_type &lt;&gt; #{classesType} 
+			AND st.work_status = 3  
+		</if>
+	LIMIT #{startNo},#{pSize}   
+	 -->
+  </select>
+  <!-- 批量修改技师工作状态 -->
+  <update id="updateTechnicianWorkStatus" parameterType="java.util.Map">
+	UPDATE 1dcq_shop_technician st
+	SET st.work_status = #{workStatus}
+	WHERE
+		st.technician_id IN (
+			<foreach collection="techIds" item="techId" separator="," close="" open="">
+			    #{techId}
+			</foreach>
+		)
+  </update>
+  <!-- 增加技师 -->
+  <insert id="insertShopTechnician" useGeneratedKeys="true" keyProperty="techId" parameterType="com.idcq.appserver.dto.shop.ShopTechnicianDto" >
+  		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="techId">
+           SELECT LAST_INSERT_ID() AS techId
+  		</selectKey>
+    insert into 1dcq_shop_technician (
+      shop_id, 
+      server_mode, 
+      technician_order, 
+      work_status, 
+      technician_name, 
+      technician_type_id, 
+      skill,
+      <if test="workLife!=null">
+      working_time, 
+      </if> 
+      sex, 
+      description,
+      create_time, 
+      last_update_time, 
+      reception_number, 
+      is_valid,
+      work_number,
+      technician_simple_name,
+      birthday,
+      phone)
+    values (
+      #{shopId,jdbcType=INTEGER},
+      3, 
+      #{technicianOrder,jdbcType=SMALLINT},
+      2, 
+      #{techName,jdbcType=VARCHAR}, 
+      #{techTypeId,jdbcType=INTEGER}, 
+      #{skill,jdbcType=VARCHAR},
+      <if test="workLife!=null">
+         #{workLife,jdbcType=DECIMAL}, 
+      </if>
+      #{sex,jdbcType=TINYINT}, #{description,jdbcType=VARCHAR}, 
+      now(), 
+      now(), 
+      0, 
+      1,
+      #{workNumber},
+      #{technicianSimpleName},
+      #{birthday},
+      #{phone})
+  </insert>
+  <!-- 更新技师 -->
+  <update id="updateShopTechnician" parameterType="com.idcq.appserver.dto.shop.ShopTechnicianDto" >
+    update 1dcq_shop_technician
+    <set >
+      <if test="shopId != null" >
+        shop_id = #{shopId,jdbcType=INTEGER},
+      </if>
+      <if test="serverMode != null" >
+        server_mode = #{serverMode,jdbcType=INTEGER},
+      </if>
+      <if test="technicianOrder != null" >
+        technician_order = #{technicianOrder,jdbcType=SMALLINT},
+      </if>
+      <if test="workStatus != null" >
+        work_status = #{workStatus,jdbcType=TINYINT},
+      </if>
+      <if test="techName != null" >
+        technician_name = #{techName,jdbcType=VARCHAR},
+      </if>
+      <if test="techTypeId != null" >
+        technician_type_id = #{techTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="skill != null" >
+        skill = #{skill,jdbcType=VARCHAR},
+      </if>
+      <if test="workLife != null" >
+        working_time = #{workLife,jdbcType=DECIMAL},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=TINYINT},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateTime != null" >
+        last_update_time = now(),
+      </if>
+      <if test="receptionNumber != null" >
+        reception_number = #{receptionNumber,jdbcType=INTEGER},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=TINYINT},
+      </if>
+    </set>
+    where technician_id = #{techId}
+  </update>
+  <!-- 删除 -->
+  <delete id="deleteShopTechnician" parameterType="com.idcq.appserver.dto.shop.ShopTechnicianDto">
+  	delete from 
+  		1dcq_shop_technician
+  	where
+  		shop_id = #{shopId}
+  	and
+  		technician_id = #{techId}
+  </delete>
+  <!-- 批量插入 -->
+  <insert id="insertShopTechRefGoods" parameterType="java.util.List" >
+  	insert into 1dcq_shop_technician_ref_goods 
+  		(technician_id,goods_group_id)
+  	values
+      <foreach collection="list" item="item" index="index" separator="," >  
+        (#{item.technicianId},#{item.goodsGroupId})  
+    </foreach> 
+  </insert>
+  <!-- 删除技师和商品族关系 -->
+  <delete id="deleteShopTechRefGoods" parameterType="com.idcq.appserver.dto.shop.ShopTechnicianRefGoodsDto">
+  	delete from 
+  		1dcq_shop_technician_ref_goods
+  	where
+  		technician_id = ${technicianId}
+  	<if test="goodsGroupId!=null">
+  		and goods_group_id = ${goodsGroupId}
+  	</if>
+  </delete>
+  <!-- 批量删除技师关系 -->
+  <delete id="deleteBatchShopTechnician" parameterType="java.util.Map">
+     <![CDATA[  
+  	delete from 
+  		1dcq_shop_technician
+       where 
+       		shop_id = #{shopId}  
+       and
+       		technician_id in  
+    ]]>  
+    <foreach collection="list" item = "model" open="(" separator="," close=")">
+    	#{model}  
+    </foreach> 
+  </delete>
+  <!-- 批量更新技师关系 -->
+  <update id="updateBatchShopTechnician" parameterType="java.util.Map">
+     <![CDATA[  
+  	 update
+  		1dcq_shop_technician
+  	 set
+  	 	is_valid = 0  	
+    where 
+       	shop_id = #{shopId}  
+    and
+       	technician_id in  
+    ]]>  
+    <foreach collection="list" item = "model" open="(" separator="," close=")">
+    	#{model}  
+    </foreach> 
+  </update>
+  <!-- 批量删除技师和商品族关系 -->
+  <delete id="deleteBatcheShopTechRefGoods" parameterType="java.util.List">
+     <![CDATA[  
+       delete from 
+       		1dcq_shop_technician_ref_goods 
+       where 
+       		technician_id  in  
+    ]]>  
+    <foreach collection="list" item = "model" open="(" separator="," close=")">
+    	#{model}  
+    </foreach> 
+  </delete>
+ 
+  <!-- 更新 -->
+	<update id="updateShopTechRefGoods"  parameterType="com.idcq.appserver.dto.shop.ShopTechnicianRefGoodsDto">
+      update 
+      	1dcq_shop_technician_ref_goods 
+      set
+         technician_id=#{technicianId},
+         goods_group_id = #{goodsGroupId}
+      where 
+      	technician_id = #{technicianId}
+          
+    </update>
+   <!--  获取技师的服务项目 -->
+    <select id="getTechnicianServiceItems" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			gg.goods_group_id AS goodsGroupId,
+			gg.goods_logo AS goodsLogo,
+			gg.goods_name AS goodsName,
+			gg.min_price AS minPrice,
+			gg.max_price AS maxPrice,
+			gg.sold_number AS soldNumber,
+			gg.goods_server_mode AS goodsServerMode,
+			gg.goods_status AS goodsStatus
+		FROM
+			1dcq_goods_group gg LEFT JOIN 1dcq_shop_technician_ref_goods strg ON gg.goods_group_id=strg.goods_group_id
+		WHERE
+			gg.shop_id = #{shopId}
+			AND gg.goods_status = 1
+		AND strg.technician_id = #{techId} 
+		 <if test="goodsServerMode!=3">
+		 	AND	gg.goods_server_mode in (#{goodsServerMode},3)
+		 </if>
+		LIMIT  #{skip},#{pSize}
+    </select>
+   <!--  获取商铺技师的服务项目总数-->
+    <select id="getTechnicianServiceItemsCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM
+			1dcq_goods_group gg LEFT JOIN 1dcq_shop_technician_ref_goods strg ON gg.goods_group_id=strg.goods_group_id
+		WHERE
+			gg.shop_id = #{shopId}
+			AND gg.goods_status = 1
+		AND strg.technician_id = #{techId} 
+		 <if test="goodsServerMode!=3">
+		 	AND	gg.goods_server_mode in (#{goodsServerMode},3)
+		 </if>
+    </select>
+   <!--  获取商铺技师接单-->
+    <select id="getScheduleSetting" parameterType="java.util.Map" resultType="java.util.Map">
+	  SELECT  
+		cast(osr.status as signed) AS status,
+		osr.start_time AS times
+	 FROM 
+	 	1dcq_order_shop_resource osr 
+	 WHERE 
+	 	osr.biz_id = #{techId}
+	 AND 
+	 	osr.reserve_resource_date = #{queryDate}
+	 AND 
+	 	osr.shop_id = #{shopId} 
+    </select>
+   <!--  获取商铺技师接单总记录-->
+    <select id="getScheduleSettingCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT
+			count(*) AS num
+		FROM
+			1dcq_order_shop_resource osr
+		LEFT JOIN 
+			1dcq_order o
+		ON
+			o.order_id = osr.order_id
+		WHERE
+	 	     osr.biz_id = #{techId}
+	 	AND 
+	 		osr.reserve_resource_date = #{queryDate}
+		AND 
+	 		osr.shop_id = #{shopId} 
+	 	AND 
+	 		o.pay_status = 1
+		AND 
+	 		o.order_status = 9
+	 <if test="times!=null">
+	 	AND osr.start_time = #{times} 
+	 </if>
+    </select>
+   <!--  获取商铺技师列表-->
+    <select id="getTechnicianList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			DISTINCT(t.technician_id) as techId,
+			t.technician_name as techName,
+			stt.technician_type_id as techTypeId,
+		    stt.technician_type_name as techTypeName,
+			t.working_time as workLife,
+			t.sex,
+			t.skill,
+			t.reception_number as orderNum,
+			t.work_status as techStatus,
+			t.technician_simple_name as technicianSimpleName,
+			t.birthday as birthday,
+			t.phone as phone,
+			t.work_number workNumber,
+			t.shop_id shopId,
+		    0 as serviceItemNum
+		FROM
+			1dcq_shop_technician t
+		LEFT JOIN 1dcq_shop_technician_ref_goods strg ON t.technician_id = strg.technician_id
+		LEFT JOIN 1dcq_shop_technician_type stt ON stt.technician_type_id = t.technician_type_id
+		LEFT JOIN 1dcq_shop_technician_classes stc ON t.shop_id = stc.shop_id
+		<!-- LEFT JOIN 1dcq_shop_classes sc ON stc.shop_id = sc.shop_id -->
+		WHERE
+			t.is_valid = 1
+		AND
+			t.shop_id = #{shopId} 
+<!-- 		AND
+			work_status<![CDATA[ <> 3]]> -->
+		<if test="goodsGroupId!=null">
+			AND strg.goods_group_id=#{goodsGroupId}
+		</if>
+		<if test="techId!=null">
+			AND t.technician_id = #{techId}
+		</if>
+		<if test="techTypeId!=null">
+			AND t.technician_type_id = #{techTypeId}
+		</if>
+		<if test="classesType!=null">
+			AND stc.classes_type = #{classesType}
+		</if>
+		<if test="orderBy==0">
+			ORDER BY t.reception_number DESC
+		</if>
+		<if test="orderBy==1">
+			ORDER BY t.technician_name ASC
+		</if>
+		<if test="orderBy==null">
+			ORDER BY t.technician_id DESC
+		</if>
+		LIMIT  #{skip},#{pSize}
+    </select>
+   <!--  获取商铺技师总数-->
+    <select id="getTechnicianListCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT
+			count(DISTINCT(t.technician_id))
+		FROM
+			1dcq_shop_technician t
+		LEFT JOIN 1dcq_shop_technician_ref_goods strg ON t.technician_id = strg.technician_id
+		LEFT JOIN 1dcq_shop_technician_type stt ON stt.technician_type_id = t.technician_type_id
+		LEFT JOIN 1dcq_shop_technician_classes stc ON t.shop_id = stc.shop_id
+		<!-- LEFT JOIN 1dcq_shop_classes sc ON stc.shop_id = sc.shop_id -->
+		WHERE
+			t.is_valid = 1
+		AND 
+			t.shop_id = #{shopId} 
+<!-- 		AND 
+			work_status <![CDATA[ <> 3]]> -->
+		<if test="goodsGroupId!=null">
+			AND strg.goods_group_id=#{goodsGroupId}
+		</if>
+		<if test="techId!=null">
+			AND t.technician_id = #{techId}
+		</if>
+		<if test="techTypeId!=null">
+			AND t.technician_type_id = #{techTypeId}
+		</if>
+		<if test="classesType!=null">
+			AND stc.classes_type = #{classesType}
+		</if>
+    </select>
+    <!-- 根据时间获取班次 -->
+    <select id="getClassesTypeByTime" parameterType="java.util.Map" resultType="java.lang.Integer">
+    <![CDATA[  
+			SELECT
+				classes_type
+			FROM
+				1dcq_shop_classes sc
+			WHERE
+				time(#{serviceTime}) >= time(
+					LEFT (
+						work_time,
+						(POSITION('-' IN work_time) - 1)
+					)
+				)
+			AND time(#{serviceTime}) <= time(
+				RIGHT (
+					work_time,
+					(
+						length(work_time) - POSITION('-' IN work_time)
+					)
+				)
+			)
+		AND
+		    sc.shop_id = #{shopId}
+		LIMIT 1
+ ]]> 
+    </select>
+    <!-- 查询商铺技师服务项目数 -->
+    <select id="getTechServiceCount" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    <![CDATA[  
+    	select 
+    		count(*) 
+    	from 
+    		1dcq_shop_technician_ref_goods strg 
+    	where 
+    		strg.technician_id = #{techId}
+   ]]> 
+    </select>
+  
+    <!-- 查询技师班次时间 -->
+    <select id="getTechWorkTimeByMap" parameterType="java.util.Map" resultType="java.lang.String">
+		SELECT 
+			work_time as workTime
+		FROM 
+				1dcq_shop_classes sc 
+			
+		WHERE  
+			sc.shop_id = #{shopId}
+		AND
+		sc.classes_type =
+			(
+				SELECT
+					stc.classes_type 
+				FROM 
+					1dcq_shop_technician_classes stc
+				WHERE 
+				    stc.classes_date = #{queryDate}
+				AND
+				    stc.technician_id = #{techId}
+				AND
+				    stc.shop_id = #{shopId}
+				)
+		LIMIT 1
+    </select>  
+    <!-- ms18获取技师订单数接口-->
+    <select id="getTechnicianOrderNum" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			COUNT(*) AS orderNum,
+			#{queryStatus} as queryStatus
+		FROM
+			1dcq_order_shop_resource osr
+		INNER JOIN
+			1dcq_order o
+		ON
+			osr.order_id = o.order_id
+		WHERE
+			o.shop_id = #{shopId}
+		AND
+			osr.biz_id =  #{techId}
+		AND
+			resource_type = 2
+		<if test="queryStatus==4">
+			AND o.order_status NOT IN (3,5)
+		</if>
+    </select>
+    <!-- 获取技师状态-->
+    <select id="getTechWorkStatusById" parameterType="java.lang.Long" resultType="java.lang.Integer">
+		SELECT 
+			 work_status
+		FROM
+			1dcq_shop_technician st
+		WHERE 
+			st.technician_id = #{technicianId}
+    </select>
+    <!-- 校验技师是否存在 -->
+	<select id="validateTechExit" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT 
+		  st.technician_id
+		FROM
+		  1dcq_shop_technician st 
+		WHERE st.work_number =#{workNumber}
+		AND st.shop_id=#{shopId}
+	</select>
+</mapper>

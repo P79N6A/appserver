@@ -1,0 +1,868 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dao.collect.CollectDaoImpl">
+	<!-- 初始化接口=菜单 需要四舍五入则用 round，否则用TRUNCATE-->
+	<select id="queryShopGoodsInfo" resultType="java.util.Map" parameterType="java.lang.Long">
+		SELECT
+			g.goods_id AS dishId,
+			g.goods_name AS `name`,
+			g.standard_price AS price,
+			cast(
+				g.goods_settle_flag AS signed
+			) AS goodsSettleFlag,
+			gc.goods_category_id AS goodsCategoryId,
+			a.file_url AS img,
+			g.goods_status AS `status`,
+			g.pinyinCode,
+			g.goods_no AS goodsNo,
+			gu.unit_name AS unitName,
+			g.recommend_flag AS recommendFlag,
+			g.hot_flag AS hotFlag,
+			gu.digit_scale AS digitScale,
+			g.is_support_market_prices AS isSupportMarketPrices,
+			g.goods_price_spec AS goodsPriceSpec,
+			g.barcode,
+			g.specs_desc AS specsDesc,
+			g.sequence AS sequence,
+			g.storage_total_number AS storageTotalNumber,
+			g.alarm_number_max AS alarmNumberMax,
+			g.alarm_number_min AS alarmNumberMin,
+			g.sold_number as soldNumber,
+			g.is_order_discount as isOrderDiscount,
+			g.sell_mode AS sellMode,
+			g.sell_mode_value AS sellModeValue,
+			IFNULL(g.goods_type,1000) as goodsType,
+			g.last_update_time AS lastUpdateTime
+		FROM
+			1dcq_goods g
+		LEFT JOIN 1dcq_goods_category gc ON g.goods_category_id = gc.goods_category_id
+		LEFT JOIN 1dcq_attachment_relation ar ON ar.biz_id=g.goods_id AND ar.biz_type=8 AND ar.pic_type = 1
+		LEFT JOIN 1dcq_attachment a on ar.attachement_id = a.attachement_id
+		LEFT JOIN 1dcq_goods_unit gu ON g.unit_id = gu.unit_id
+		WHERE
+			g.shop_id = #{shopId}
+			and g.goods_status in(0,1) 
+	</select>
+	
+	<!--CS22：获取店铺商品信息接口 2015.12.15 add by huangrui-->
+	<select id="getShopGoodsByShopId" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT
+			g.goods_id AS dishId,
+			g.goods_name AS `name`,
+			g.standard_price AS price,
+			cast(
+				g.goods_settle_flag AS signed
+			) AS goodsSettleFlag,
+			gc.goods_category_id AS goodsCategoryId,
+			a.file_url AS img,
+			g.goods_status AS `status`,
+			g.pinyinCode,
+			g.goods_no AS goodsNo,
+			gu.unit_name AS unitName,
+			g.recommend_flag AS recommendFlag,
+			g.hot_flag AS hotFlag,
+			gu.digit_scale AS digitScale,
+			g.is_support_market_prices AS isSupportMarketPrices,
+			g.goods_price_spec AS goodsPriceSpec,
+			g.barcode,
+			g.specs_desc AS specsDesc,
+			g.goods_type goodsType,
+			g.goods_pro_values_ids as goodsProValuesIds,
+			g.goods_pro_values_names as goodsProValuesNames,
+			IFNULL(g.sold_number,0) AS soldNumber,
+			IFNULL(g.zan_number,0) AS zanNumber,
+			g.storage_total_number AS storageTotalNumbe,
+			g.alarm_number_max AS alarmNumberMax,
+			g.alarm_number_min AS alarmNumberMin,
+			g.goods_group_id as goodsGroupId,
+
+			g.sell_mode as sellMode,
+			g.sell_mode_value as sellModeValue,
+
+			gp.min_price as minPrice,
+			gp.max_price as maxPrice,
+			g.is_order_discount as isOrderDiscount,
+			IFNULL(g.goods_type,1000) as goodsType,
+			g.last_update_time AS lastUpdateTime
+		FROM
+			1dcq_goods g
+		LEFT JOIN 1dcq_goods_category gc ON g.goods_category_id = gc.goods_category_id
+		LEFT JOIN 1dcq_goods_group gp on g.goods_group_id=gp.goods_group_id
+		LEFT JOIN 1dcq_attachment_relation ar ON ar.biz_id=g.goods_id AND ar.biz_type=8 AND ar.pic_type = 1
+		LEFT JOIN 1dcq_attachment a on ar.attachement_id = a.attachement_id
+		LEFT JOIN 1dcq_goods_unit gu ON g.unit_id = gu.unit_id
+		WHERE
+			g.shop_id = #{shopId} 
+			<if test="status != null">
+			    and g.goods_status = #{status} 
+			</if>
+			<if test="isNeedCheck != null">
+				and g.is_need_check = #{isNeedCheck}
+			</if>
+			<if test="queryData">
+				and (
+					g.goods_name like concat('%',trim(#{queryData}),'%') 
+					or 
+					g.pinyinCode like concat('%',trim(#{queryData}),'%')
+					or 
+					g.goods_no like concat('%',trim(#{queryData}),'%')
+					or 
+					g.barcode = #{queryData}
+				)
+			</if>
+			 <if test="storageAlarmType == 1">
+    	      <![CDATA[ and if(g.alarm_number_max is null,0,g.alarm_number_max) < if(g.storage_total_number is null,0,g.storage_total_number) ]]>
+    	    </if> 
+    	    <if test="storageAlarmType == 2">
+    	      <![CDATA[ and if(g.alarm_number_min is null,0,g.alarm_number_min) > if(g.storage_total_number is null,0,g.storage_total_number) ]]>
+    	    </if> 
+			<if test="goodsCategoryId != null">
+				and gc.goods_category_id = #{goodsCategoryId}
+			</if>
+			<if test="lastUpdateTime!=null">
+    	    	<![CDATA[ and g.last_update_time>=#{lastUpdateTime} ]]>
+    	    </if>
+    	    <if test="goodsGroupFlag!=null">
+    	        <choose>
+    	            <when test="goodsGroupFlag==1">
+						and g.goods_group_id is not null    	                
+    	            </when>
+    	            <otherwise>
+						and g.goods_group_id is null    	                
+    	            </otherwise>
+    	        </choose>
+    	    </if>
+		<if test="sellMode  != null">
+			<choose>
+				<when test="sellMode == 101"> AND sell_mode != 0</when>
+				<when test="sellMode == 0"> AND sell_mode = 0</when>
+				<when test="sellMode == 102"></when>
+				<otherwise>AND sell_mode = #{sellMode}</otherwise>
+			</choose>
+		</if>
+		 order by g.goods_id desc  limit #{n},#{m}
+	</select>
+	
+	
+	<!--CS22：获取店铺商品信息接口 2015.12.15 add by huangrui-->
+	<select id="getShopGoodsByShopIdCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT
+			count(1)
+		FROM
+			1dcq_goods g
+		LEFT JOIN 1dcq_goods_category gc ON g.goods_category_id = gc.goods_category_id
+		LEFT JOIN 1dcq_attachment_relation ar ON ar.biz_id=g.goods_id AND ar.biz_type=8 AND ar.pic_type = 1
+		LEFT JOIN 1dcq_attachment a on ar.attachement_id = a.attachement_id
+		LEFT JOIN 1dcq_goods_unit gu ON g.unit_id = gu.unit_id
+		WHERE
+			g.shop_id = #{shopId} 
+			<if test="status != null">
+			    and g.goods_status = #{status} 
+			</if>
+			<if test="isNeedCheck != null">
+				and g.is_need_check = #{isNeedCheck}
+			</if>
+			<if test="queryData">
+				and (
+					g.goods_name like concat('%',trim(#{queryData}),'%') 
+					or 
+					g.pinyinCode like concat('%',trim(#{queryData}),'%')
+					or 
+					g.goods_no like concat('%',trim(#{queryData}),'%')
+					or 
+					g.barcode = #{queryData}
+				)
+			</if>
+			 <if test="storageAlarmType == 1">
+    	      <![CDATA[ and if(g.alarm_number_max is null,0,g.alarm_number_max) < if(g.storage_total_number is null,0,g.storage_total_number) ]]>
+    	    </if> 
+    	    <if test="storageAlarmType == 2">
+    	      <![CDATA[ and if(g.alarm_number_min is null,0,g.alarm_number_min) > if(g.storage_total_number is null,0,g.storage_total_number) ]]>
+    	    </if> 
+			<if test="goodsCategoryId != null">
+				and gc.goods_category_id = #{goodsCategoryId}
+			</if>
+			<if test="lastUpdateTime!=null">
+    	    	<![CDATA[ and g.last_update_time>=#{lastUpdateTime} ]]>
+    	    </if>
+    	    <if test="goodsGroupFlag!=null">
+    	        <choose>
+    	            <when test="goodsGroupFlag==1">
+						and g.goods_group_id is not null    	                
+    	            </when>
+    	            <otherwise>
+						and g.goods_group_id is null    	                
+    	            </otherwise>
+    	        </choose>
+    	    </if>
+			<if test="sellMode  != null">
+			<choose>
+				<when test="sellMode == 101"> AND sell_mode != 0</when>
+				<when test="sellMode == 0"> AND sell_mode = 0</when>
+				<when test="sellMode == 102"></when>
+				<otherwise>AND sell_mode = #{sellMode}</otherwise>
+			</choose>
+			</if>
+		 order by g.goods_id desc  
+	</select>
+	
+	<!--CS22：获取店铺商品信息接口 2015.12.15 add by huangrui-->
+	<select id="getShopSimpleCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT
+			count(1)
+		FROM
+			1dcq_goods g
+		WHERE
+			g.shop_id = #{shopId} 
+			and g.goods_group_id is null    	                
+		 order by g.goods_id desc  
+	</select>
+	
+	<!-- 初始化接口=商品分类 -->
+	<select id="queryShopGoodsCategoryInfo" resultType="java.util.Map" parameterType="java.lang.Long">
+		SELECT
+			gc.goods_category_id AS goodsCategoryId,
+			gc.category_index AS categoryIndex,
+			gc.category_name AS categoryName ,
+			gc.parent_category_id AS parentCategoryId,
+			gc.status 
+		FROM
+			1dcq_goods_category gc
+		WHERE
+			gc.shop_id = #{shopId}
+		order by category_index
+	</select>
+	
+	
+	<!-- 获取商铺账务统计信息 （非会员订单）-->
+	<select id="getShopIncomeStatDtoByOrderId" parameterType="java.lang.String" resultType="com.idcq.appserver.dto.shop.ShopIncomeStatDto">
+	    SELECT
+			s.stat_date as statDate,
+			s.shop_id as shopId,
+			s.order_id as orderId,
+			s.order_title as orderTitle,
+			s.mobile as mobile,
+			s.settle_price as settlePrice,
+			s.order_time as orderTime,
+			s.cash_pay as cashPay,
+			s.pos_pay as posPay,
+			s.onLine_pay as onLinePay
+		FROM
+			1dcq_shop_income_stat s
+		WHERE
+			s.order_id = #{xorderId}
+	</select>
+	<!-- 修改商铺账务统计信息（非会员订单） -->
+	<update id="updateShopIncomeStatDtoByOrderId" parameterType="com.idcq.appserver.dto.shop.ShopIncomeStatDto">
+	    update 1dcq_shop_income_stat
+	    <set >
+	      <if test="statDate != null" >
+	        stat_date = #{statDate},
+	      </if>
+	      <if test="shopId != null" >
+	        shop_id = #{shopId},
+	      </if>
+	      <if test="orderTitle != null" >
+	        order_title = #{orderTitle},
+	      </if>
+	      <if test="mobile != null" >
+	        mobile = #{mobile},
+	      </if>
+	      <if test="settlePrice != null" >
+	        settle_price = #{settlePrice},
+	      </if>
+	      <if test="orderTime != null" >
+	        order_time = #{orderTime},
+	      </if>
+	      <if test="cashPay != null" >
+	        cash_pay = #{cashPay},
+	      </if>
+	      <if test="posPay != null" >
+	        pos_pay = #{posPay},
+	      </if>
+	      <if test="onLinePay != null" >
+	        onLine_pay = #{onLinePay},
+	      </if>
+	      <if test="cashierId != null" >
+	        cashier_id = #{cashierId},
+	      </if>
+	    </set>
+	    where order_id = #{orderId}
+	</update>
+	<!-- 初始化接口=员工 -->
+	<select id="queryShopEmployeeInfo" resultType="java.util.Map" parameterType="java.lang.Long">
+		SELECT 
+		  e.username AS `name`,
+		  IF(e.is_check = 1, u.`password`, e.`password`) AS password,
+		  e.employee_id AS employeeId,
+		  e.fullname AS fullName,
+		  'boss' AS role
+		FROM 1dcq_shop_employee e 
+		  LEFT JOIN 1dcq_user u 
+		    ON e.user_id = u.user_id
+		  INNER JOIN 1dcq_user_role ur 
+		    ON e.employee_id = ur.user_id 
+		  INNER JOIN 1dcq_role r
+		    ON r.id = ur.role_id 
+		WHERE e.shop_id = #{shopId} AND e.`status` = 1 and ur.user_type_id = 3 and r.role_type in (3, 4) group by e.employee_id having  COUNT(*) > 1
+		UNION
+		SELECT 
+		  e.username AS `name`,
+		  IF(e.is_check = 1, u.`password`, e.`password`) AS password,
+		  e.employee_id AS employeeId,
+		  e.fullname AS fullName,
+		  IF(r.role_type=3,'cashier','biller') AS role
+		FROM 1dcq_shop_employee e 
+		  LEFT JOIN 1dcq_user u 
+		    ON e.user_id = u.user_id
+		  INNER JOIN 1dcq_user_role ur 
+		    ON e.employee_id = ur.user_id 
+		  INNER JOIN 1dcq_role r
+		    ON r.id = ur.role_id 
+		WHERE e.shop_id = #{shopId} AND e.`status` = 1 and ur.user_type_id = 3 and r.role_type IN (3, 4) group by e.employee_id having  COUNT(*) = 1
+	</select>
+	<!-- 初始化接口=座位 -->
+	<select id="queryShopResourceInfo" resultType="java.util.Map" parameterType="java.lang.Long">
+		SELECT
+			sr.resource_name AS `name`,
+			sr.resource_type AS category,
+			srg.max_people AS capacity,
+			sr.resource_id AS seatId,
+			sr.position_id AS positionId,
+			srg.min_people AS minPeople,
+			sr.resource_index AS sortNum
+		FROM
+			1dcq_shop_resource sr
+		LEFT JOIN 1dcq_shop_resource_group srg ON sr.group_id = srg.group_id
+		WHERE
+			sr.shop_id = #{shopId}
+	</select>
+	<!-- 初始化接口=版本信息 -->
+	<select id="queryAppVersionInfo" resultType="java.util.Map" parameterType="java.util.Map">
+		select t1.device,t1.description,t1.time,t1.url,t1.build from (
+			select 
+				av.version_id as build,av.version_desc as description,
+				av.release_datetime as time,av.download_url as url,
+				ai.app_name as device
+			from 1dcq_app_version av 
+			inner join 1dcq_app_info ai on av.app_id = ai.app_id
+			where ai.app_name in 
+			<foreach collection="arrays" item="appName" open="(" separator="," close=")">
+				#{appName}
+			</foreach>
+			AND av.lastest_flag = 1 AND av.version_status = 0
+			order by av.release_datetime desc  ) 
+		as t1 group by t1.device
+	</select>
+	<!-- 初始化接口=附加费信息 -->
+	<select id="queryExtraFeeInfo" resultType="java.util.Map" parameterType="java.lang.Long">
+		SELECT
+			ecs.`name`,
+			ecs.area AS targetArea,
+			cast(ecs.charge_type as signed) AS feeType,
+			ecs.charge AS fee
+		FROM
+			1dcq_extra_charge_set ecs
+		WHERE
+			ecs.shop_id = #{shopId}
+		AND ecs.`enable` = 1
+	</select>
+	<!-- 初始化接口=获取商铺状态信息 -->
+	<select id="queryShopInfoStatus" resultType="java.util.Map" parameterType="java.lang.Long">
+		SELECT
+			s.shop_status AS shopStatus,
+			s.last_update_time AS shopDeadTime,
+			s.member_discount AS memberDiscount,
+			s.telephone,
+			s.shop_name AS shopName,
+			s.shop_short AS shopShort,
+			s.address,
+			s.is_maling AS isMaling,
+			s.shop_mode AS shopMode,
+			s.province_id AS provinceId,
+			s.city_id AS cityId,
+			s.district_id AS districtId,
+			s.shop_identity as shopIdentity
+		FROM
+			1dcq_shop s
+		WHERE
+			s.shop_id = #{shopId}
+	</select>
+	<!-- 初始化接口=商铺座位位置分类信息 -->
+	<select id="qaueryShopResourcePositionInfo" resultType="java.util.Map" parameterType="java.lang.Long">
+		SELECT
+			srp.`name`,
+			srp.position_status AS `status`,
+			srp.position_id AS positionId,
+			srp.parent_position_id AS parentPositionId,
+			srp.category_index AS categoryIndex
+		FROM
+			1dcq_shop_resource_position srp
+		WHERE
+			srp.shop_id = #{shopId}
+	</select>
+	<!-- 初始化接口=初始化接口=商铺服务备注信息-->
+	<select id="qaueryShopCookingDetailInfo" resultType="java.util.Map" parameterType="java.lang.Long">
+		SELECT
+			scd.details_type AS detailsType,
+			scd.details_name AS detailsName
+		FROM
+			1dcq_shop_cooking_details scd
+		WHERE
+			scd.shop_id = #{shopId}
+		ORDER BY scd.type_order ASC
+	</select>
+	<select id="queryLastUpdate" resultType="java.lang.String" parameterType="java.util.Map">
+		<choose>
+			<when test="paramStr == 'goods'">
+				select 
+					date_format(ifnull(g.last_update_time,NOW()),'%Y-%m-%d %H:%i:%s') as lastUpdate
+				from 1dcq_goods g 
+				left join 1dcq_goods_category gc on g.goods_category_id = gc.goods_category_id 
+				left join 1dcq_attachment a on g.goods_logo1 = a.attachement_id
+				where g.shop_id = #{shopId}
+				order by g.last_update_time desc limit 1
+			</when>
+			<when test="paramStr == 'employee'">
+				select 
+					date_format(ifnull(se.last_update_time,NOW()),'%Y-%m-%d %H:%i:%s') as lastUpdate
+				from 1dcq_shop_employee se 
+				left join 1dcq_shop_employee_type et on se.employee_type_id = et.employee_type_id
+				where se.shop_id = #{shopId}
+				order by se.last_update_time desc limit 1
+			</when>
+			<when test="paramStr == 'version'">
+				select 
+					date_format(ifnull(max(av.release_datetime),NOW()),'%Y-%m-%d %H:%i:%s') as lastUpdate
+				from 1dcq_app_version av 
+				inner join 1dcq_app_info ai on av.app_id = ai.app_id
+				where ai.app_name in 
+				<foreach collection="arrays" item="appName" open="(" separator="," close=")">
+					#{appName}
+				</foreach>
+			</when>
+			<when test="paramStr == 'seats'">
+				select 
+					date_format(ifnull(sr.last_update_time,NOW()),'%Y-%m-%d %H:%i:%s') as lastUpdate
+				from 1dcq_shop_resource sr
+				left join 1dcq_shop_resource_group srg on sr.group_id = srg.group_id
+				where sr.shop_id = #{shopId}
+				order by sr.last_update_time desc limit 1
+			</when>
+			<when test="paramStr == 'extraFee'">
+				SELECT
+					date_format(ifnull(ecs.last_update_time,NOW()),'%Y-%m-%d %H:%i:%s') as lastUpdate
+				FROM
+					1dcq_extra_charge_set ecs
+				WHERE
+					ecs.shop_id = #{shopId}
+				AND ecs.`enable` = 1
+				order by ecs.last_update_time desc limit 1
+			</when>
+			<when test="paramStr == 'timed'">
+				SELECT
+					date_format(ifnull(td.last_update_time,NOW()),'%Y-%m-%d %H:%i:%s') as lastUpdate
+				FROM
+					1dcq_timed_discount td
+				WHERE
+					td.shop_id = #{shopId}
+				ORDER BY
+					td.last_update_time DESC limit 1
+			</when>
+			<otherwise>
+				select date_format(NOW(),'%Y-%m-%d %H:%i:%s')  as lastUpdate
+			</otherwise>
+		</choose>
+	</select>
+	<!-- 查询订单详情 -->
+	<select id="getOrderDetail4CR" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT
+			o.token_id AS tokenId,
+			o.consume_type AS consumeType,
+			o.order_id AS orderId,
+			o.user_id AS userId,
+			cast(o.order_scene_type AS signed) AS orderSceneType,
+			o.order_title AS orderTitle,
+			cast(o.distribution_type AS signed) AS distributionType,
+			o.distribution_time AS distributionTime,
+			o.order_type AS orderType,
+			cast(o.order_service_type AS signed) AS orderServiceType,
+			o.service_time_from AS serviceTimeFrom,
+			o.service_time_to AS serviceTimeTo,
+			o.prepay_money AS prepayMoney,
+			cast(o.pay_time_type AS signed) AS payTimeType,
+			o.address_id AS addressId,
+			o.order_total_price AS orderTotalPrice,
+			o.goods_price_before_discount AS goodsPriceBeforeDiscount,
+			o.user_remark AS userRemark,
+			o.logistics_price AS logisticsPrice,
+			cast(o.order_status AS signed) AS orderStatus,
+			o.pay_status AS payStatus,
+			o.order_time AS orderTime,
+			o.order_mobile AS mobile,
+			o.client_last_time AS clientLastTime,
+			o.server_last_time AS serverLastTime,
+			o.is_member as isMember,
+			o.settle_price as settlePrice,
+			o.remark as remark,	
+			o.send_red_packet_money as sendRedPacketMoney,
+			
+			(CASE  
+				WHEN o.cashier_id >0 THEN ifnull(e.fullname,"")
+				ELSE  "老板" 
+			 END) as cashierUsername,
+		 
+<!-- 			ifnull(e.fullname,"老板") as cashierUsername, -->
+			IFNULL(o.member_discount, 1) AS memberDiscount,
+			IFNULL(o.coupon_discount_price, 0) AS couponDiscountPrice,
+			o.is_wait as isWait,
+			o.consumer_num as consumerNum,
+			o.client_system_type as clientSystemType,
+			o.cashier_id as cashierId,
+			o.seat_ids as seatIds,
+			o.refuse_reason as refuseReason,
+			o.coupon_discount_price as couponDiscountPrice,
+			o.order_discount as orderDiscount,
+			o.settle_time as settleTime,
+			s.resource_name as resourceName
+		FROM
+			1dcq_order o
+		left join 1dcq_shop_employee e on o.cashier_id = e.employee_id
+		LEFT JOIN 1dcq_shop_resource s ON o.seat_ids = s.resource_id AND o.shop_id = s.shop_id
+		WHERE
+			o.order_id = #{orderId}
+	</select>
+	<!-- 获取订单商品详情 -->
+	<select id="getOrderGoodsDetail" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			g.goods_id AS goodsId,
+			g.goods_number AS goodsNumber,
+			g.goods_settle_price AS goodsSettlePrice,
+			<!-- 这里不能取商品表中的名称，临时菜，是在商品表中不存在的，会导致取不到值  nie_jq 20160929-->
+			g.goods_name as goodsName,
+			<!-- 这个字段也不能取商品表中的，多规格商品，原价是有可能跟商品表中不一致的 nie_jq 20160929 -->
+			g.standard_price as standardPrice,
+			<!-- 新增的规格名称    20160719 增加规格名称 -->
+			goods.goods_pro_values_ids as goodsProValuesIds,
+			goods.goods_pro_values_names as goodsProValuesName,
+			g.is_cancle as isCancle,
+			g.avs_specs as avsSpecsList,
+			g.goods_type as goodsType,
+			g.goods_set_id as goodsSetId,
+			g.set_goods_group as setGoodsGroup,
+			<!-- 增加返回单品折扣字段 -->
+			g.order_goods_discount as orderGoodsDiscount,
+			<!-- 增加返回单品折扣字段 -->
+			g.goods_settle_flag as goodsSettleFlag,
+			<!-- 规格选择需要返回 -->
+			g.`specs_desc` AS specsDesc,
+			g.is_consume_outer AS isConsumeOuter
+		FROM
+			1dcq_order_goods g 
+			left join 1dcq_goods goods
+			on g.goods_id = goods.goods_id
+		WHERE
+			g.order_id = #{orderId}
+	</select>
+	
+	<!-- 获取订单支付详情 -->
+	<select id="getOrderPayDetailCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT
+			count(1) as num
+		FROM
+			1dcq_order_pay p
+		WHERE
+			p.order_id = #{orderId}
+		AND	p.pay_status = 1
+	</select>
+	<!-- 获取订单支付详情 -->
+	<select id="getOrderPayDetail" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT
+		    p.order_pay_id AS orderPayId,
+			p.pay_type AS payType,
+			p.pay_amount AS payAmount,
+			p.order_pay_time AS payTime,
+			p.pay_index AS payIndex,
+			p.client_system_type AS clientSystem
+		FROM
+			1dcq_order_pay p
+		WHERE
+			p.order_id = #{orderId}
+		AND	p.pay_status = 1
+		ORDER BY
+			order_pay_time ASC
+	</select>
+	
+	<!-- 获取外卖或者配送费用 -->
+	<select id="getDistriTakeoutSetInit" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT
+			delivery_price AS deliveryPrice,
+			reduction,
+			is_cash_on_delivery AS isCashOnDelivery,
+			is_reduction AS isReduction,
+			if(is_cash_on_delivery=1, "在线支付,当面付款", "在线支付") AS paymentType
+		FROM
+			1dcq_distribution_takeout_setting 
+		WHERE
+			shop_id = #{shopId}
+		<if test="settingType != null ">
+		AND 
+		    setting_type = #{settingType}
+		</if>
+		limit 1
+	</select>
+	
+	<update id="updateShopResourceStatus" parameterType="java.util.Map">
+	       update 1dcq_shop_resource
+   			 <set>
+     			 <if test="resourceStatus != null" >
+      			  used_from_datetime=null,
+      			  used_to_datetime=null,
+      			  last_update_time = NOW(),
+      			  resource_status = #{resourceStatus,jdbcType=VARCHAR},
+      			</if>
+    		</set>
+   		 where order_id = #{orderId,jdbcType=INTEGER}
+	</update>
+	<update id="updateShopResourceStatusByOrderIdList" parameterType="java.util.Map">
+	       update 1dcq_shop_resource
+   			 <set>
+     			 <if test="resourceStatus != null" >
+      			  used_from_datetime=null,
+      			  used_to_datetime=null,
+      			  last_update_time = NOW(),
+      			  resource_status = #{resourceStatus,jdbcType=VARCHAR},
+      			</if>
+    		</set>
+   		 where order_id in
+   		 <foreach collection="orderIdList" open="(" close=")" separator="," item="item">
+				#{item}   		 	
+   		 </foreach>
+	</update>
+	
+	<select id="getShopAppVersion" resultType="java.lang.String" parameterType="java.util.Map">
+	   select app_version from 1dcq_shop_app_version 
+	   where app_name = #{appName}
+	     and shop_id = #{shopId}
+	</select>
+	
+	<insert id="addAppVersion" parameterType="com.idcq.appserver.dto.shop.ShopAppVersionDto">
+	   insert into 1dcq_shop_app_version (
+			shop_id, app_name, app_version, sn_id,create_time,last_update_time,app_desc
+		)
+		VALUES
+		(
+			#{shopId}, #{appName}, #{appVersion}, #{snId}, NOW(), NOW(),#{appDesc}
+		)
+	</insert>
+	
+     <insert id="addAppVersionLog" parameterType="com.idcq.appserver.dto.shop.ShopAppVersionDto" keyProperty="versionLogId" useGeneratedKeys="true">
+	    insert into 1dcq_shop_app_version_log (
+			version_log_id, shop_id, app_name, app_version, sn_id,create_time,app_desc
+		)
+		VALUES
+		(
+			#{versionLogId}, #{shopId}, #{appName}, #{appVersion}, #{snId}, NOW(), #{appDesc}
+		)
+	</insert>
+	 <insert id="updateAppVersion" parameterType="com.idcq.appserver.dto.shop.ShopAppVersionDto">
+	     update 1dcq_shop_app_version
+	        set app_version = #{appVersion},
+	            app_desc = #{appDesc},
+	            sn_id = #{snId},
+	            last_update_time = NOW()
+	      where shop_id = #{shopId}
+	        and app_name = #{appName}
+	</insert>
+	
+	<select id="getStandardGoodsByBarCode" resultType="java.util.Map" parameterType="java.lang.String">
+	   select 
+	   		  id,
+	   		  barcode,
+	          goods_name AS goodsName,
+	          sale_price AS standardPrice,
+	          unit_name AS unitName,
+	          product_name as productName,
+	          goods_size AS specifications
+	     from 1dcq_goods_barcode
+	    where barcode = #{barcode}
+	</select>
+	
+	<select id="queryGoodsByBarcode" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT
+			g.goods_id as goodsId,
+			g.barcode as barcode,
+			a.file_url AS fileUrl,
+			IFNULL(g.goods_name,"") AS goodsName,
+			IFNULL(g.standard_price,0.0) AS standardPrice,
+			IFNULL(g.discount_price,0.0) as discountPrice,
+			IFNULL(g.vip_price,0.0) as vipPrice,
+			IFNULL(g.final_price,0.0) as finalPrice,
+			IFNULL(gc.goods_category_id,0) AS goodsCategoryId,
+			IFNULL(g.unit_id,0) as unitId,
+			IFNULL(gu.unit_name,"") AS unitName,
+			IFNULL(g.lowest_unit,"") as lowestUnit,
+			IFNULL(g.recommend_flag,0) AS recommendFlag,
+			IFNULL(g.hot_flag,0) AS hotFlag,
+			IFNULL(gu.digit_scale,0) AS digitScale,
+			IFNULL(g.goods_status,0) AS goodsStatus,
+			IFNULL(g.goods_settle_flag,0) AS goodsSettleFlag 
+		FROM
+			1dcq_goods g
+		LEFT JOIN 1dcq_goods_category gc ON g.goods_category_id = gc.goods_category_id
+		LEFT JOIN 1dcq_goods_unit gu ON g.unit_id = gu.unit_id 
+		<if test="shopId!=null">
+			and (( unit_type=2 and gu.shop_id = #{shopId}) or  gu.shop_id is NULL)
+		</if>
+		LEFT JOIN 1dcq_attachment_relation ar ON ar.biz_id=g.goods_id AND ar.biz_type=8 AND ar.pic_type = 1 
+		LEFT JOIN 1dcq_attachment a on ar.attachement_id = a.attachement_id
+		WHERE 
+			1=1
+		<if test="goodsStatus!=null and goodsStatus != 99">
+			and g.goods_status = #{goodsStatus}
+		</if>
+		<if test="goodsStatus != null and goodsStatus==99">
+			and  g.goods_status !=2
+		</if>
+		<if test="shopId!=null">
+			and g.shop_id = #{shopId}
+		</if>
+		<if test="barcode!=null">
+			and (g.barcode=#{barcode} or g.goods_no = #{barcode})
+		</if>
+		order by gu.unit_id desc
+		<if test="searchFlag == 1">
+			limit 1;
+		</if>
+	</select>
+	
+	<select id="queryEmployeeByCashierId" resultType="java.util.Map" parameterType="java.lang.String">
+	   select 
+	   e.fullname as cashierName,
+	   
+	    e.mobile AS caisherMobile
+	     from 1dcq_order o
+	     left join 1dcq_shop_employee e
+	     on o.cashier_id=e.employee_id
+	    where o.order_id = #{orderId}
+	</select>
+	
+	<insert id="batchInsertCookingDetail" parameterType="java.util.List">
+    	insert into 1dcq_shop_cooking_details
+    	(
+			shop_id,
+			details_type,
+			type_order,
+			details_name,
+			create_time
+		 )
+		 values
+		 <foreach collection="cookDetailList" item="item" separator=",">
+		 	(
+			  	#{item.shopId},
+			  	#{item.detailsType},
+			  	#{item.typeOrder},
+			  	#{item.detailsName},
+			  	NOW()
+	  		)
+		 </foreach>
+  	</insert>
+	<select id="getShopIncomeStat" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT TRUNCATE(SUM(si.settle_price),2) AS settlePrice, TRUNCATE(SUM(si.member_card_pay),2) AS memberCardPay, TRUNCATE(SUM(si.charge_price),2) AS chargePrice
+		FROM 1dcq_shop_income_stat si
+		 WHERE si.shop_id=#{shopId} AND si.stat_date <![CDATA[ >= ]]>  #{startDate} AND si.stat_date <![CDATA[ < ]]> #{endDate};
+	</select>
+
+	<select id="countSalerPerformanceDtailByOrder" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT
+		COUNT(DISTINCT(od.order_id))
+		FROM
+		1dcq_order od
+		INNER JOIN
+		1dcq_order_goods og
+		ON
+		od.order_id=og.order_id
+		WHERE
+		og.biller_id = #{employeeId}
+		AND
+		od.order_status=3
+		AND date(od.order_finish_time) BETWEEN #{startDate} AND #{endDate}
+	</select>
+
+	<select id="getSalerPerformanceDtailByOrder" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+		od.order_id AS orderId, od.settle_price AS orderAmount, DATE_FORMAT(od.order_finish_time, "%Y/%c/%e %k:%i") AS orderTime
+		FROM
+		1dcq_order od
+		INNER JOIN
+		1dcq_order_goods og
+		ON
+		od.order_id=og.order_id
+		WHERE
+		og.biller_id = #{employeeId}
+		AND
+		od.order_status=3
+		AND date(od.order_finish_time) BETWEEN #{startDate} AND #{endDate}
+		GROUP BY
+		od.order_id
+		ORDER BY
+		od.order_finish_time DESC
+	</select>
+
+	<select id="countSalerPerformanceDtailByOrderGoods" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		FROM (
+		SELECT
+		FORMAT(SUM(og.goods_number * CASE og.is_cancle WHEN 2 THEN 1 WHEN 3 THEN 1 WHEN 1 THEN (-1) ELSE 0 END
+	),0) AS soldNum, og.goods_id
+		FROM
+		1dcq_order od
+		INNER JOIN
+		1dcq_order_goods og
+		ON
+		od.order_id=og.order_id
+		INNER JOIN
+		1dcq_goods g
+		ON
+		g.goods_id = og.goods_id
+		WHERE
+		og.biller_id = #{employeeId}
+		AND
+		od.order_status=3
+		AND date(od.order_finish_time) BETWEEN #{startDate} AND #{endDate}
+		GROUP BY
+		og.goods_id
+		HAVING soldNum > 0
+		) AS t;
+	</select>
+
+	<select id="getSalerPerformanceDtailByOrderGoods" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+		FORMAT(SUM(og.goods_number * CASE og.is_cancle WHEN 2 THEN 1 WHEN 3 THEN 1 WHEN 1 THEN (-1) ELSE 0 END
+		),
+		0) AS soldNum, SUM(og.goods_settle_price * CASE og.is_cancle WHEN 2 THEN 1 WHEN 3 THEN 1 WHEN 1 THEN (-1) ELSE 0 END
+		) AS soldPrice, og.standard_price AS goodsPrice, og.goods_name AS goodsName,
+		g.goods_pro_values_names as goodsProValuesNames 
+		FROM
+		1dcq_order od
+		INNER JOIN
+		1dcq_order_goods og
+		ON
+		od.order_id=og.order_id
+		INNER JOIN
+		1dcq_goods g
+		ON
+		g.goods_id = og.goods_id
+		WHERE
+		og.biller_id = #{employeeId}
+		AND
+		od.order_status=3
+		AND date(od.order_finish_time) BETWEEN #{startDate} AND #{endDate}
+		GROUP BY
+		og.goods_id
+		HAVING
+		soldNum > 0
+		ORDER BY
+		soldPrice DESC
+	</select>
+</mapper>

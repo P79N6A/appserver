@@ -1,0 +1,2531 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.goods.GoodsDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.goods.GoodsDto" >
+    <id column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="goods_server_mode" property="goodsServerMode" jdbcType="INTEGER" />
+    <result column="goods_type" property="goodsType" jdbcType="INTEGER" />
+    <result column="goods_no" property="goodsNo" jdbcType="VARCHAR" />
+    <result column="barcode" property="barcode"/>
+    <result column="specs_desc" property="specsDesc"/>
+    <result column="goods_group_id" property="goodsGroupId"/>
+    <result column="goods_category_id" property="goodsCategoryId" jdbcType="INTEGER" />
+    <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    <result column="sequence" property="sequence" jdbcType="INTEGER" />
+    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+    <result column="goods_desc" property="goodsDesc" jdbcType="VARCHAR" />
+    <result column="goods_detail_desc" property="goodsDetailDesc" jdbcType="VARCHAR" />
+    <result column="goods_key" property="goodsKey" jdbcType="VARCHAR" />
+    <result column="standard_price" property="standardPrice" jdbcType="DECIMAL" />
+    <result column="discount_price" property="discountPrice" jdbcType="DECIMAL" />
+    <result column="vip_price" property="vipPrice" jdbcType="DECIMAL" />
+    <result column="final_price" property="finalPrice" jdbcType="DECIMAL" />
+    <result column="unit_id" property="unitId" jdbcType="INTEGER" />
+    <result column="unit_name" property="unitName"/>
+    <result column="lowest_unit" property="lowestUnit" jdbcType="INTEGER" />
+    <result column="goods_logo1" property="goodsLogo1" jdbcType="INTEGER" />
+    <result column="goods_logo2" property="goodsLogo2" jdbcType="INTEGER" />
+    <result column="goods_logo3" property="goodsLogo3" jdbcType="INTEGER" />
+    <result column="goods_logo4" property="goodsLogo4" jdbcType="INTEGER" />
+    <result column="goods_logo5" property="goodsLogo5" jdbcType="INTEGER" />
+    <result column="goods_logo6" property="goodsLogo6" jdbcType="INTEGER" />
+    <result column="goods_status" property="goodsStatus" jdbcType="INTEGER" />
+    <result column="is_show" property="isShow"/>
+    <result column="taste" property="taste" jdbcType="VARCHAR" />
+    <result column="spiciness" property="spiciness" jdbcType="VARCHAR" />
+    <result column="takeout" property="takeout" jdbcType="INTEGER" />
+    <result column="cooking_style_id" property="cookingStyleId" jdbcType="INTEGER" />
+    <result column="is_expert" property="isExpert" jdbcType="INTEGER" />
+	<result column="zan_number" property="zanNumber" jdbcType="INTEGER" />
+    <result column="sold_number" property="soldNumber" jdbcType="INTEGER" />
+    <result column="star_level_grade" property="starLevelGrade" jdbcType="DECIMAL" />
+    <result column="percentage" property="percentage" jdbcType="DECIMAL" />
+    <result column="recommend_flag" property="recommendFlag" jdbcType="INTEGER" />
+    <result column="hot_flag" property="hotFlag" jdbcType="INTEGER" />
+    <result column="pinyinCode" property="pinyinCode"/>
+    <result column="create_time" property="createTime"/>
+    <result column="last_update_time" property="lastUpdateTime"/>
+    <result column="goods_settle_flag" property="goodsSettleFlag" jdbcType="INTEGER" />
+    <result column="extra_charge" property="extraCharge" jdbcType="DECIMAL" />
+    <result column="use_time" property="useTime"/>
+    <result column="keep_time" property="keepTime"/>
+    <result column="is_support_market_prices" property="isSupportMarketPrices"/>
+    <result column="goods_price_spec" property="goodsPriceSpec"/>
+    <result column="goods_rebate_flag" property="goodsRebateFlag"/>
+    <result column="validity_term" property="validityTerm"/>
+    <result column="storage_total_number" property="storageTotalNumber"/>
+    <result column="alarm_number_max" property="alarmNumberMax"/>
+    <result column="alarm_number_min" property="alarmNumberMin"/>
+    <result column="is_need_check" property="isNeedCheck"/>
+    <result column="plu_code" property="pluCode"/>
+    <result column="cost_price" property="costPrice"/>
+    <result column="source_goods_id" property="sourceGoodsId"/>
+    
+    <result column="longitude" property="longitude" jdbcType="DECIMAL" />
+    <result column="latitude" property="latitude" jdbcType="DECIMAL" />
+    <result column="city_id" property="cityId" jdbcType="INTEGER" />
+    <result column="district_id" property="districtId" jdbcType="INTEGER" />
+    <result column="town_id" property="townId" jdbcType="INTEGER" />
+    <result column="column_id" property="shopColumnId" jdbcType="INTEGER" />
+    <result column="red_packet_flag" property="redPacketFlag" jdbcType="INTEGER" />
+    <result column="cash_coupon_flag" property="cashCouponFlag" jdbcType="INTEGER" />
+    <result column="business_area_activity_flag" property="businessAreaActivityFlag"/>
+    <result column="coupon_flag" property="couponFlag" jdbcType="INTEGER" />
+    <result column="shop_status" property="shopStatus" jdbcType="INTEGER" />
+    <result column="goods_pro_values_ids" property="goodsProValuesIds" />
+    <result column="goods_pro_values_names" property="goodsProValuesNames" />
+    <result column="original_price" property="originalPrice" />
+    <result column="is_order_discount" property="isOrderDiscount" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.idcq.appserver.dto.goods.GoodsDto" extends="BaseResultMap" >
+    <result column="expert_ids" property="expertIds" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+		goods_id,goods_server_mode,goods_type,goods_no,barcode,specs_desc,goods_group_id,goods_category_id,shop_id,sequence,goods_name
+		,goods_desc,goods_detail_desc,goods_key,standard_price,discount_price,vip_price,final_price,unit_id,unit_name
+		,lowest_unit,goods_logo1,goods_logo2,goods_logo3,goods_logo4,goods_logo5,goods_logo6,goods_status,is_show,taste,spiciness
+		,takeout,cooking_style_id,zan_number,sold_number,star_level_grade,percentage,recommend_flag,hot_flag,pinyinCode,create_time
+		,last_update_time,goods_settle_flag,extra_charge,use_time,keep_time,is_support_market_prices,goods_price_spec,goods_rebate_flag,validity_term,
+		storage_total_number,alarm_number_max,alarm_number_min,is_need_check,plu_code,cost_price,source_goods_id,goods_pro_values_ids,goods_pro_values_names,
+		original_price,is_order_discount
+  </sql>
+  
+  <select id="updateGoodsPrice" parameterType="com.idcq.appserver.dto.goods.GoodsDto">
+  	update 1dcq_goods 
+  	set standard_price = #{standardPrice},
+  	discount_price = #{discountPrice},
+  	vip_price = #{vipPrice},
+  	last_update_time = now() 
+  	where goods_id = #{goodsId}
+  </select>
+  <select id="queryGoodsExists"  resultType="java.lang.Integer" parameterType="java.lang.Long">
+  	select count(1) from 1dcq_goods where goods_id = #{goodsId} and goods_status = 1
+  </select>
+  <update id="updateGoodsStatus" parameterType="java.util.Map">
+  	update 1dcq_goods set goods_status = #{status} where goods_group_id = #{ggId}
+  	<if test="status != null and status == 1"><!-- 上架只操作草稿和下架的商品 -->
+  		and (goods_status = 0 or goods_status = 3)
+  	</if>
+  	<if test="status != null and status == 0"><!-- 下架只操作上架的商品 -->
+  		and goods_status = 1
+  	</if>
+  </update>
+  <!-- 编辑商品族时同步部分信息到关联的商品 -->
+  <update id="syncGoodsInfoOfGg" parameterType="com.idcq.appserver.dto.goods.GoodsDto">
+  	update 1dcq_goods set 
+  	goods_name = #{goodsName}
+  	<if test="goodsDesc != null">
+  	,goods_desc = #{goodsDesc}
+  	</if>
+  	<if test="useTime != null">
+  	,use_time = #{useTime}
+  	</if>
+  	<if test="keepTime != null">
+  	,keep_time = #{keepTime}
+  	</if>
+  	<if test="goodsServerMode != null">
+  	,goods_server_mode = #{goodsServerMode}
+  	</if>
+  	<if test="standardPrice != null">
+  	,standard_price = #{standardPrice}
+  	</if>
+  	where goods_group_id = #{goodsGroupId}
+  </update>
+  <update id="updateGoodsNameBatch" parameterType="java.util.List">
+  	 <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+  	 	update 1dcq_goods 
+  	 	<set>
+  	 		goods_name = #{item.goodsName} 
+  	 	</set>
+  	 	where goods_id = #{item.goodsId}
+     </foreach>
+  </update>
+  <select id="getGoodsIdListOfGg" parameterType="java.lang.Long" resultType="java.lang.Long">
+  	select goods_id from 1dcq_goods where goods_group_id = #{ggId}
+  </select>
+   <update id="statisGoodsSoldExecute" parameterType="java.util.Map">
+  	 {call sp_goods_soldnum_statis (#{startTime,mode=IN},#{endTime,mode=IN})}  
+  </update>
+  <update id="incrGoodsSoldNum" parameterType="java.util.Map">
+  	update 1dcq_goods set sold_number = (ifnull(sold_number,0)+#{soldNum}) where goods_id = #{goodsId} and goods_status = 1
+  </update>
+  <select id="getGoodsList" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />,shop.city_id,shop.district_id as district_id,shop.longitude as longitude,shop.latitude as latitude
+    from 1dcq_goods goods,1dcq_shop shop 
+  	 where goods.shop_id=shop.shop_id
+  </select>
+  <select id="getDigitScaleOfGoodsUnit" resultType="java.lang.Integer" parameterType="long">
+  	select digit_scale from 1dcq_goods t1 inner join 1dcq_goods_unit t2 on t1.unit_id = t2.unit_id and t1.goods_id = #{goodsId}
+  </select>
+  <select id="getGoodsListToIndex" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from 1dcq_goods limit #{n},#{m}
+  </select>
+  
+  <select id="getLastId" parameterType="java.lang.Long" resultType="int">
+    select goods_id from 1dcq_goods order by goods_id desc limit 1;
+  </select>
+  
+  <select id="validGoodsExists" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select goods_id from 1dcq_goods 
+    where goods_id = #{goodsId}
+    <if test="shopId != null">
+    and shop_id = #{shopId}
+    </if>
+  </select>
+  
+  <select id="getGoodsById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from 1dcq_goods
+    where goods_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getById" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from 1dcq_goods
+    where goods_id = #{primaryKeyId}
+  </select>
+  
+<!--   根据goodId查询商品数量 -->
+  <select id="getCountByGoodId" resultType="java.lang.Integer" parameterType="java.lang.Long">
+  	select 
+  		count(*) 
+  	from
+  		1dcq_goods g
+  	 where 
+  	 	g.goods_id = #{goodsId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getGoodsByIdList" resultMap="BaseResultMap">
+  	  select goods.*,shop.city_id,shop.district_id as district_id,shop.longitude as longitude,shop.latitude as latitude,shop.town_id as town_id,
+		  shop.column_id,shop.shop_status,market.red_packet_flag,market.cash_coupon_flag,market.coupon_flag from 1dcq_goods goods,1dcq_shop shop left join 1dcq_shop_marketing market on shop.shop_id=market.shop_id 
+  	 where goods.shop_id=shop.shop_id and	 goods.goods_id in
+     <foreach collection="list" item="item" open="(" separator="," close=")">
+     	#{item}
+     </foreach>
+  </select>
+  
+   <update id="updateGoodsZan" parameterType="java.lang.Long">
+       update 1dcq_goods set zan_number = zan_number + 1  where goods_id = #{goodsId,jdbcType=INTEGER}
+  </update>
+  <select id="getGoodsZanById" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+  	    select zan_number from 1dcq_goods  where goods_id = #{goodsId,jdbcType=INTEGER}
+  </select> 
+  
+  <select id="getGoodsListForSearch" parameterType="com.idcq.appserver.dto.common.PageModel" resultMap="ResultMapWithBLOBs">
+  		 SELECT 
+		  goods_id,
+		  goods_server_mode,
+		  goods_type,
+		  goods_no,
+		  goods_category_id,
+		  goods.shop_id,
+		  sequence,
+		  goods_name,
+		  goods_desc,
+		  goods_detail_desc,
+		  standard_price,
+		  discount_price,
+		  vip_price,
+		  final_price,
+		  unit_id,
+		  lowest_unit,
+		  goods_logo1,
+		  goods_logo2,
+		  goods_logo3,
+		  goods_logo4,
+		  goods_logo5,
+		  goods_logo6,
+		  goods_status,
+		  taste,
+		  spiciness,
+		  takeout,
+		  cooking_style_id,
+		  is_expert,
+		  expert_ids,
+		  goods.zan_number,
+		  goods.sold_number,
+		  goods.star_level_grade,
+		  goods.percentage,
+		  shop.city_id,
+		  shop.district_id AS district_id,
+		  shop.longitude AS longitude,
+		  shop.latitude AS latitude,
+		  shop.town_id as town_id,
+		  shop.column_id,
+		  goods.goods_settle_flag,
+		  market.red_packet_flag,
+		  market.coupon_flag,
+		  market.cash_coupon_flag,
+		  market.business_area_activity_flag,
+		  shop.shop_status,
+		  goods.is_show 
+		FROM
+		  1dcq_goods goods,
+		  1dcq_shop shop left join 1dcq_shop_marketing market on shop.shop_id=market.shop_id 
+		WHERE goods.shop_id = shop.shop_id and goods.goods_group_id is null
+		limit #{start},#{limit}
+  </select>
+  
+  <select id="getTotalCount" resultType="int">
+  	select count(*) from 1dcq_goods where goods_group_id is null
+  </select>
+  
+  <select id="queryGoodIsExist" resultType="int" parameterType="com.idcq.appserver.dto.goods.GoodsDto">
+  	select count(*) 
+  	from 1dcq_goods 
+  	<where>
+  	  <if test="shopId != null" >
+        AND shop_id = #{shopId}
+      </if>
+	  <if test="goodsName != null" >
+        AND goods_name = #{goodsName}
+      </if>
+<!-- 	  <if test="pinyinCode != null" >
+        AND pinyinCode = #{pinyinCode}
+      </if> -->
+	  <if test="goodsCategoryId != null" >
+        AND goods_category_id = #{goodsCategoryId}
+      </if>
+<!-- 	   <if test="standardPrice != null" >
+        AND standard_price = #{standardPrice}
+      </if> -->
+      <if test="unitName != null" >
+        AND unit_name = #{unitName}
+      </if>
+<!-- 	  <if test="goodsServerMode != null" >
+        AND goods_server_mode = #{goodsServerMode}
+      </if> --> 
+<!-- 	  <if test="goodsType != null" >
+        AND goods_type = #{goodsType}
+      </if> -->
+	   <if test="goodsNo != null" >
+        AND goods_no = #{goodsNo}
+      </if>
+     	<if test="goodsNo == null" >
+        AND goods_no IS NULL
+      </if>
+	  <if test="barcode != null" >
+        AND barcode = #{barcode}
+      </if>
+      <if test="barcode == null" >
+        AND barcode IS NULL
+      </if>
+       <if test="goodsProValuesNames != null" >
+        AND goods_pro_values_names = #{goodsProValuesNames}
+      </if>
+<!-- 	  <if test="specsDesc != null" >
+        AND specs_desc = #{specsDesc}
+      </if> -->
+<!-- 	  <if test="sequence != null" >
+        AND sequence = #{sequence}
+      </if> -->
+<!-- 	  <if test="goodsDesc != null" >
+        AND goods_desc = #{goodsDesc}
+      </if> -->
+<!-- 	  <if test="goodsDetailDesc != null" >
+        AND goods_detail_desc = #{goodsDetailDesc}
+      </if> -->
+<!-- 	 <if test="goodsKey != null" >
+        AND goods_key = #{goodsKey}
+      </if> -->
+<!-- 	  <if test="lowestUnit != null" >
+        AND lowest_unit = #{lowestUnit}
+      </if> -->
+<!-- 	  <if test="isShow != null" >
+        AND is_show = #{isShow}
+      </if> -->
+<!--       <if test="recommendFlag != null" >
+        AND recommend_flag = #{recommendFlag}
+      </if> -->
+<!-- 	   <if test="hotFlag != null" >
+        AND hot_flag = #{hotFlag}
+       </if> -->
+<!-- 	 <if test="goodsSettleFlag != null" >
+        AND goods_settle_flag = #{goodsSettleFlag}
+      </if> -->
+<!-- 	  <if test="extraCharge != null" >
+        AND extra_charge = #{extraCharge}
+      </if>
+	  <if test="takeout != null" >
+        AND takeout = #{takeout}
+      </if> -->
+<!-- 	   <if test="goodsPriceSpec != null" >
+        AND goods_price_spec = #{goodsPriceSpec}
+      </if>
+      <if test="goodsStatus != null">
+      	and goods_status != #{goodsStatus}
+      </if> -->
+      and goods_status != 2
+  	</where>
+  </select>
+  
+    <select id="queryExistGood" resultMap="BaseResultMap" parameterType="com.idcq.appserver.dto.goods.GoodsDto">
+  	select goods_id,storage_total_number,goods_group_id
+  	from 1dcq_goods 
+  	<where>
+  	  <if test="shopId != null" >
+        AND shop_id = #{shopId}
+      </if>
+	  <if test="goodsName != null" >
+        AND goods_name = #{goodsName}
+      </if>
+	  <if test="goodsCategoryId != null" >
+        AND goods_category_id = #{goodsCategoryId}
+      </if>
+      
+      <if test="unitName != null" >
+        AND unit_name = #{unitName}
+      </if>
+	  <if test="goodsNo != null" >
+        AND goods_no = #{goodsNo}
+      </if>
+	  <if test="barcode != null" >
+        AND barcode = #{barcode}
+      </if>
+      <if test="goodsProValuesNames != null" >
+        AND goods_pro_values_names = #{goodsProValuesNames}
+      </if>
+      and goods_status != 2
+      and goods_status != 3
+  	</where>
+  </select>
+  
+   <select id="queryGoods" resultMap="BaseResultMap" parameterType="com.idcq.appserver.dto.goods.GoodsDto">
+	  	select *
+	  	from 1dcq_goods 
+	  	<where>
+	  	  <if test="shopId != null" >
+	        AND shop_id = #{shopId}
+	      </if>
+		  <if test="sourceGoodsId != null" >
+	        AND source_goods_id = #{sourceGoodsId}
+	      </if>
+	  	</where>
+  </select>
+  <select id="queryGoodsByShopIdAndCategoryId" resultMap="BaseResultMap" parameterType="com.idcq.appserver.dto.goods.GoodsDto">
+	  	select *
+	  	from 1dcq_goods
+	  	<where>
+		  goods_status=1
+	  	  <if test="shopId != null" >
+	        AND shop_id = #{shopId}
+	      </if>
+		  <if test="goodsCategoryId != null" >
+	        AND goods_category_id = #{goodsCategoryId}
+	      </if>
+
+	  	</where>
+  </select>
+  
+   <select id="queryGoodsIdList" resultType="java.lang.Long" parameterType="com.idcq.appserver.dto.goods.GoodsDto">
+	  	select goods_id
+	  	from 1dcq_goods 
+	  	<where>
+	  	  <if test="shopId != null" >
+	        AND shop_id = #{shopId}
+	      </if>
+		  <if test="sourceGoodsId != null" >
+	        AND source_goods_id = #{sourceGoodsId}
+	      </if>
+	  	</where>
+  </select>
+  
+  <select id="getTotalCountByShopId" resultType="int">
+  	select count(1) from 1dcq_goods goods where goods.shop_id=#{shopId}
+  </select>
+  <select id="getGoodsReplicationCount" resultType="int">
+  	select count(*) from 1dcq_goods_replication
+  </select>
+  
+   <select id="getGoodsByPageAndLastUpdateTime" resultMap="BaseResultMap" parameterType="java.util.Map">
+  		select goods.*, shop.city_id,
+		  shop.district_id AS district_id,
+		  shop.column_id as column_id,
+		  shop.longitude AS longitude,
+		  shop.latitude AS latitude,
+		  shop.town_id as town_id,
+		  goods.goods_settle_flag,
+		  market.red_packet_flag,
+		  market.coupon_flag,
+		  market.cash_coupon_flag,
+		  market.business_area_activity_flag,
+		  shop.shop_status
+		  from 1dcq_goods goods left join 1dcq_shop shop on goods.shop_id=shop.shop_id 
+		  left join 1dcq_shop_marketing market on shop.shop_id=market.shop_id  where goods.last_update_time>=TIMESTAMP(#{lastUpdateTime}) and goods.goods_group_id is null limit #{start},#{limit}
+  </select>
+  
+  <select id="getDistinctGoodsGroupIdForIndex" resultType="java.lang.Integer">
+  		SELECT DISTINCT(goods_group_id) from 1dcq_goods where goods_group_id is not null and last_update_time>=TIMESTAMP(#{lastUpdateTime})
+  </select>
+  
+   <select id="getGoodNameListByGroupId" resultMap="BaseResultMap">
+  		select  group_concat(goods_name,'##') as goods_name,goods_group_id goods_group_id from 1dcq_goods  where 1=1 
+  		 <if test="groupIdList != null" >
+  		 	 and goods_group_id in
+       		 <foreach collection="groupIdList" item="item" separator="," close=")" open="(">
+				#{item}
+			</foreach>
+     	 </if>
+  		 and goods_status=1 group by goods_group_id 
+  </select>
+  <select id="getGoodsListByShopId" resultMap="BaseResultMap" parameterType="java.util.Map">
+  			select goods.*, shop.city_id,
+		  shop.district_id AS district_id,
+		  shop.longitude AS longitude,
+		  shop.latitude AS latitude,
+		  shop.town_id as town_id,
+		  shop.column_id as column_id,
+		  goods.goods_settle_flag,
+		  market.red_packet_flag,
+		  market.coupon_flag,
+		  market.cash_coupon_flag,
+		  shop.shop_status
+		  from 1dcq_goods goods left join 1dcq_shop shop on goods.shop_id=shop.shop_id  left join 1dcq_shop_marketing market on shop.shop_id=market.shop_id 
+		  where shop.shop_id=#{shopId} and goods.goods_group_id is null
+		   order by goods_id asc  limit #{start},#{limit}
+  </select>
+  
+  <select id="getGoodsDataFromTemporyTable" resultMap="BaseResultMap">
+  		select goods.*, shop.city_id,
+		  shop.district_id AS district_id,
+		  shop.longitude AS longitude,
+		  shop.latitude AS latitude,
+		  shop.town_id as town_id,
+		  goods.goods_settle_flag,
+		  market.red_packet_flag,
+		  market.coupon_flag,
+		  market.cash_coupon_flag,
+		  shop.shop_status from goods_tempory_index goods left join 1dcq_shop shop on goods.shop_id=shop.shop_id  left join 1dcq_shop_marketing market on shop.shop_id=market.shop_id  order by goods_id limit #{start},#{limit}
+  </select>
+  <!-- 查询商品logo图片 -->
+  <select id="getGoodsLogo1ById" resultType="java.lang.String" parameterType="java.lang.Long">
+	  SELECT 
+	 	 a.file_url 
+	  FROM 
+	  	1dcq_goods g 
+	  LEFT JOIN 1dcq_attachment a
+	  ON 
+	  	g.goods_logo1 = a.attachement_id
+	WHERE 
+		g.goods_id = #{goodsId}
+	LIMIT 1
+  </select>
+  
+  <select id="getGoodsGroupByShopIdList" resultMap="BaseResultMap">
+	    <foreach collection="shopIdList" item="item"  separator=" union " >
+     		(select * from 1dcq_goods where shop_id=#{item} and goods_status=1 and is_show=1 and goods_group_id is null order by sold_number desc  limit #{goodsNum})
+    	 </foreach>
+  </select>
+  <!-- 更新商品族下面所有商品的状态 -->
+  <update id="updateGoodsStatsIsDelByGoodsGroupId" parameterType="java.util.Map">
+      UPDATE 1dcq_goods
+		SET goods_status = #{goodsStatus},
+		last_update_time = NOW()
+		WHERE
+			goods_group_id = #{goodsGroupId}
+  </update>
+  <update id="clearTemporyGoodsByMaxId">
+  		truncate table goods_tempory_index
+  </update>
+  <!-- 修改商品价格 -->
+  <update id="updateGoodsStandardPrice" parameterType="com.idcq.appserver.dto.goods.GoodsDto">
+  	UPDATE 1dcq_goods g
+	SET g.standard_price = #{standardPrice},
+	 g.last_update_time = NOW()
+	WHERE
+		g.goods_id =#{goodsId}
+  </update>
+  <!-- 批量将商品逻辑删除 [有效=1，失效(删除)=0]-->
+  <update id="batchUpdateGoodsById" parameterType="java.util.List">
+  	UPDATE 1dcq_goods g
+	SET g.goods_status = 2,
+	 g.last_update_time = NOW()
+	WHERE
+		g.goods_id IN (
+			<foreach collection="list" item="goodsId" close="" open="" separator=",">
+				#{goodsId}
+			</foreach>
+		)
+  </update>
+  
+  <update id="updateGoods" parameterType="com.idcq.appserver.dto.goods.GoodsDto">
+  	UPDATE 1dcq_goods 
+	<set>
+	  <if test="shopId != null" >
+        shop_id = #{shopId},
+      </if>
+	  <if test="goodsName != null" >
+        goods_name = #{goodsName},
+      </if>
+	  <if test="pinyinCode != null" >
+        pinyinCode = #{pinyinCode},
+      </if>
+	  <if test="goodsCategoryId != null" >
+        goods_category_id = #{goodsCategoryId},
+      </if>
+	   <if test="standardPrice != null" >
+        standard_price = #{standardPrice},
+      </if>
+      <if test="unitName != null" >
+        unit_name = #{unitName},
+      </if>
+	  <if test="goodsServerMode != null" >
+        goods_server_mode = #{goodsServerMode},
+      </if>
+	  <if test="goodsType != null" >
+        goods_type = #{goodsType},
+      </if>
+	   <if test="goodsNo != null" >
+        goods_no = #{goodsNo},
+      </if>
+	  <if test="barcode != null" >
+        barcode = #{barcode},
+      </if>
+	  <if test="specsDesc != null" >
+        specs_desc = #{specsDesc},
+      </if>
+	  <if test="sequence != null" >
+        sequence = #{sequence},
+      </if>
+	  <if test="goodsDesc != null" >
+        goods_desc = #{goodsDesc},
+      </if>
+	  <if test="goodsDetailDesc != null" >
+        goods_detail_desc = #{goodsDetailDesc},
+      </if>
+	 <if test="goodsKey != null" >
+        goods_key = #{goodsKey},
+      </if>
+	  <if test="lowestUnit != null" >
+        lowest_unit = #{lowestUnit},
+      </if>
+	  <if test="isShow != null" >
+        is_show = #{isShow},
+      </if>
+      <if test="recommendFlag != null" >
+        recommend_flag = #{recommendFlag},
+      </if>
+	   <if test="hotFlag != null" >
+        hot_flag = #{hotFlag},
+       </if>
+	 <if test="goodsSettleFlag != null" >
+        goods_settle_flag = #{goodsSettleFlag},
+      </if>
+	  <if test="extraCharge != null" >
+        extra_charge = #{extraCharge},
+      </if>
+	  <if test="takeout != null" >
+        takeout = #{takeout},
+      </if>
+	   <if test="goodsPriceSpec != null" >
+        goods_price_spec = #{goodsPriceSpec},
+      </if>
+	</set>
+	WHERE
+		goods_id = #{goodsId}
+  </update>
+  
+  <!-- 添加商品记录，返回商品编号 -->
+	<insert id="addGoodsDto" parameterType="com.idcq.appserver.dto.goods.GoodsDto" useGeneratedKeys="true" keyProperty="goodsId" >
+   		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="goodsId">
+           SELECT LAST_INSERT_ID() AS goodsId
+  		</selectKey>
+	    insert into 1dcq_goods
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+    <if test="costPrice != null" >
+        cost_price,
+      </if>
+      <if test="goodsId != null" >
+        goods_id,
+      </if>
+      <if test="goodsServerMode != null" >
+        goods_server_mode,
+      </if>
+      <if test="goodsType != null" >
+        goods_type,
+      </if>
+      <if test="goodsNo != null" >
+        goods_no,
+      </if>
+      <if test="barcode != null" >
+        barcode,
+      </if>
+      <if test="specsDesc != null" >
+        specs_desc,
+      </if>
+      <if test="goodsGroupId != null" >
+        goods_group_id,
+      </if>
+      <if test="goodsCategoryId != null" >
+        goods_category_id,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+      <if test="sequence != null" >
+        sequence,
+      </if>
+      <if test="goodsName != null" >
+        goods_name,
+      </if>
+      <if test="goodsDesc != null" >
+        goods_desc,
+      </if>
+      <if test="goodsDetailDesc != null" >
+        goods_detail_desc,
+      </if>
+      <if test="goodsKey != null" >
+        goods_key,
+      </if>
+      <if test="standardPrice != null" >
+        standard_price,
+      </if>
+      <if test="discountPrice != null" >
+        discount_price,
+      </if>
+      <if test="vipPrice != null" >
+        vip_price,
+      </if>
+      <if test="finalPrice != null" >
+        final_price,
+      </if>
+      <if test="unitId != null" >
+        unit_id,
+      </if>
+       <if test="unitName != null" >
+        unit_name,
+      </if>
+      <if test="lowestUnit != null" >
+        lowest_unit,
+      </if>
+      <if test="goodsLogo1 != null" >
+        goods_logo1,
+      </if>
+      <if test="goodsLogo2 != null" >
+        goods_logo2,
+      </if>
+      <if test="goodsLogo3 != null" >
+        goods_logo3,
+      </if>
+      <if test="goodsLogo4 != null" >
+        goods_logo4,
+      </if>
+      <if test="goodsLogo5 != null" >
+        goods_logo5,
+      </if>
+      <if test="goodsLogo6 != null" >
+        goods_logo6,
+      </if>
+      <if test="goodsStatus != null" >
+        goods_status,
+      </if>
+      <if test="taste != null" >
+        taste,
+      </if>
+      <if test="spiciness != null" >
+        spiciness,
+      </if>
+      <if test="cookingStyleId != null" >
+        cooking_style_id,
+      </if>
+      <if test="isExpert != null" >
+        is_expert,
+      </if>
+      <if test="zanNumber != null" >
+        zan_number,
+      </if>
+      <if test="soldNumber != null" >
+        sold_number,
+      </if>
+      <if test="starLevelGrade != null" >
+        star_level_grade,
+      </if>
+      <if test="percentage != null" >
+        percentage,
+      </if>
+      <if test="recommendFlag != null" >
+        recommend_flag,
+      </if>
+      <if test="hotFlag != null" >
+        hot_flag,
+      </if>
+      <if test="pinyinCode != null" >
+        pinyinCode,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="lastUpdateTime != null" >
+        last_update_time,
+      </if>
+      <if test="goodsSettleFlag != null" >
+        goods_settle_flag,
+      </if>
+      <if test="goodsRebateFlag != null" >
+        goods_rebate_flag,
+      </if>
+      <if test="extraCharge != null" >
+        extra_charge,
+      </if>
+      <if test="useTime != null" >
+        use_time,
+      </if>
+      <if test="keepTime != null" >
+        keep_time,
+      </if>
+      <if test="takeout != null" >
+        takeout,
+      </if>
+      <if test="isSupportMarketPrices != null" >
+        is_support_market_prices,
+      </if>
+      <if test="goodsPriceSpec != null" >
+        goods_price_spec,
+      </if>
+      <if test="expertIds != null" >
+        expert_ids,
+      </if>
+      <if test="validityTerm != null">
+      	validity_term,
+      </if>
+      <if test="storageTotalNumber != null">
+      	storage_total_number,
+      </if>
+      <if test="alarmNumberMax != null">
+      	alarm_number_max,
+      </if>
+       <if test="alarmNumberMin != null">
+      	alarm_number_min,
+      </if>
+      <if test="isNeedCheck != null">
+      	is_need_check,
+      </if>
+      <if test="sourceGoodsId != null">
+      	source_goods_id,
+      </if>
+      <if test="goodsProValuesIds != null">
+      	goods_pro_values_ids,
+      </if>
+      <if test="goodsProValuesNames != null">
+      	goods_pro_values_names,
+      </if>
+      <if test="pluCode != null">
+      	plu_code,
+      </if>
+      <if test="isShow != null">
+      	is_show,
+      </if>
+      <if test="originalPrice != null">
+      	original_price,
+      </if>
+
+	  <if test="sellMode != null">
+		  sell_mode,
+      </if>
+	  <if test="sellModeValue != null">
+		  sell_mode_value,
+      </if>
+
+       <if test="isOrderDiscount != null">
+      	is_order_discount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+     <if test="costPrice != null" >
+        #{costPrice},
+      </if>
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsServerMode != null" >
+        #{goodsServerMode,jdbcType=TINYINT},
+      </if>
+      <if test="goodsType != null" >
+        #{goodsType,jdbcType=INTEGER},
+      </if>
+      <if test="goodsNo != null" >
+        #{goodsNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        #{barcode},
+      </if>
+      <if test="specsDesc != null" >
+        #{specsDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsGroupId != null" >
+        #{goodsGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsCategoryId != null" >
+        #{goodsCategoryId,jdbcType=INTEGER},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=INTEGER},
+      </if>
+      <if test="sequence != null" >
+        #{sequence,jdbcType=INTEGER},
+      </if>
+      <if test="goodsName != null" >
+        #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsDesc != null" >
+        #{goodsDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsDetailDesc != null" >
+        #{goodsDetailDesc,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="goodsKey != null" >
+        #{goodsKey,jdbcType=VARCHAR},
+      </if>
+      <if test="standardPrice != null" >
+        #{standardPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="discountPrice != null" >
+        #{discountPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="vipPrice != null" >
+        #{vipPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="finalPrice != null" >
+        #{finalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="unitId != null" >
+        #{unitId,jdbcType=INTEGER},
+      </if>
+      <if test="unitName != null" >
+         #{unitName,jdbcType=VARCHAR},
+      </if>
+      <if test="lowestUnit != null" >
+        #{lowestUnit,jdbcType=INTEGER},
+      </if>
+      <if test="goodsLogo1 != null" >
+        #{goodsLogo1,jdbcType=INTEGER},
+      </if>
+      <if test="goodsLogo2 != null" >
+        #{goodsLogo2,jdbcType=INTEGER},
+      </if>
+      <if test="goodsLogo3 != null" >
+        #{goodsLogo3,jdbcType=INTEGER},
+      </if>
+      <if test="goodsLogo4 != null" >
+        #{goodsLogo4,jdbcType=INTEGER},
+      </if>
+      <if test="goodsLogo5 != null" >
+        #{goodsLogo5,jdbcType=INTEGER},
+      </if>
+      <if test="goodsLogo6 != null" >
+        #{goodsLogo6,jdbcType=INTEGER},
+      </if>
+      <if test="goodsStatus != null" >
+        #{goodsStatus,jdbcType=TINYINT},
+      </if>
+      <if test="taste != null" >
+        #{taste,jdbcType=VARCHAR},
+      </if>
+      <if test="spiciness != null" >
+        #{spiciness,jdbcType=VARCHAR},
+      </if>
+      <if test="cookingStyleId != null" >
+        #{cookingStyleId,jdbcType=INTEGER},
+      </if>
+      <if test="isExpert != null" >
+        #{isExpert,jdbcType=BIT},
+      </if>
+      <if test="zanNumber != null" >
+        #{zanNumber,jdbcType=INTEGER},
+      </if>
+      <if test="soldNumber != null" >
+        #{soldNumber,jdbcType=INTEGER},
+      </if>
+      <if test="starLevelGrade != null" >
+        #{starLevelGrade,jdbcType=DECIMAL},
+      </if>
+      <if test="percentage != null" >
+        #{percentage,jdbcType=DECIMAL},
+      </if>
+      <if test="recommendFlag != null" >
+        #{recommendFlag,jdbcType=INTEGER},
+      </if>
+      <if test="hotFlag != null" >
+        #{hotFlag,jdbcType=TINYINT},
+      </if>
+      <if test="pinyinCode != null" >
+        #{pinyinCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateTime != null" >
+        #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="goodsSettleFlag != null" >
+        #{goodsSettleFlag,jdbcType=BIT},
+      </if>
+      <if test="goodsRebateFlag != null" >
+         #{goodsRebateFlag,jdbcType=BIT},
+      </if>
+      <if test="extraCharge != null" >
+        #{extraCharge,jdbcType=DECIMAL},
+      </if>
+      <if test="useTime != null" >
+        #{useTime,jdbcType=DECIMAL},
+      </if>
+      <if test="keepTime != null" >
+        #{keepTime,jdbcType=SMALLINT},
+      </if>
+      <if test="takeout != null" >
+        #{takeout,jdbcType=INTEGER},
+      </if>
+      <if test="isSupportMarketPrices != null" >
+        #{isSupportMarketPrices,jdbcType=TINYINT},
+      </if>
+      <if test="goodsPriceSpec != null" >
+        #{goodsPriceSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="expertIds != null" >
+        #{expertIds,jdbcType=LONGVARCHAR},
+      </if>
+       <if test="validityTerm != null">
+       	#{validityTerm,jdbcType=INTEGER},
+       </if>
+      <if test="storageTotalNumber != null">
+      	#{storageTotalNumber},
+      </if>
+      <if test="alarmNumberMax != null">
+      	#{alarmNumberMax},
+      </if>
+      <if test="alarmNumberMin != null">
+      	#{alarmNumberMin},
+      </if>
+       <if test="isNeedCheck != null">
+      	#{isNeedCheck},
+      </if>
+      <if test="sourceGoodsId != null">
+      	#{sourceGoodsId},
+      </if>
+      <if test="goodsProValuesIds != null">
+      	#{goodsProValuesIds},
+      </if>
+      <if test="goodsProValuesNames != null">
+      	#{goodsProValuesNames},
+      </if> 
+      <if test="pluCode != null">
+      	#{pluCode},
+      </if>
+      <if test="isShow != null">
+      	#{isShow},
+      </if>
+      <if test="originalPrice != null">
+      	#{originalPrice},
+      </if>
+
+	  <if test="sellMode != null">
+      	#{sellMode},
+      </if>
+	  <if test="sellModeValue != null">
+		#{sellModeValue},
+	  </if>
+      <if test="isOrderDiscount != null">
+      	#{isOrderDiscount},
+      </if>
+    </trim>
+  </insert>
+  
+  <insert id="batchAddGoodsDto" parameterType="java.util.Map" >
+    insert into 1dcq_goods  
+	(   cost_price,                                                                         
+        goods_server_mode,
+        goods_type,
+        goods_no,
+        barcode,
+        specs_desc,
+        goods_group_id,
+        goods_category_id,
+        shop_id,
+        sequence,
+        goods_name,
+        goods_desc,
+        goods_detail_desc,
+        goods_key,
+        standard_price,
+        discount_price,
+        vip_price,
+        final_price,
+        unit_id,
+        unit_name,
+        lowest_unit,
+        goods_logo1,
+        goods_logo2,
+        goods_logo3,
+        goods_logo4,
+        goods_logo5,
+        goods_logo6,
+        goods_status,
+        taste,
+        spiciness,
+        cooking_style_id,
+        is_expert,
+        zan_number,
+        sold_number,
+        star_level_grade,
+        percentage,
+        recommend_flag,
+        hot_flag,
+        pinyinCode,
+        create_time,
+        last_update_time,
+        goods_settle_flag,
+        goods_rebate_flag,
+        extra_charge,
+        use_time,
+        keep_time,
+        takeout,
+        is_support_market_prices,
+        goods_price_spec,
+        expert_ids,
+      	validity_term,
+      	storage_total_number,
+      	alarm_number_max,
+      	alarm_number_min,
+      	is_need_check,
+      	source_goods_id,
+      	goods_pro_values_ids,
+      	goods_pro_values_names,
+      	original_price,
+      	is_order_discount )
+	values
+	<foreach collection="goodList" item="good" separator=",">
+	   (
+		    #{good.costPrice},
+	        #{good.goodsServerMode},
+	        #{good.goodsType},
+	        #{good.goodsNo},
+	        #{good.barcode},
+	        #{good.specsDesc},
+	        #{good.goodsGroupId},
+	        #{good.goodsCategoryId},
+	        #{good.shopId},
+	        #{good.sequence},
+	        #{good.goodsName},
+	        #{good.goodsDesc},
+	        #{good.goodsDetailDesc},
+	        #{good.goodsKey},
+	        #{good.standardPrice},
+	        #{good.discountPrice},
+	        #{good.vipPrice},
+	        #{good.finalPrice},
+	        #{good.unitId},
+	        #{good.unitName},
+	        #{good.lowestUnit},
+	        #{good.goodsLogo1},
+	        #{good.goodsLogo2},
+	        #{good.goodsLogo3},
+	        #{good.goodsLogo4},
+	        #{good.goodsLogo5},
+	        #{good.goodsLogo6},
+	        #{good.goodsStatus},
+	        #{good.taste},
+	        #{good.spiciness},
+	        #{good.cookingStyleId},
+	        #{good.isExpert},
+	        #{good.zanNumber},
+	        #{good.soldNumber},
+	        #{good.starLevelGrade},
+	        #{good.percentage},
+	        #{good.recommendFlag},
+	        #{good.hotFlag},
+	        #{good.pinyinCode},
+	        #{good.createTime},
+	        #{good.lastUpdateTime},
+	        #{good.goodsSettleFlag},
+	        #{good.goodsRebateFlag},
+	        #{good.extraCharge},
+	        #{good.useTime},
+	        #{good.keepTime},
+	        #{good.takeout},
+	        #{good.isSupportMarketPrices},
+	        #{good.goodsPriceSpec},
+	        #{good.expertIds},
+	       	#{good.validityTerm},
+	      	#{good.storageTotalNumber},
+	      	#{good.alarmNumberMax},
+	      	#{good.alarmNumberMin},
+	      	#{good.isNeedCheck},
+	      	#{good.sourceGoodsId},
+	      	#{good.goodsProValuesIds},
+	      	#{good.goodsProValuesNames},
+	      	#{good.originalPrice},
+	      	#{good.isOrderDiscount}
+      	)
+	</foreach>
+  </insert>
+  
+  <insert id="batchUpdateGoodsDto" parameterType="java.util.Map" >
+    insert into 1dcq_goods  
+	(  
+		goods_id,
+		cost_price,                                                                         
+        goods_server_mode,
+        goods_type,
+        goods_no,
+        barcode,
+        specs_desc,
+        goods_group_id,
+        goods_category_id,
+        shop_id,
+        sequence,
+        goods_name,
+        goods_desc,
+        goods_detail_desc,
+        goods_key,
+        standard_price,
+        discount_price,
+        vip_price,
+        final_price,
+        unit_id,
+        unit_name,
+        lowest_unit,
+        goods_logo1,
+        goods_logo2,
+        goods_logo3,
+        goods_logo4,
+        goods_logo5,
+        goods_logo6,
+        goods_status,
+        taste,
+        spiciness,
+        cooking_style_id,
+        is_expert,
+        zan_number,
+        sold_number,
+        star_level_grade,
+        percentage,
+        recommend_flag,
+        hot_flag,
+        pinyinCode,
+        create_time,
+        last_update_time,
+        goods_settle_flag,
+        goods_rebate_flag,
+        extra_charge,
+        use_time,
+        keep_time,
+        takeout,
+        is_support_market_prices,
+        goods_price_spec,
+        expert_ids,
+      	validity_term,
+      	storage_total_number,
+      	alarm_number_max,
+      	alarm_number_min,
+      	is_need_check,
+      	source_goods_id,
+      	goods_pro_values_ids,
+      	goods_pro_values_names,
+      	original_price,
+      	is_order_discount )
+	values
+	<foreach collection="goodList" item="good" separator=",">
+		(
+			#{good.goodsId},
+		    #{good.costPrice},
+	        #{good.goodsServerMode},
+	        #{good.goodsType},
+	        #{good.goodsNo},
+	        #{good.barcode},
+	        #{good.specsDesc},
+	        #{good.goodsGroupId},
+	        #{good.goodsCategoryId},
+	        #{good.shopId},
+	        #{good.sequence},
+	        #{good.goodsName},
+	        #{good.goodsDesc},
+	        #{good.goodsDetailDesc},
+	        #{good.goodsKey},
+	        #{good.standardPrice},
+	        #{good.discountPrice},
+	        #{good.vipPrice},
+	        #{good.finalPrice},
+	        #{good.unitId},
+	        #{good.unitName},
+	        #{good.lowestUnit},
+	        #{good.goodsLogo1},
+	        #{good.goodsLogo2},
+	        #{good.goodsLogo3},
+	        #{good.goodsLogo4},
+	        #{good.goodsLogo5},
+	        #{good.goodsLogo6},
+	        #{good.goodsStatus},
+	        #{good.taste},
+	        #{good.spiciness},
+	        #{good.cookingStyleId},
+	        #{good.isExpert},
+	        #{good.zanNumber},
+	        #{good.soldNumber},
+	        #{good.starLevelGrade},
+	        #{good.percentage},
+	        #{good.recommendFlag},
+	        #{good.hotFlag},
+	        #{good.pinyinCode},
+	        #{good.createTime},
+	        #{good.lastUpdateTime},
+	        #{good.goodsSettleFlag},
+	        #{good.goodsRebateFlag},
+	        #{good.extraCharge},
+	        #{good.useTime},
+	        #{good.keepTime},
+	        #{good.takeout},
+	        #{good.isSupportMarketPrices},
+	        #{good.goodsPriceSpec},
+	        #{good.expertIds},
+	       	#{good.validityTerm},
+	      	#{good.storageTotalNumber},
+	      	#{good.alarmNumberMax},
+	      	#{good.alarmNumberMin},
+	      	#{good.isNeedCheck},
+	      	#{good.sourceGoodsId},
+	      	#{good.goodsProValuesIds},
+	      	#{good.goodsProValuesNames},
+	      	#{good.originalPrice},
+	      	#{good.isOrderDiscount}
+      	)
+	</foreach>
+	ON DUPLICATE KEY UPDATE 
+		cost_price=VALUES(cost_price),
+		goods_server_mode=VALUES(goods_server_mode),
+		goods_type=VALUES(goods_type),
+		goods_no=VALUES(goods_no),
+		barcode=VALUES(barcode),
+		specs_desc=VALUES(specs_desc),
+		goods_group_id=VALUES(goods_group_id),
+		goods_category_id=VALUES(goods_category_id),
+		shop_id=VALUES(shop_id),
+		sequence=VALUES(sequence),
+		goods_name=VALUES(goods_name),
+		goods_desc=VALUES(goods_desc),
+		goods_detail_desc=VALUES(goods_detail_desc),
+		goods_key=VALUES(goods_key),
+		standard_price=VALUES(standard_price),
+		discount_price=VALUES(discount_price),  
+		vip_price=VALUES(vip_price),
+		final_price=VALUES(final_price),
+		unit_id=VALUES(unit_id),
+		unit_name=VALUES(unit_name),
+		lowest_unit=VALUES(lowest_unit),
+		goods_logo1=VALUES(goods_logo1),
+		goods_logo2=VALUES(goods_logo2), 
+		goods_logo3=VALUES(goods_logo3),  
+		goods_logo4=VALUES(goods_logo4), 
+		goods_logo5=VALUES(goods_logo5),
+		goods_logo6=VALUES(goods_logo6),
+		goods_status=VALUES(goods_status), 
+		taste=VALUES(taste), 
+		spiciness=VALUES(spiciness),
+		cooking_style_id=VALUES(cooking_style_id), 
+		is_expert=VALUES(is_expert), 
+		zan_number=VALUES(zan_number),  
+		sold_number=VALUES(sold_number), 
+		star_level_grade=VALUES(star_level_grade), 
+		percentage=VALUES(percentage),  
+		recommend_flag=VALUES(recommend_flag), 
+		hot_flag=VALUES(hot_flag),
+		pinyinCode=VALUES(pinyinCode), 
+		create_time=VALUES(create_time),
+		last_update_time=VALUES(last_update_time),
+		goods_settle_flag=VALUES(goods_settle_flag), 
+		goods_rebate_flag=VALUES(goods_rebate_flag), 
+		extra_charge=VALUES(extra_charge),
+		use_time=VALUES(use_time),
+		keep_time=VALUES(keep_time),  
+		takeout=VALUES(takeout),
+		is_support_market_prices=VALUES(is_support_market_prices), 
+		goods_price_spec=VALUES(goods_price_spec), 
+		expert_ids=VALUES(expert_ids), 
+		validity_term=VALUES(validity_term), 
+		storage_total_number=VALUES(storage_total_number),
+		alarm_number_max=VALUES(alarm_number_max),
+		alarm_number_min=VALUES(alarm_number_min), 
+		is_need_check=VALUES(is_need_check),
+		source_goods_id=VALUES(source_goods_id),
+		goods_pro_values_ids=VALUES(goods_pro_values_ids),
+		goods_pro_values_names=VALUES(goods_pro_values_names),
+		original_price=VALUES(original_price),
+		is_order_discount=VALUES(is_order_discount)                                
+  </insert>
+  
+	<select id="getGoodsByGroupMap" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+			<include refid="Base_Column_List" /> 
+		from 
+		1dcq_goods g 
+		where 
+		g.goods_status != 2
+  	    <if test='shopId != null'>
+    	    and g.shop_id = #{shopId}
+    	</if>
+  	    <if test='goodsCategoryId != null'>
+    	    and g.goods_category_id = #{goodsCategoryId}
+    	</if>
+    	<if test='goodsGroupId != null'>
+    	    and g.goods_group_id = #{goodsGroupId}
+    	</if>
+    	<if test='goodsServerMode!=null'>
+    	    and g.goods_server_mode = #{goodsServerMode}
+    	</if>
+    	<if test="goodsType!=null">
+    		and g.goods_type=#{goodsType}
+    	</if>
+<!--     	<if test="goodsStatus==99">
+    		and ( g.goods_status=0 OR g.goods_status=1)
+    	</if> -->
+    	<if test="goodsStatus!=null">
+    		and g.goods_status = #{goodsStatus}
+    	</if>
+    	<if test="goodsProValuesIds">
+    		and g.goods_pro_values_ids = #{goodsProValuesIds}
+    	</if>
+    	<if test="goodsProValuesNames">
+    		and g.goods_pro_values_names = #{goodsProValuesNames}
+    	</if>
+    	<if test="storageAlarmType == 1">
+    	    <![CDATA[ and if(g.alarm_number_max is null,0,g.alarm_number_max) < if(g.storage_total_number is null,0,g.storage_total_number) ]]>
+    	</if> 
+    	<if test="storageAlarmType == 2">
+    	   <![CDATA[ and if(g.alarm_number_min is null,0,g.alarm_number_min) > if(g.storage_total_number is null,0,g.storage_total_number) ]]>
+    	</if>
+    	<if test="storageAlarmType == 3">
+    		<![CDATA[ and ((if(g.alarm_number_max is null,0,g.alarm_number_max) < if(g.storage_total_number is null,0,g.storage_total_number))
+    			or (if(g.alarm_number_min is null,0,g.alarm_number_min) > if(g.storage_total_number is null,0,g.storage_total_number)))
+    		 ]]>
+    	</if>
+    	
+	</select>
+	<!-- 收银机接口：获取商铺菜品信息 -->
+	<select id="getGoodsListByCollect" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT 
+				g.goods_name as goodsName,
+				g.goods_category_id as goodsCategoryId,
+				g.standard_price as price,
+				cast(g.goods_settle_flag as signed) as goodsSettleFlag,
+				g.goods_id as goodsId ,
+				g.pinyinCode as pinyinCode,
+				g.goods_no as goodsNo ,
+				gu.unit_name as unitName,
+				gu.digit_scale as  digitScale,
+				g.recommend_flag as recommendFlag,
+				g.hot_flag as hotFlag,
+				g.is_support_market_prices as  isSupportMarketPrices
+		 FROM 
+				1dcq_goods g
+		LEFT JOIN
+				1dcq_goods_category gc
+		ON
+				g.goods_category_id = gc.goods_category_id
+		LEFT JOIN
+				1dcq_goods_unit gu
+		ON
+				g.unit_id = gu.unit_id
+		WHERE 
+				g.shop_id = #{shopId}
+		AND
+				g.goods_status = 1
+		AND
+				gc.status = 1
+		<if test="isSupportMarketPrices!=null">
+			AND g.is_support_market_prices = #{isSupportMarketPrices}
+		</if>
+		<if test="goodsCategoryId!=null">
+		    AND 
+		    	(
+		    		gc.goods_category_id = #{goodsCategoryId}
+		    	OR 
+		    		gc.parent_category_id = #{goodsCategoryId}
+		    	)
+		</if>	
+	</select>	
+
+   <!-- 点赞添加日志 -->
+   <insert id="addGoodsZanLog" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="goodsZanId" >
+   		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="goodsZanId">
+           SELECT LAST_INSERT_ID() AS goodsZanId
+  		</selectKey>
+	    insert into 1dcq_order_goods_zan_log
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="goodsZanId != null" >
+	        goods_zan_id,
+	      </if>
+	      <if test="userId != null" >
+	        user_id,
+	      </if>
+	      <if test="orderId != null" >
+	        order_id,
+	      </if>
+	      <if test="goodsId != null" >
+	        goods_id,
+	      </if>
+	      <if test="zanStatus != null" >
+	        zan_status,
+	      </if>
+	      <if test="createTime == null" >
+	        create_time,
+	      </if>
+	      <if test="lastUpdateTime == null" >
+	        last_update_time,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="goodsZanId != null" >
+	        #{goodsZanId,jdbcType=INTEGER},
+	      </if>
+	      <if test="userId != null" >
+	        #{userId,jdbcType=INTEGER},
+	      </if>
+	      <if test="orderId != null" >
+	        #{orderId,jdbcType=INTEGER},
+	      </if>
+	      <if test="goodsId != null" >
+	        #{goodsId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="zanStatus != null" >
+	        #{zanStatus,jdbcType=INTEGER},
+	      </if>
+	      <if test="createTime == null" >
+	         NOW(),
+	      </if>
+	      <if test="lastUpdateTime == null" >
+	         NOW(),
+	      </if>
+	    </trim>
+	</insert>
+	
+	<!-- 根据条形码和shopId获取商品数量 -->
+	<select id="getShopGoodsIdByBarcode" parameterType="java.util.Map" resultType="java.lang.Long">
+	    select goods_id from 1dcq_goods where shop_id = #{shopId} and barcode = #{barcode} limit 1
+	</select>
+	
+ <update id="updateGoodsDto" parameterType="com.idcq.appserver.dto.goods.GoodsDto" >
+    update 1dcq_goods
+    <set >
+    <!-- 20160705请求参数新添加costPrice成本价字段 -->
+    <if test="costPrice != null" >
+        cost_price = #{costPrice},
+      </if>
+      <if test="goodsServerMode != null" >
+        goods_server_mode = #{goodsServerMode,jdbcType=TINYINT},
+      </if>
+      <if test="goodsType != null" >
+        goods_type = #{goodsType,jdbcType=INTEGER},
+      </if>
+      <if test="goodsNo != null" >
+        goods_no = #{goodsNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        barcode = #{barcode},
+      </if>
+      <if test="specsDesc != null" >
+        specs_desc = #{specsDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsGroupId != null" >
+        goods_group_id = #{goodsGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsCategoryId != null" >
+        goods_category_id = #{goodsCategoryId,jdbcType=INTEGER},
+      </if>
+      <if test="shopId != null" >
+        shop_id = #{shopId,jdbcType=INTEGER},
+      </if>
+      <if test="sequence != null" >
+        sequence = #{sequence,jdbcType=INTEGER},
+      </if>
+      <if test="goodsName != null" >
+        goods_name = #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsDesc != null" >
+        goods_desc = #{goodsDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsDetailDesc != null" >
+        goods_detail_desc = #{goodsDetailDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsKey != null" >
+        goods_key = #{goodsKey,jdbcType=VARCHAR},
+      </if>
+      <if test="standardPrice != null" >
+        standard_price = #{standardPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="discountPrice != null" >
+        discount_price = #{discountPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="vipPrice != null" >
+        vip_price = #{vipPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="finalPrice != null" >
+        final_price = #{finalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="unitId != null" >
+        unit_id = #{unitId,jdbcType=INTEGER},
+      </if>
+      <if test="lowestUnit != null" >
+        lowest_unit = #{lowestUnit,jdbcType=INTEGER},
+      </if>
+      <if test="goodsLogo1 != null" >
+        goods_logo1 = #{goodsLogo1,jdbcType=INTEGER},
+      </if>
+      <if test="goodsLogo2 != null" >
+        goods_logo2 = #{goodsLogo2,jdbcType=INTEGER},
+      </if>
+      <if test="goodsLogo3 != null" >
+        goods_logo3 = #{goodsLogo3,jdbcType=INTEGER},
+      </if>
+      <if test="goodsLogo4 != null" >
+        goods_logo4 = #{goodsLogo4,jdbcType=INTEGER},
+      </if>
+      <if test="goodsLogo5 != null" >
+        goods_logo5 = #{goodsLogo5,jdbcType=INTEGER},
+      </if>
+      <if test="goodsLogo6 != null" >
+        goods_logo6 = #{goodsLogo6,jdbcType=INTEGER},
+      </if>
+      <if test="goodsStatus != null" >
+        goods_status = #{goodsStatus,jdbcType=TINYINT},
+      </if>
+      <if test="taste != null" >
+        taste = #{taste,jdbcType=VARCHAR},
+      </if>
+      <if test="spiciness != null" >
+        spiciness = #{spiciness,jdbcType=VARCHAR},
+      </if>
+      <if test="cookingStyleId != null" >
+        cooking_style_id = #{cookingStyleId,jdbcType=INTEGER},
+      </if>
+      <if test="isExpert != null" >
+        is_expert = #{isExpert,jdbcType=BIT},
+      </if>
+      <if test="zanNumber != null" >
+        zan_number = #{zanNumber,jdbcType=INTEGER},
+      </if>
+      <if test="soldNumber != null" >
+        sold_number = #{soldNumber,jdbcType=INTEGER},
+      </if>
+      <if test="starLevelGrade != null" >
+        star_level_grade = #{starLevelGrade,jdbcType=DECIMAL},
+      </if>
+      <if test="percentage != null" >
+        percentage = #{percentage,jdbcType=DECIMAL},
+      </if>
+      <if test="recommendFlag != null" >
+        recommend_flag = #{recommendFlag,jdbcType=INTEGER},
+      </if>
+      <if test="hotFlag != null" >
+        hot_flag = #{hotFlag,jdbcType=TINYINT},
+      </if>
+      <if test="pinyinCode != null" >
+        pinyinCode = #{pinyinCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateTime != null" >
+        last_update_time = #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="goodsSettleFlag != null" >
+        goods_settle_flag = #{goodsSettleFlag,jdbcType=BIT},
+      </if>
+      <if test="extraCharge != null" >
+        extra_charge = #{extraCharge,jdbcType=DECIMAL},
+      </if>
+      <if test="useTime != null" >
+        use_time = #{useTime,jdbcType=DECIMAL},
+      </if>
+      <if test="keepTime != null" >
+        keep_time = #{keepTime,jdbcType=SMALLINT},
+      </if>
+      <if test="takeout != null" >
+        takeout = #{takeout,jdbcType=INTEGER},
+      </if>
+      <if test="isSupportMarketPrices != null" >
+        is_support_market_prices = #{isSupportMarketPrices,jdbcType=TINYINT},
+      </if>
+      <if test="goodsPriceSpec != null" >
+        goods_price_spec = #{goodsPriceSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="expertIds != null" >
+        expert_ids = #{expertIds,jdbcType=LONGVARCHAR},
+      </if>
+       <if test="unitName != null" >
+        unit_name = #{unitName,jdbcType=VARCHAR},
+      </if>
+      <if test="storageTotalNumber != null">
+      	storage_total_number = #{storageTotalNumber},
+      </if>
+      <if test="alarmNumberMax != null">
+      	alarm_number_max = #{alarmNumberMax},
+      </if>
+      <if test="alarmNumberMin != null">
+      	alarm_number_min=#{alarmNumberMin},
+      </if>
+      <if test="isNeedCheck != null">
+      	is_need_check=#{isNeedCheck},
+      </if>
+      <if test="sourceGoodsId != null">
+      	source_goods_id= #{sourceGoodsId},
+      </if>
+      <if test="costPrice != null">
+      	cost_price = #{costPrice},
+      </if>
+      <if test="isShow != null">
+      	is_show = #{isShow},
+      </if>
+      <if test="originalPrice != null">
+      	original_price = #{originalPrice},
+      </if>
+
+	  <if test="sellMode != null">
+		  sell_mode = #{sellMode},
+	  </if>
+	  <if test="sellModeValue != null">
+		  sell_mode_value = #{sellModeValue},
+	  </if>
+    </set>
+    where
+    1=1
+    <if test="goodsId != null">
+   		and  goods_id = #{goodsId,jdbcType=INTEGER}
+    </if>
+    <if test="sourceGoodsId != null">
+   		and  source_goods_id = #{sourceGoodsId,jdbcType=INTEGER}
+    </if>    
+  </update>
+  <!-- 查询商品是否属于商品族 -->
+  <select id="queryGoodGroupExist" resultType="java.lang.Long" parameterType="java.lang.Long">
+	select 
+		gg.goods_group_id
+	from 
+		1dcq_goods g
+	inner join 
+		1dcq_goods_group gg
+	on
+		gg.goods_group_id = g.goods_group_id
+	where
+		g.goods_id = #{goodsId}
+  </select>
+  <!-- 商品状态变更接口 -->
+  <update id="updateGoodsInfoStatus" parameterType="java.util.Map">
+      UPDATE 1dcq_goods g
+		SET g.goods_status = #{operateType}
+		WHERE
+			g.shop_id = #{shopId}
+		AND g.goods_id IN (
+			<foreach collection="goodsIds" item="goodsId" open="" close="" separator=",">
+			    #{goodsId}
+			</foreach>
+		)
+  </update>
+  
+  <!-- 求和出list中的商品总价 -->
+  <select id="sumGoodsPirce" resultType="java.lang.Double" parameterType="java.util.List">
+  	SELECT SUM(g.standard_price) FROM 1dcq_goods  g  where g.goods_id in 
+  		 <foreach item="item" index="index" collection="list" open="(" separator="," close=")">  
+		  #{item.goodsId}  
+		 </foreach> 
+  </select>
+  
+   <!-- 添加商品条码记录，返回商品条码id -->
+	<insert id="addGoodsBarcode" parameterType="com.idcq.appserver.dto.goods.GoodsBarcodeDto" useGeneratedKeys="true" keyProperty="id" >
+   		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+           SELECT LAST_INSERT_ID() AS id
+  		</selectKey>
+	    insert into 1dcq_goods_barcode
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="barcode != null" >
+        barcode,
+      </if>
+      <if test="goodsName != null" >
+        goods_name,
+      </if>
+      <if test="unitName != null" >
+        unit_name,
+      </if>
+      <if test="goodsSize != null" >
+        goods_size,
+      </if>
+      <if test="inPrice != null" >
+        in_price,
+      </if>
+      <if test="salePrice != null" >
+        sale_price,
+      </if>
+      <if test="productName != null" >
+        product_name
+      </if>
+    </trim>
+    
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+    	<if test="barcode != null" >
+         #{barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsName != null" >
+        #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="unitName != null" >
+        #{unitName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsSize != null" >
+        #{goodsSize,jdbcType=VARCHAR},
+      </if>
+      <if test="inPrice != null" >
+         #{inPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="salePrice != null" >
+         #{salePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="productName != null" >
+        #{productName,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateGoodsBarcode" parameterType="com.idcq.appserver.dto.goods.GoodsBarcodeDto" >
+    update 1dcq_goods_barcode
+    <set >
+      <if test="barcode != null" >
+        barcode = #{barcode,jdbcType=VARCHAR},
+      </if>
+       <if test="goodsName != null" >
+        goods_name = #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="unitName != null" >
+        unit_name = #{unitName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsSize != null" >
+        goods_Size = #{goodsSize,jdbcType=VARCHAR},
+      </if>
+      <if test="inPrice != null" >
+         in_price = #{inPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="salePrice != null" >
+         sale_price = #{salePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="productName != null" >
+        product_name = #{productName,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+	
+	<!-- 新增商品单位 -->
+	<insert id="insertGoodsUnit" parameterType="com.idcq.appserver.dto.goods.GoodsUnitDto" useGeneratedKeys="true" keyProperty="unitId" >
+   		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="unitId">
+           SELECT LAST_INSERT_ID() AS unitId
+  		</selectKey>
+	    insert into 1dcq_goods_unit
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="unitIndex != null" >
+        unit_index,
+      </if>
+      <if test="unitName != null" >
+        unit_name,
+      </if>
+      <if test="digitScale != null" >
+        digit_scale,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="unitType != null" >
+        unit_type,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+       <if test="sourceType != null" >
+        source_type
+      </if>
+    </trim>
+    
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+    	<if test="unitIndex != null" >
+	        #{unitIndex,jdbcType=INTEGER,javaType=Integer},
+	      </if>
+	      <if test="unitName != null" >
+	        trim(#{unitName,jdbcType=VARCHAR,javaType=String}),
+	      </if>
+	      <if test="digitScale != null" >
+	        #{digitScale,jdbcType=INTEGER,javaType=Integer},
+	      </if>
+	      <if test="status != null" >
+	       #{status,jdbcType=INTEGER,javaType=Integer},
+	      </if>
+	      <if test="unitType != null" >
+	       #{unitType,jdbcType=INTEGER,javaType=Integer},
+	      </if>
+	      <if test="shopId != null" >
+	        #{shopId,jdbcType=BIGINT,javaType=Long},
+	      </if>
+	       <if test="sourceType != null" >
+	        #{sourceType,jdbcType=INTEGER,javaType=Integer}
+	      </if>
+    </trim>
+  </insert>
+	
+	
+	<!-- 更新商品单位 -->
+	<update id="updateGoodsUnit"  parameterType="com.idcq.appserver.dto.goods.GoodsUnitDto">
+                update 1dcq_goods_unit 
+                <set>
+                	<if test="unitIndex != null">
+	                  unit_index=#{unitIndex},
+                	</if>
+                	<if test="unitName != null">
+	                  unit_name=trim(#{unitName}),
+                	</if>
+                	<if test="digitScale != null">
+	                  digit_scale=#{digitScale},
+                	</if>
+                	<if test="status != null">
+	                  status=#{status},
+                	</if>
+                	<if test="unitType != null">
+	                  unit_type=#{unitType},
+                	</if>
+                	<if test="sourceType != null">
+	                  source_type=#{sourceType},
+                	</if>
+                </set>
+                where 
+				 	unit_id = #{unitId} and shop_id=#{shopId}
+    </update>
+    
+    <!-- 通过店铺ID，单位名称，查询商铺单位 -->
+  <select id="getShopGoodUnit" parameterType="java.util.Map" resultType="com.idcq.appserver.dto.goods.GoodsUnitDto">
+  	SELECT 
+	 unit_id as unitId,
+	 unit_index as unitIndex,
+	 unit_name as unitName,
+	 digit_scale as digitScale,
+	 status as status,
+	 unit_type as unitType,
+	 ifnull(shop_id,0) as shopId,
+	 source_type as sourceType
+	FROM
+	  1dcq_goods_unit
+	 <where>
+	 	<!-- 通过shopId和unitName查询单位是否存在 -->
+	 	<if test="unitName!=null">
+	 		and unit_name=trim(#{unitName})
+	 	</if>
+	 	<if test="shopId!=null">
+	 		and shop_id = #{shopId}
+	 	</if>
+	 	<if test="unitId!=null">
+	 		and unit_id!=#{unitId}
+	 	</if>
+	 	<if test="sourceType!=0">
+	 		and source_type=1
+	 	</if>
+	 	<if test="unitType==2">
+	 		and unit_type=2
+	 	</if>
+	 	<if test="status==1">
+	 		and status=1
+	 	</if>
+	 </where>
+	 limit 1
+  </select>
+  
+   <!-- 通过单位ID查询商铺单位 -->
+  <select id="getShopGoodUnitByUnitId" parameterType="java.util.Map" resultType="com.idcq.appserver.dto.goods.GoodsUnitDto">
+  	SELECT 
+	 unit_id as unitId,
+	 unit_index as unitIndex,
+	 unit_name as unitName,
+	 digit_scale as digitScale,
+	 status as status,
+	 unit_type as unitType,
+	 ifnull(shop_id,0) as shopId,
+	 source_type as sourceType
+	FROM
+	  1dcq_goods_unit
+	 <where>
+	 	<if test="unitId!=null">
+	 		and unit_id=#{unitId}
+	 	</if>
+	 </where>
+	 limit 1
+  </select>
+  	<!-- 删除商铺单位 -->
+   <delete id="delGoodsUnit" parameterType="java.util.Map">
+   		DELETE FROM
+   			1dcq_goods_unit
+   		<where>
+   			<if test="unitId!=null">
+		 		and unit_id=#{unitId}
+		 	</if>
+		 	<if test="shopId!=null">
+		 		and shop_id = #{shopId}
+		 	</if>
+   		</where>
+   </delete>
+  
+   <!--查询商铺单位 -->
+	<select id="getGoodsUnitList" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT DISTINCT(unitName),unitId,unitIndex,digitScale,status,unitType,shopId,sourceType
+		FROM  
+		(SELECT 
+			unit_id as unitId,
+			unit_index as unitIndex,
+			unit_name as unitName,
+			digit_scale as digitScale,
+			status as status,
+			unit_type as unitType,
+			shop_id as shopId,
+			source_type as sourceType
+		 FROM 
+			1dcq_goods_unit
+		<where>
+			unit_type=2
+			<if test="shopId!=null">
+				and shop_id=#{shopId}
+			</if>
+			<if test="unitName!=null">
+				and unit_name = #{unitName}
+			</if>
+		</where>
+		
+		union all
+		
+		SELECT 
+			unit_id as unitId,
+			unit_index as unitIndex,
+			unit_name as unitName,
+			digit_scale as digitScale,
+			status as status,
+			unit_type as unitType,
+			ifnull(shop_id,0) as shopId,
+			source_type as sourceType
+		 FROM 
+			1dcq_goods_unit
+		<where>
+			<if test="shopId!=null">
+				and shop_id is NULL
+			</if>
+			<if test="unitName!=null">
+				and unit_name = #{unitName}
+			</if>
+		</where>
+		) a
+		GROUP BY unitName
+		ORDER BY shopId DESC,unitId DESC 
+		limit #{m},#{n}
+	</select>
+	
+	 <!-- 通过店铺ID，单位ID，查询商铺单位 -->
+  <select id="getGoodsUnit" parameterType="java.util.Map" resultType="int">
+  	SELECT 
+	 count(*)
+	FROM
+	  1dcq_goods_unit
+	 <where>
+	 		and shop_id is null
+	 	<if test="unitId!=null">
+	 		and unit_id =#{unitId}
+	 	</if>
+	 	<if test="unitName != null">
+	 		and unit_name =trim(#{unitName})
+	 	</if>
+	 </where>
+  </select>
+  
+  
+   <!-- 通过单位ID，查询商品 -->
+  <select id="getGoodsByUnitId" parameterType="java.util.Map" resultType="int">
+	 select count(*) from 1dcq_goods where unit_id = #{unitId}
+  </select>
+  
+  
+   <!-- 通过店铺ID，单位ID，查询商铺单位 -->
+  <select id="getGoodsUnitByUnitNameAndShopId" parameterType="java.util.Map" resultType="com.idcq.appserver.dto.goods.GoodsUnitDto">
+  	SELECT DISTINCT(unitName),unitId,unitIndex,digitScale,status,unitType,shopId,sourceType
+		FROM  
+		(SELECT 
+			unit_id as unitId,
+			unit_index as unitIndex,
+			unit_name as unitName,
+			digit_scale as digitScale,
+			status as status,
+			unit_type as unitType,
+			shop_id as shopId,
+			source_type as sourceType
+		 FROM 
+			1dcq_goods_unit
+		<where>
+			unit_type=2
+			<if test="shopId!=null">
+				and shop_id=#{shopId}
+			</if>
+			<if test="unitName!=null">
+				and unit_name = #{unitName}
+			</if>
+		</where>
+		
+		union all
+		
+		SELECT 
+			unit_id as unitId,
+			unit_index as unitIndex,
+			unit_name as unitName,
+			digit_scale as digitScale,
+			status as status,
+			unit_type as unitType,
+			ifnull(shop_id,0) as shopId,
+			source_type as sourceType
+		 FROM 
+			1dcq_goods_unit
+		<where>
+			<if test="shopId!=null">
+				and shop_id is NULL
+			</if>
+			<if test="unitName!=null">
+				and unit_name = #{unitName}
+			</if>
+		</where>
+		) a
+		GROUP BY unitName
+		ORDER BY shopId DESC,unitId DESC 
+	</select>
+	
+	<!-- 经营分析商品销售统计总数 -->
+	<select id="getGoodsSalestatisticsCount" parameterType="java.util.Map"
+		resultType="int">
+		select count(1) from (
+		SELECT count(1)
+		FROM 1dcq_order o
+		inner join 1dcq_order_goods og on o.order_id = og.order_id
+		inner join 1dcq_goods g on og.goods_id = g.goods_id
+		<if test="statisticsMode == 2">
+			inner join 1dcq_goods_category c on c.goods_category_id = g.goods_category_id 
+		</if>
+		where o.shop_id=#{shopId} 
+		<if test="goodsGroupId != null">
+			and g.goods_group_id = #{goodsGroupId}
+		</if>
+		<if test="statisticsMode != 2 and goodsGroupId == null">
+			and (g.goods_group_id =0 or g.goods_group_id is null)
+		</if>
+		<if test="orderStatus != null">
+			and o.order_status=#{orderStatus}
+		</if>
+		<if test="startTime != null">
+			<![CDATA[and Date(o.order_finish_time) >=#{startTime}]]>
+		</if>
+		<if test="endTime != null">
+			<![CDATA[and Date(o.order_finish_time) <= #{endTime}]]>
+		</if>
+		<if test="cashierId != null">
+			and o.cashier_id=#{cashierId}
+		</if>
+		<if test="goodsCategoryId != null">
+			and g.goods_category_id = #{goodsCategoryId}
+		</if>
+		<if test="goodsName != null ">
+			and (g.goods_name like concat('%',trim(#{goodsName}),'%') or g.pinyinCode like concat('%',trim(#{goodsName}),'%'))
+		</if>
+		<if test="goodsCategoryIds != null">
+			and g.goods_category_id in 
+			<foreach collection="goodsCategoryIds" close=")" item="item" open="(" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="userId != null">
+			and o.user_id = #{userId}
+		</if>
+		<if test="statisticsMode == 2">
+			group by c.category_name
+		</if>
+		<if test="statisticsMode != 2">
+			group by g.goods_name
+		</if>
+		
+		<if test="statisticsMode == 2">
+			union all
+			SELECT count(1)
+			FROM 1dcq_order o
+			inner join 1dcq_order_goods og on o.order_id = og.order_id
+			inner join 1dcq_goods g on og.goods_id = g.goods_id
+			where o.shop_id=#{shopId} 
+			<if test="goodsGroupId != null">
+				and g.goods_group_id = #{goodsGroupId}
+			</if>
+<!-- 			<if test="goodsGroupId == null"> -->
+<!-- 				and (g.goods_group_id =0 or g.goods_group_id is null) -->
+<!-- 			</if> -->
+			<if test="orderStatus != null">
+				and o.order_status=#{orderStatus}
+			</if>
+			<if test="startTime != null">
+				<![CDATA[and Date(o.order_finish_time) >=#{startTime}]]>
+			</if>
+			<if test="endTime != null">
+				<![CDATA[and Date(o.order_finish_time) <= #{endTime}]]>
+			</if>
+			<if test="cashierId != null">
+				and o.cashier_id=#{cashierId}
+			</if>
+			<if test="goodsCategoryId != null">
+				and g.goods_category_id = #{goodsCategoryId}
+			</if>
+			<if test="goodsName != null ">
+				and (g.goods_name like concat('%',trim(#{goodsName}),'%') or g.pinyinCode like concat('%',trim(#{goodsName}),'%'))
+			</if>
+			<if test="goodsCategoryIds != null">
+				and g.goods_category_id in 
+				<foreach collection="goodsCategoryIds" close=")" item="item" open="(" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="userId != null">
+				and o.user_id = #{userId}
+			</if>
+			and (<![CDATA[g.goods_category_id =0 and g.goods_id > 0]]> )
+			GROUP BY g.goods_category_id
+		</if>
+		
+		<if  test="statisticsMode != 2 and goodsGroupId == null">
+			union all
+			SELECT count(1)
+			FROM 1dcq_order o
+			inner join 1dcq_order_goods og on o.order_id = og.order_id
+			inner join 1dcq_goods g on og.goods_id = g.goods_id
+			<if test="statisticsMode == 2">
+				inner join 1dcq_goods_category c on c.goods_category_id = g.goods_category_id 
+			</if>
+			<if test="statisticsMode != 2">
+				inner join 1dcq_goods_group gp on gp.goods_group_id = g.goods_group_id 
+			</if>
+			where o.shop_id=#{shopId} and g.goods_group_id > 0 
+			<if test="orderStatus != null">
+				and o.order_status=#{orderStatus}
+			</if>
+			<if test="startTime != null">
+				<![CDATA[and Date(o.order_finish_time) >=#{startTime}]]>
+			</if>
+			<if test="endTime != null">
+				<![CDATA[and Date(o.order_finish_time) <= #{endTime}]]>
+			</if>
+			<if test="cashierId != null">
+				and o.cashier_id=#{cashierId}
+			</if>
+			<if test="goodsCategoryId != null">
+				and g.goods_category_id = #{goodsCategoryId}
+			</if>
+			<if test="goodsName != null ">
+				and (g.goods_name like concat('%',trim(#{goodsName}),'%') or g.pinyinCode like concat('%',trim(#{goodsName}),'%'))
+			</if>
+			<if test="goodsCategoryIds != null">
+				and g.goods_category_id in 
+				<foreach collection="goodsCategoryIds" close=")" item="item" open="(" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="userId != null">
+				and o.user_id = #{userId}
+			</if>
+			<if test="statisticsMode == 2">
+				group by c.category_name
+			</if>
+			<if test="statisticsMode != 2">
+				group by g.goods_group_id
+			</if>
+			
+		</if>
+		) a
+	</select>
+	
+	
+	<!-- 经营分析商品销售统计 -->
+	<select id="getGoodsSalestatistics" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		select * from (
+		SELECT
+			<if test="statisticsMode == 2">
+				c.category_name as goodsName,
+			</if>
+			<if test="statisticsMode != 2">
+				g.goods_name as goodsName,
+			</if>
+			0 as goodsGroupId,
+			sum(og.goods_number) as salesTotal,
+			truncate(sum(ifnull(og.goods_settle_price,0)),2) as salesSum,
+			<if test="statisticsMode == 2">
+				"" as goodsProValuesNames
+			</if> 
+			<if test="statisticsMode != 2">
+				ifnull(g.goods_pro_values_names,"") as goodsProValuesNames
+			</if> 
+		FROM 1dcq_order o
+		inner join 1dcq_order_goods og on o.order_id = og.order_id
+		inner join 1dcq_goods g on og.goods_id = g.goods_id
+		<if test="statisticsMode == 2">
+			inner join 1dcq_goods_category c on c.goods_category_id = g.goods_category_id 
+		</if> 
+		where o.shop_id=#{shopId} 
+		<if test="goodsGroupId != null">
+			and g.goods_group_id = #{goodsGroupId}
+		</if>
+		<if test="statisticsMode != 2 and goodsGroupId == null">
+			and (g.goods_group_id = 0 or g.goods_group_id is null)
+ 		</if>
+		<if test="orderStatus != null">
+			and o.order_status=#{orderStatus}
+		</if>
+		<if test="startTime != null">
+			<![CDATA[and Date(o.order_finish_time) >=#{startTime}]]>
+		</if>
+		<if test="endTime != null">
+			<![CDATA[and Date(o.order_finish_time) <= #{endTime}]]>
+		</if>
+		<if test="cashierId != null">
+			and o.cashier_id=#{cashierId}
+		</if>
+		<if test="goodsCategoryId != null">
+			and g.goods_category_id = #{goodsCategoryId}
+		</if>
+		<if test="goodsName != null ">
+			and (g.goods_name like concat('%',trim(#{goodsName}),'%') or g.pinyinCode like concat('%',trim(#{goodsName}),'%'))
+		</if>
+		<if test="goodsCategoryIds != null">
+			and g.goods_category_id in 
+			<foreach collection="goodsCategoryIds" close=")" item="item" open="(" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		
+		<if test="userId != null">
+			and o.user_id = #{userId}
+		</if>
+		<if test="statisticsMode == 2">
+			group by c.category_name
+		</if>
+		<if test="statisticsMode != 2">
+			<if test="goodsGroupId != null">
+				group by g.goods_pro_values_names
+			</if>
+			<if test="goodsGroupId == null">
+				group by g.goods_name
+			</if>
+		</if>
+		
+		<if test="statisticsMode == 2">
+			union all
+			SELECT
+				"无分类" as goodsName,
+				0 as goodsGroupId,
+				sum(og.goods_number) as salesTotal,
+				truncate(sum(ifnull(og.goods_settle_price,0)),2) as salesSum,
+				"" as goodsProValuesNames 
+			FROM 1dcq_order o
+			inner join 1dcq_order_goods og on o.order_id = og.order_id
+			inner join 1dcq_goods g on og.goods_id = g.goods_id
+			where o.shop_id=#{shopId} 
+			<if test="goodsGroupId != null">
+				and g.goods_group_id = #{goodsGroupId}
+			</if>
+<!-- 			<if test="goodsGroupId == null"> -->
+<!-- 				and g.goods_group_id =0  -->
+<!-- 			</if> -->
+			<if test="orderStatus != null">
+				and o.order_status=#{orderStatus}
+			</if>
+			<if test="startTime != null">
+				<![CDATA[and Date(o.order_finish_time) >=#{startTime}]]>
+			</if>
+			<if test="endTime != null">
+				<![CDATA[and Date(o.order_finish_time) <= #{endTime}]]>
+			</if>
+			<if test="cashierId != null">
+				and o.cashier_id=#{cashierId}
+			</if>
+			<if test="goodsCategoryId != null">
+				and g.goods_category_id = #{goodsCategoryId}
+			</if>
+			<if test="goodsName != null ">
+				and (g.goods_name like concat('%',trim(#{goodsName}),'%') or g.pinyinCode like concat('%',trim(#{goodsName}),'%'))
+			</if>
+			<if test="goodsCategoryIds != null">
+				and g.goods_category_id in 
+				<foreach collection="goodsCategoryIds" close=")" item="item" open="(" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			
+			<if test="userId != null">
+				and o.user_id = #{userId}
+			</if>
+			and (<![CDATA[g.goods_category_id =0 and g.goods_id > 0]]> )
+			GROUP BY g.goods_category_id
+		</if>
+		
+		<if  test="statisticsMode != 2 and goodsGroupId == null">
+			union all
+			SELECT
+				<if test="statisticsMode == 2">
+					c.category_name as goodsName,
+				</if>
+				<if test="statisticsMode != 2">
+					gp.goods_name as goodsName,
+				</if>  
+				g.goods_group_id as goodsGroupId,
+				sum(og.goods_number) as salesTotal,
+				truncate(sum(ifnull(og.goods_settle_price,0)),2) as salesSum,
+				"" as goodsProValuesNames
+			FROM 1dcq_order o
+			inner join 1dcq_order_goods og on o.order_id = og.order_id
+			inner join 1dcq_goods g on og.goods_id = g.goods_id
+			<if test="statisticsMode == 2">
+				inner join 1dcq_goods_category c on c.goods_category_id = g.goods_category_id 
+			</if> 
+			<if test="statisticsMode != 2">
+				inner join 1dcq_goods_group gp on gp.goods_group_id = g.goods_group_id 
+			</if> 
+			
+			where o.shop_id=#{shopId} and g.goods_group_id > 0 
+			<if test="orderStatus != null">
+				and o.order_status=#{orderStatus}
+			</if>
+			<if test="startTime != null">
+				<![CDATA[and Date(o.order_finish_time) >=#{startTime}]]>
+			</if>
+			<if test="endTime != null">
+				<![CDATA[and Date(o.order_finish_time) <= #{endTime}]]>
+			</if>
+			<if test="cashierId != null">
+				and o.cashier_id=#{cashierId}
+			</if>
+			<if test="goodsCategoryId != null">
+				and g.goods_category_id = #{goodsCategoryId}
+			</if>
+			<if test="statisticsMode != 2">
+				<if test="goodsName != null ">
+					and (gp.goods_name like concat('%',trim(#{goodsName}),'%') or gp.pinyinCode like concat('%',trim(#{goodsName}),'%'))
+				</if>
+			</if>
+			<if test="goodsCategoryIds != null">
+				and g.goods_category_id in 
+				<foreach collection="goodsCategoryIds" close=")" item="item" open="(" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="userId != null">
+				and o.user_id = #{userId}
+			</if>
+			<if test="statisticsMode == 2">
+				group by c.category_name
+			</if>
+			<if test="statisticsMode != 2">
+				group by g.goods_group_id
+			</if>
+		</if>
+		) a
+		<if test="orderBy != null">
+			<if test="orderBy == 1">
+				order by a.salesTotal
+			</if>
+			<if test="orderBy == 2">
+				order by a.salesSum
+			</if>
+		</if>
+		<if test="orderBy == null">
+			order by a.goodsName 
+		</if>
+		<if test="orderByMode == 0 or orderByMode == null">
+			desc
+		</if>
+		<if test="orderByMode == 1">
+			asc
+		</if>
+		limit #{n},#{m}
+	</select>
+	
+	
+  <select id="getGoodsTotalByCategoryId" parameterType="java.util.Map" resultType="int">
+    select count(1) from( 
+    select c.goods_group_id
+    from 1dcq_goods c 
+    inner join 1dcq_goods_category g on c.goods_category_id = g.goods_category_id
+    where 1=1 
+    and (c.goods_status=0  OR c.goods_status=1)
+    and c.is_show=1
+    and (c.goods_group_id=0 or c.goods_group_id IS NULL)
+    <if test="shopId != null">
+        and c.shop_id = #{shopId} 
+    </if>
+    <if test="categoryId != null">
+		and (c.goods_category_id=#{categoryId} or g.parent_category_id = #{categoryId})
+	</if>
+    <if test="goodsType != null">
+    	and c.goods_type = #{goodsType}
+    </if>
+    
+    union all 
+    
+    select c.goods_group_id
+    from 1dcq_goods c
+    inner join 1dcq_goods_category g on c.goods_category_id = g.goods_category_id
+    where 1=1 
+    and (c.goods_status=0  OR c.goods_status=1)
+    and c.is_show=1
+    and c.goods_group_id>0
+    <if test="shopId != null">
+        and c.shop_id = #{shopId} 
+    </if>
+    <if test="categoryId != null">
+		and (c.goods_category_id=#{categoryId} or g.parent_category_id = #{categoryId})
+	</if>
+    <if test="goodsType != null">
+    	and c.goods_type = #{goodsType}
+    </if>
+    GROUP BY c.goods_group_id
+    ) a
+  </select>
+  
+   <select id="getGoodsSaleSalestatistics" resultType="java.lang.Double" parameterType="java.util.Map">
+  		 select truncate(sum(ifnull(og1.goods_settle_price,0)),2)
+		 FROM 1dcq_order o1
+		 inner join 1dcq_order_goods og1 on o1.order_id = og1.order_id
+		 inner join 1dcq_goods g1 on og1.goods_id = g1.goods_id  
+		 where o1.shop_id=#{shopId}
+		 <if test="orderStatus != null">
+			and o1.order_status=#{orderStatus}
+		 </if>
+		 <if test="startTime != null">
+			<![CDATA[and Date(o1.order_finish_time) >=#{startTime}]]>
+		 </if>
+		 <if test="endTime != null">
+			<![CDATA[and Date(o1.order_finish_time) <= #{endTime}]]>
+		 </if>
+		 
+<!-- 		 <if test="cashierId != null"> -->
+<!-- 			and o1.cashier_id=#{cashierId} -->
+<!-- 		 </if> -->
+<!-- 		 <if test="goodsCategoryId != null"> -->
+<!-- 			and g1.goods_category_id = #{goodsCategoryId} -->
+<!-- 		 </if> -->
+<!-- 		 <if test="goodsName != null "> -->
+<!-- 			and (g1.goods_name like concat('%',trim(#{goodsName}),'%') or g1.pinyinCode like concat('%',trim(#{goodsName}),'%')) -->
+<!-- 		 </if> -->
+<!-- 		 <if test="goodsCategoryIds != null"> -->
+<!-- 			and g1.goods_category_id in  -->
+<!-- 			<foreach collection="goodsCategoryIds" close=")" item="item" open="(" separator=","> -->
+<!-- 				#{item} -->
+<!-- 			</foreach> -->
+<!-- 	   	 </if> -->
+<!-- 	   	 <if test="goodsGroupId != null"> -->
+<!-- 			and g1.goods_group_id = #{goodsGroupId} -->
+<!-- 		</if> -->
+  </select>
+	
+</mapper>

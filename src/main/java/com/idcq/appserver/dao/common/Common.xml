@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dao.common.CommonDaoImpl">
+	<select id="getSmsValueByKey" resultType="java.lang.String" parameterType="java.lang.String">
+		select config_value from 1dcq_app_config ac where config_key = #{configKey} limit 1
+	</select>
+	<select id="getConfigValueByKeys" resultType="java.util.Map" parameterType="java.util.List">
+	    SELECT
+			t.config_key AS configKey,
+			t.config_value AS configValue
+		FROM
+			1dcq_app_config t
+		WHERE
+			t.config_key IN (
+				<foreach collection="list" item="configKey" index="index" open="" close="" separator=",">
+				    #{configKey}
+				</foreach>
+			)
+	</select>
+	<select id="getSettingValue" resultType="java.lang.String" parameterType="java.util.Map">
+		SELECT
+			t.setting
+		FROM
+			1dcq_settings t
+		WHERE
+			t.`code` = #{settingCode}
+		AND t.setting_key = #{settingKey}
+		LIMIT 1
+	</select>
+	<select id="getMsgSettingContent" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT
+			t.msg_content,
+			t.remand_flag
+		FROM
+			1dcq_message_setting t
+		WHERE
+			t.setting_key = #{settingKey}
+		LIMIT 1
+	</select>
+	
+	<select id="getSettingValueByKey" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT t.setting,t.description
+		FROM 1dcq_settings t
+		WHERE t.setting_key = #{settingKey}
+		LIMIT 1
+	</select>
+	<update id="updateConfigValueByKey" parameterType="java.util.Map">
+		update 1dcq_app_config set config_value = #{configValue}, update_time = now()
+		where config_key = #{configKey}
+	</update>
+	<insert id="addConfigValueByKey" parameterType="java.util.Map">
+		insert into 1dcq_app_config(config_value,config_key,create_time) values(#{configValue},#{configKey},now())
+	</insert>
+	
+	<insert id="writeQueryLog" parameterType="java.util.Map">
+		insert into 1dcq_user_quest_sms_logs(username,mobile,create_time) values(#{userName},#{mobile},now())
+	</insert>
+	
+	<!-- 查询手机号码 -->
+	<select id="getMobileInfo" resultType="java.util.Map">
+	   SELECT
+			t.id,
+			t.mobile,
+			t.`status`
+		FROM
+			1dcq_batch_send_sms_tmp t
+		WHERE
+			t.`status` = 0
+		LIMIT 1 
+	</select>
+	<!-- 根据手机号码更新发送状态 -->
+	<update id="updateStatus" parameterType="java.lang.String">
+	    UPDATE 1dcq_batch_send_sms_tmp
+		SET STATUS = 1
+		WHERE
+			mobile = #{mobile}
+	</update>
+	
+	<delete id="deleteSession" parameterType="java.lang.String">
+	    delete from 1dcq_session where session_id = #{sessionId}
+	</delete>
+	<insert id="insertSession" parameterType="java.lang.String">
+	    insert ignore into 1dcq_session(session_id) values (#{sessionId})
+	 </insert>
+	 
+	<select id="getSessionById" resultType="java.lang.String"> 
+	    select session_id from 1dcq_session where session_id = #{sessionId}
+	</select>
+</mapper>

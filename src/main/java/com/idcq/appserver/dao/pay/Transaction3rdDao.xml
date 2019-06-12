@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.pay.Transaction3rdDto">
+
+	<!-- 使用第三方支付接口 -->
+	<insert id="payBy3rd" useGeneratedKeys="true" keyProperty="transactionId"
+		parameterType="com.idcq.appserver.dto.pay.Transaction3rdDto">
+		insert into
+		1dcq_transaction
+		(
+		user_id,
+		order_id,
+		pay_amount,
+		terminal_type,
+		3rd_org_name,
+		user_pay_channel_id,
+		transaction_time,
+		status,
+		transaction_type
+		)
+		values
+		(
+		#{userId},
+		#{orderId},
+		#{payAmount},
+		#{terminalType},
+		#{rdOrgName},
+		#{userPayChannelId},
+		now(),
+		0,
+		#{transactionType}
+
+		)
+	</insert>
+	<!-- 查询第三方支付列表 -->
+	<select id="getMy3rdPay" resultType="java.util.Map"
+		parameterType="java.util.Map">
+		Select
+		order_id as orderId,
+		transaction_id as transactionId,
+		status as
+		status,
+		pay_amount as payAmount,
+		3rd_org_name as 3rdOrgName,
+		user_pay_channel_id as userPayChannelId,
+		transaction_Time as
+		transactionTime,
+		shop_Info as shopInfo,
+		goods_Info as goodsInfo,
+		goods_desc as goodsDesc,
+		goods_Number as goodsNumber,
+		terminal_type as
+		terminalType
+		FROM
+		1dcq_transaction
+		WHERE
+		user_Id =
+		#{userId,jdbcType=INTEGER}
+		and
+		status = #{status,jdbcType=INTEGER}
+		<if test="rdOrgName">
+			and 3rd_org_name = #{rdOrgName,jdbcType=VARCHAR}
+		</if>
+		limit #{n},#{m}
+	</select>
+	<!-- 根据id获取第三方支付信息 -->
+	<select id="ge3rdPayById" resultType="com.idcq.appserver.dto.pay.Transaction3rdDto"
+		parameterType="com.idcq.appserver.dto.pay.Transaction3rdDto">
+		Select
+		order_id as orderId,
+		transaction_id as
+		transactionId,
+		status as status,
+		pay_amount as payAmount,
+		3rd_org_name as
+		3rdOrgName,
+		user_pay_channel_id as userPayChannelId,
+		transaction_Time as
+		transactionTime,
+		shop_Info as shopInfo,
+		goods_Info as goodsInfo,
+		goods_desc as goodsDesc,
+		goods_Number as goodsNumber,
+		user_id as userId,
+		order_pay_type as orderPayType,
+		status as status,
+		transaction_type as
+		transactionType,
+		3rd_notify_time as rdNotifyTime
+		FROM
+		1dcq_transaction
+		WHERE
+		transaction_id = #{transactionId,jdbcType=INTEGER}
+	</select>
+	<!-- 查询第三方支付列表总记录数 -->
+	<select id="getMy3rdPayCount" resultType="int" parameterType="java.util.Map">
+		SELECT
+		count(*)
+		FROM
+		1dcq_transaction
+		WHERE
+		user_Id =
+		#{userId,jdbcType=INTEGER}
+		AND
+		status=#{status,jdbcType=INTEGER}
+		<if test="rdOrgName">
+			and 3rd_org_name = #{rdOrgName,jdbcType=VARCHAR}
+		</if>
+	</select>
+	<!-- 根据用户id和订单id获取记录数 -->
+	<select id="getPayByUserIdOrderId" resultType="java.lang.Long"
+		parameterType="com.idcq.appserver.dto.pay.Transaction3rdDto">
+		SELECT
+		transaction_id
+		FROM
+		1dcq_transaction
+		WHERE
+		user_id =
+		#{userId,jdbcType=INTEGER}
+		AND status != 1
+		<if test="orderId != null">
+			AND order_id = #{orderId,jdbcType=VARCHAR}
+		</if>
+		<if test="terminalType != null">
+			AND terminal_type = #{terminalType,jdbcType=VARCHAR}
+		</if>
+		<if test="payAmount != null">
+			AND pay_amount = #{payAmount,jdbcType=VARCHAR}
+		</if>
+		LIMIT 1
+	</select>
+	<!-- 更新第三方交易状态 -->
+	<update id="nofity3rdPayStatus" parameterType="com.idcq.appserver.dto.pay.Transaction3rdDto">
+		UPDATE
+		1dcq_transaction
+		SET
+		3rd_transaction_id =
+		#{rdTransactionId,jdbcType=VARCHAR},
+		3rd_notify_time = NOW(),
+		<if test="rdNotifyId != null">
+			3rd_notify_id = #{rdNotifyId,jdbcType=VARCHAR},
+		</if>
+		status = #{status,jdbcType=VARCHAR}
+		WHERE
+		transaction_Id =
+		#{transactionId,jdbcType=INTEGER}
+	</update>
+	<select id="getShopRechargeList" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		SELECT
+		(CASE
+		WHEN t.transaction_type = 4 THEN t.transaction_id
+		ELSE
+		t.3rd_transaction_id
+		END) as rechargeId,
+		t.transaction_id as transactionId,
+		t.pay_amount as amount,
+		sa.create_time as rechargeTime,
+		t.status as rechargeStatus,
+		t.3rd_org_name as bankName,
+		t.sub_pay_model as subPayModel,
+		t.shop_info as
+		handleMark,
+		sa.account_after_amount as balance,
+		s.shop_name as shopName,
+		sa.settle_time as settleTime
+		FROM
+		1dcq_transaction t
+		INNER JOIN
+		1dcq_shop_bill sa
+		ON
+		t.transaction_id = sa.transaction_id
+		LEFT JOIN
+			1dcq_shop s
+		ON
+			s.shop_id = t.user_id
+			
+		WHERE
+		t.user_id IN
+	    <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">  
+            #{item}   
+        </foreach> 		
+		AND
+		t.status = 1
+		AND
+		sa.account_type = 3
+		AND
+		sa.bill_type in (5,
+		10)
+		<if test="transactionId!=null">
+			AND t.transaction_id=#{transactionId}
+		</if>
+		<if test="startTime!=null">
+			AND t.transaction_time>=#{startTime}
+		</if>
+		<if test="endTime!=null">
+			<![CDATA[
+				AND t.transaction_time<=#{endTime}
+			]]>
+		</if>
+		ORDER BY
+		sa.create_time desc
+		LIMIT #{n},#{m}
+	</select>
+
+	<select id="getShopRechargeCount" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT
+		count(*)
+		FROM
+		1dcq_transaction t
+		INNER JOIN
+		1dcq_shop_bill sa
+		ON
+		t.transaction_id = sa.transaction_id
+		LEFT JOIN
+			1dcq_shop s
+		ON
+			s.shop_id = t.user_id
+		WHERE
+		t.user_id IN 
+	    <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">  
+            #{item}   
+        </foreach>  
+		AND
+		t.status = 1
+		AND
+		sa.account_type = 3
+		AND
+		sa.bill_type in (5, 10)
+		<if test="transactionId!=null">
+			AND t.transaction_id=#{transactionId}
+		</if>
+		<if test="startTime!=null">
+			AND t.transaction_time>=#{startTime}
+		</if>
+		<if test="endTime!=null">
+			<![CDATA[
+				AND t.transaction_time<=#{endTime}
+			]]>
+		</if>
+	</select>
+
+
+	<insert id="addTransaction" useGeneratedKeys="true" keyProperty="transactionId"
+		parameterType="com.idcq.appserver.dto.pay.Transaction3rdDto">
+		insert into
+		1dcq_transaction
+		(
+		user_id,
+		order_id,
+		pay_amount,
+		terminal_type,
+		3rd_org_name,
+		user_pay_channel_id,
+		transaction_time,
+		status,
+		transaction_type,
+		3rd_notify_time,
+		3rd_transaction_id
+		)
+		values
+		(
+		#{userId},
+		#{orderId},
+		#{payAmount},
+		#{terminalType},
+		#{rdOrgName},
+		#{userPayChannelId},
+		now(),
+		#{status},
+		#{transactionType},
+		#{rdNotifyTime},
+		#{rdTransactionId}
+		)
+	</insert>
+</mapper>

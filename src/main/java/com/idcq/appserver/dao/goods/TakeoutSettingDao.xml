@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.goods.TakeoutSettingDto">
+	<resultMap type="com.idcq.appserver.dto.goods.TakeoutSettingDto" id="takeoutSettingMap">
+		<result column="setting_id" property="settingId"/>
+		<result column="shop_id" property="shopId"/>
+		<result column="setting_type" property="settingType"/>
+		<result column="least_book_price" property="leastBookPrice"/>
+	</resultMap>
+	<select id="findTakeoutSettingByShopList" resultMap="takeoutSettingMap">
+		select  setting_id,shop_id,setting_type,least_book_price
+		from 1dcq_distribution_takeout_setting se
+		where se.setting_type=#{settingType} 
+		and shop_id in
+		<foreach collection="shopIdList" item="item" open="(" separator="," close=")">
+     		#{item}
+    	 </foreach>
+	</select>
+    
+</mapper> 
+   

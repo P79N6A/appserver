@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.pay.PayDto" >
+  <resultMap id="payMap" type="com.idcq.appserver.dto.pay.PayDto" >
+    <result column="order_pay_id" property="orderPayId" jdbcType="INTEGER" />
+    <result column="order_id" property="orderId" jdbcType="INTEGER" />
+    <result column="pay_type" property="payType" jdbcType="INTEGER" />
+    <result column="pay_id" property="payId" jdbcType="INTEGER" />
+    <result column="pay_amount" property="payAmount" jdbcType="FLOAT" />
+    <result column="order_pay_type" property="orderPayType"  />
+    <result column="pay_index" property="payIndex"  />
+    <result column="user_pay_time" property="userPayTime"  />
+    <result column="order_pay_time" property="orderPayTime"  />
+    <result column="pay_channel" property="payChannel"  />
+    <result column="real_money" property="realCharges"  />
+    <result column="change_money" property="oddChange"  />
+    <result column="user_id" property="userId"  />
+    <result column="group_id" property="groupId"  jdbcType="VARCHAR"/>
+    <result column="auto_settle_flag" property="autoSettleFlag"  />
+    <result column="notify_cashier_mobile" property="notifyCashierMobile" />
+    <result column="pay_status" property="payStatus" />
+  </resultMap>
+  
+   <sql id="Base_Column_List" >
+   		order_pay_id,
+   		order_id,
+   		pay_type,
+   		pay_id,
+   		pay_amount,
+   		order_pay_type,
+   		pay_index,
+   		user_pay_time,
+   		order_pay_time,
+   		pay_channel,
+   		real_money,
+   		change_money,
+   		user_id,
+   		group_id,
+   		auto_settle_flag,
+   		notify_cashier_mobile
+  </sql>
+  
+   <select id="getOrderPayById" resultMap="payMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from 1dcq_order_pay
+    where order_pay_id = #{orderPayId}
+  </select>
+  
+  <select id="getOrderPayByIdAndGroupId" resultMap="payMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from 1dcq_order_pay
+    where order_id = #{orderId} and group_id = #{groupId} and pay_type = 3
+  </select>
+  
+  <insert id="addOrderPay" useGeneratedKeys="true" keyProperty="orderPayId" parameterType="com.idcq.appserver.dto.pay.PayDto" >
+    insert into 1dcq_order_pay
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderPayId != null" >
+        order_pay_id,
+      </if>
+      <if test="orderId != null" >
+        order_id,
+      </if>
+      <if test="payType != null" >
+        pay_type,
+      </if>
+      <if test="payId != null" >
+        pay_id,
+      </if>
+      <if test="payAmount != null" >
+        pay_amount,
+      </if>
+      <if test="orderPayType != null" >
+        order_pay_type,
+      </if>
+      <if test="orderPayTime != null" >
+        order_pay_time,
+      </if>
+      <if test="lastUpdateTime != null" >
+        last_update_time,
+      </if>
+      <if test="payeeType != null" >
+        payee_type,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+      <if test="payIndex != null" >
+        pay_index,
+      </if>
+      <if test="userPayTime != null" >
+        user_pay_time,
+      </if>
+        <if test="payChannel != null" >
+        pay_channel,
+      </if>
+        <if test="userId != null" >
+        user_id,
+      </if>
+        <if test="payStatus != null" >
+        pay_status,
+      </if>
+       <if test="autoSettleFlag != null" >
+        auto_settle_flag,
+      </if>
+      <if test="realCharges != null" >
+        real_money,
+      </if>
+       <if test="groupId != null" >
+        group_id,
+      </if>
+       <if test="oddChange != null" >
+        change_money,
+      </if>
+      <if test="clientSystem != null" >
+        client_system_type,
+      </if>
+      <if test="notifyCashierMobile != null" >
+        notify_cashier_mobile,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderPayId != null" >
+        #{orderPayId},
+      </if>
+      <if test="orderId != null" >
+        #{orderId},
+      </if>
+      <if test="payType != null" >
+        #{payType,jdbcType=TINYINT},
+      </if>
+      <if test="payId != null" >
+        #{payId,jdbcType=INTEGER},
+      </if>
+      <if test="payAmount != null" >
+        #{payAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="orderPayType != null" >
+        #{orderPayType,jdbcType=TINYINT},
+      </if>
+      <if test="orderPayTime != null" >
+        #{orderPayTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateTime != null" >
+        #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payeeType != null" >
+        #{payeeType,jdbcType=TINYINT},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=INTEGER},
+      </if>
+      <if test="payIndex != null" >
+        #{payIndex},
+      </if>
+      <if test="userPayTime != null" >
+        #{userPayTime},
+      </if>
+       <if test="payChannel != null" >
+        #{payChannel},
+      </if>
+        <if test="userId != null" >
+       #{userId},
+      </if>
+        <if test="payStatus != null" >
+       #{payStatus},
+      </if>
+       <if test="autoSettleFlag != null" >
+        #{autoSettleFlag},
+      </if>
+      <if test="realCharges != null" >
+        #{realCharges},
+      </if>
+      <if test="groupId != null" >
+        #{groupId},
+      </if>
+       <if test="oddChange != null" >
+        #{oddChange},
+      </if>
+      <if test="clientSystem != null" >
+        #{clientSystem},
+      </if>
+      <if test="notifyCashierMobile != null" >
+         #{notifyCashierMobile},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateOrderPayAfterPaySuccess" parameterType="com.idcq.appserver.dto.pay.PayDto">
+  	update 1dcq_order_pay
+  	<set>
+  		<if test="payStatus != null">
+  			pay_status=#{payStatus},
+  		</if>
+  		<if test="orderPayTime != null">
+  			order_pay_time=#{orderPayTime},
+  		</if>
+  		<if test="lastUpdateTime != null">
+  			last_update_time=#{lastUpdateTime}
+  		</if>
+  	</set>
+  	where  order_pay_id=#{orderPayId}
+  </update>
+  
+ 
+  <select id="getSumPayAmount" parameterType="java.util.Map" resultType="double">
+    	select ifnull(sum(pay_amount),0) 
+    	from 1dcq_order_pay 
+    	where order_id=#{orderId}
+    	<if test="payeeType != null">
+    		and payee_type=#{payeeType}
+    	</if>
+    	<if test="payType != null">
+    		and pay_type=#{payType}
+    	</if>
+    	and pay_status = 1
+   </select>  
+    
+   <select id="getOrderPayList" parameterType="java.lang.String" resultMap="payMap"> 
+    	select 
+    		order_pay_id,
+    		order_id,
+    		pay_type,
+    		pay_id,
+    		pay_amount,
+    		order_pay_type, 
+    		pay_index, 
+    		user_pay_time,
+    		order_pay_time,
+    		pay_channel,
+    		real_money,
+    		change_money,
+    		pay_status
+    	from 1dcq_order_pay 
+    		where order_id=#{orderId}
+    	<if test="payStatus != null">
+    		and pay_status = #{payStatus}
+    	</if>
+   </select>   
+   
+   <select id="checkOrderIsPayByCash" parameterType="java.util.Map" resultType="java.lang.Integer">
+   		select count(1) 
+   		from 1dcq_order_pay 
+   		where pay_type = 2 
+   		and order_pay_type = #{orderPayType} 
+   		and order_id = #{orderId} 
+   		and pay_id &lt;> #{uccId}
+   		and pay_status = 1
+   </select>
+   
+   <delete id="deletePayByOrderPayId" parameterType="java.lang.Long">
+   		delete from 1dcq_order_pay where order_pay_id=#{orderPayId}
+   </delete>
+  <delete id="deletePayByOrderId" parameterType="java.lang.String">
+   		delete from 1dcq_order_pay where order_id=#{orderPayId}
+   </delete>
+   
+   <insert id="groupOrders" parameterType="java.util.Map">
+   	replace into 1dcq_order_group
+   	values(#{orderGroupId},#{orderId});
+   </insert>
+   
+	<select id="queryOrderGroupById" parameterType="java.lang.String" resultType="java.util.Map">
+		select order_group_id orderGroupId,order_id orderId
+		from 1dcq_order_group
+		where order_group_id=#{orderGroupId}
+	</select>
+	<!-- 根据订单组编号查询订单组中订单信息 -->
+	<select id="queryOrderGroupByOrderId" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			og.order_group_id,
+			o.order_id,
+			cast(o.order_status as signed) order_status,
+			o.pay_status
+		FROM
+			1dcq_order_group og
+		INNER JOIN 1dcq_order o ON og.order_id = o.order_id
+		where og.order_group_id=#{orderGroupId}
+	</select>
+	
+	<select id="getSumOrderGroupAmount" parameterType="java.util.Map" resultType="double">
+    	select ifnull(sum(settle_price),0)
+		from 1dcq_order_group g INNER JOIN 1dcq_order o 
+		on g.order_id=o.order_id
+		where order_group_id=#{orderGroupId};
+   </select>  
+    
+	<select id="getShopIdByOrderId" parameterType="java.lang.String" resultType="java.lang.Long">
+    	select o.shop_id
+		from 1dcq_order o 
+		where o.order_id = #{orderId};
+   </select>  
+   
+   	<select id="getOrderPayIdByPayId" parameterType="java.lang.Long" resultType="java.lang.Long">
+    	select o.order_pay_id
+		from 1dcq_order_pay o 
+		where o.pay_id = #{transactionId};
+   </select> 
+	<!-- 查询订单支付详情 2015.8.26 -->
+	<select id="getOrderPayByOrderId" parameterType="java.lang.String" resultType="java.util.Map">
+    	select 
+    		pay_type as payType,
+    		pay_amount as amount,
+    		last_update_time as payTime
+		from 1dcq_order_pay 
+		where order_id = #{orderId}
+		and pay_status = 1
+   </select>
+    <!-- 根据订单id和收款人类型获取订单收益信息 -->
+  <select id="getAmountByOrderIdAndPayeeType" parameterType="java.util.Map"  resultType="java.util.Map">
+	   SELECT 
+			SUM(op.cnt) as totalRevenue,
+			MAX(CASE op.payee_type WHEN 0 THEN op.cnt ELSE 0 END)  as onLinePay,
+			MAX(CASE op.payee_type WHEN 1 THEN op.cnt ELSE 0 END)  as offLinePay
+		FROM 
+			(
+			select  shop_id,payee_type,sum(pay_amount) as cnt from 1dcq_order_pay 
+				WHERE order_id = #{orderId}
+				 and pay_status = 1
+			group by payee_type
+			) as op 
+   </select> 
+    <!-- 根据订单id和支付类型获取订单收益信息 -->
+  <select id="getAmountByOrderIdAndPayType" parameterType="java.util.Map"  resultType="java.util.Map">
+		SELECT 
+			MAX(CASE op.pay_type WHEN 5 THEN op.cnt ELSE 0 END)  as memberCardPay,
+			MAX(CASE op.pay_type WHEN 6 THEN op.cnt ELSE 0 END)  as cashPay,
+			MAX(CASE op.pay_type WHEN 7 THEN op.cnt ELSE 0 END)  as posPay,
+			MAX(CASE op.pay_type WHEN 22 THEN op.cnt ELSE 0 END)  as freePay,
+			MAX(CASE op.pay_type WHEN 23 THEN op.cnt ELSE 0 END)  as customPay1,
+			MAX(CASE op.pay_type WHEN 24 THEN op.cnt ELSE 0 END)  as customPay2,
+			MAX(CASE op.pay_type WHEN 25 THEN op.cnt ELSE 0 END)  as customPay3
+		FROM 
+			(
+			select  shop_id,pay_type,sum(pay_amount) as cnt from 1dcq_order_pay 
+				WHERE order_id = #{orderId}
+				  and pay_status = 1
+			group by pay_type
+			) as op 
+   </select> 
+    
+  <!-- 查询订单支付记录，返回map -->
+  <select id="getPayLogByOrderId" parameterType="java.lang.String" resultType="java.util.Map">
+      SELECT
+        t.order_pay_id as orderPayId,
+		t.pay_type AS payType,
+		t.pay_amount AS payMoney,
+		t.pay_index AS payIndex,
+		t.user_pay_time AS payClientTime,
+		t.order_pay_time AS paidTime,
+		t.real_money AS realCharges,
+		t.change_money AS oddChange,
+		t.pay_status AS payStatus
+	FROM
+		1dcq_order_pay t
+	WHERE
+		t.order_id = #{orderId}
+      and t.pay_status = 1
+  </select>
+    <!-- 获取最大支付序号 -->
+  <select id="getMaxPayIndex" parameterType="java.lang.String" resultType="java.lang.Integer">
+      select max(pay_index) from 1dcq_order_pay where order_id = #{orderId} and pay_status = 1
+  </select>
+  
+  <!-- 根据订单编号列表 -->
+  <select id="getAllOrderPayDetail" parameterType="java.util.List" resultType="java.util.Map">
+      SELECT
+			SUM(t.cashPay) AS cashPay,
+			SUM(t.posPay) AS posPay,
+			SUM(t.onlinePay) AS onlinePay,
+			SUM(t.memberCardPay) AS memberCardPay,
+
+			SUM(t.freePay) AS freePay,
+			SUM(t.customPay1) AS customPay1,
+			SUM(t.customPay2) AS customPay2,
+			SUM(t.customPay3) AS customPay3,
+
+			t.order_id AS orderId
+		FROM
+			(
+				SELECT
+					o.order_id,
+					IFNULL(SUM(o.pay_amount), 0) AS cashPay,
+					0 AS posPay,
+					0 AS onlinePay,
+					0 as memberCardPay,
+	  0 AS freePay,
+	  0 AS customPay1,
+	  0 AS customPay2,
+	  0 AS customPay3
+				FROM
+					1dcq_order_pay o
+				WHERE
+					o.order_id in (
+					<foreach collection="list" item="orderId" open="" close="" separator=",">
+					    #{orderId}
+					</foreach>
+					)
+					AND o.pay_type = 6
+					AND o.pay_status = 1
+					GROUP BY o.order_id
+					
+				UNION ALL
+				
+					SELECT
+						o.order_id,
+						0 AS cashPay,
+						IFNULL(SUM(o.pay_amount), 0) AS posPay,
+						0 AS onlinePay,
+						0 as memberCardPay,
+	  0 AS freePay,
+	  0 AS customPay1,
+	  0 AS customPay2,
+	  0 AS customPay3
+					FROM
+						1dcq_order_pay o
+					WHERE
+						o.order_id in (
+						<foreach collection="list" item="orderId" open="" close="" separator=",">
+						    #{orderId}
+						</foreach>
+						)
+						AND o.pay_type = 7
+						AND o.pay_status = 1
+						GROUP BY o.order_id
+					
+					UNION ALL
+				
+						SELECT
+							o.order_id,
+							0 AS cashPay,
+							0 AS posPay,
+							0 AS onlinePay,
+							IFNULL(SUM(o.pay_amount), 0) AS memberCardPay,
+	  0 AS freePay,
+	  0 AS customPay1,
+	  0 AS customPay2,
+	  0 AS customPay3
+						FROM
+							1dcq_order_pay o
+						WHERE
+							o.order_id in (
+							<foreach collection="list" item="orderId" open="" close="" separator=",">
+							    #{orderId}
+							</foreach>
+							)
+							AND o.pay_type = 5
+							AND o.pay_status = 1
+							GROUP BY o.order_id
+						
+					UNION ALL
+					
+						SELECT
+							o.order_id,
+							0 AS cashPay,
+							0 AS posPay,
+							IFNULL(SUM(o.pay_amount), 0) AS onlinePay,
+							0 as memberCardPay,
+	  0 AS freePay,
+	  0 AS customPay1,
+	  0 AS customPay2,
+	  0 AS customPay3
+						FROM
+							1dcq_order_pay o
+						WHERE
+							o.order_id in (
+							<foreach collection="list" item="orderId" open="" close="" separator=",">
+							    #{orderId}
+							</foreach>
+							)
+							AND o.pay_type NOT IN (5,6, 7,22,23,24,25)
+							AND o.pay_status = 1
+							GROUP BY o.order_id
+	  UNION ALL
+
+	  SELECT
+	  o.order_id,
+	  0 AS cashPay,
+	  0 AS posPay,
+	  0 AS onlinePay,
+	  0 as memberCardPay,
+	  IFNULL(SUM(o.pay_amount), 0) AS freePay,
+	  0 AS customPay1,
+	  0 AS customPay2,
+	  0 AS customPay3
+	  FROM
+	  1dcq_order_pay o
+	  WHERE
+	  o.order_id in (
+	  <foreach collection="list" item="orderId" open="" close="" separator=",">
+		  #{orderId}
+	  </foreach>
+	  )
+	  AND o.pay_type=22
+	  AND o.pay_status = 1
+	  GROUP BY o.order_id
+
+	  UNION ALL
+
+	  SELECT
+	  o.order_id,
+	  0 AS cashPay,
+	  0 AS posPay,
+	  0 AS onlinePay,
+	  0 as memberCardPay,
+	  0 AS freePay,
+	  IFNULL(SUM(o.pay_amount), 0) AS customPay1,
+	  0 AS customPay2,
+	  0 AS customPay3
+	  FROM
+	  1dcq_order_pay o
+	  WHERE
+	  o.order_id in (
+	  <foreach collection="list" item="orderId" open="" close="" separator=",">
+		  #{orderId}
+	  </foreach>
+	  )
+	  AND o.pay_type=23
+	  AND o.pay_status = 1
+	  GROUP BY o.order_id
+
+	  UNION ALL
+
+	  SELECT
+	  o.order_id,
+	  0 AS cashPay,
+	  0 AS posPay,
+	  0 AS onlinePay,
+	  0 as memberCardPay,
+	  0 AS freePay,
+	  0 AS customPay1,
+	  IFNULL(SUM(o.pay_amount), 0) AS customPay2,
+	  0 AS customPay3
+	  FROM
+	  1dcq_order_pay o
+	  WHERE
+	  o.order_id in (
+	  <foreach collection="list" item="orderId" open="" close="" separator=",">
+		  #{orderId}
+	  </foreach>
+	  )
+	  AND o.pay_type=24
+	  AND o.pay_status = 1
+	  GROUP BY o.order_id
+
+	  UNION ALL
+
+	  SELECT
+	  o.order_id,
+	  0 AS cashPay,
+	  0 AS posPay,
+	  0 AS onlinePay,
+	  0 as memberCardPay,
+	  0 AS freePay,
+	  0 AS customPay1,
+	  0 AS customPay2,
+	  IFNULL(SUM(o.pay_amount), 0) AS customPay3
+	  FROM
+	  1dcq_order_pay o
+	  WHERE
+	  o.order_id in (
+	  <foreach collection="list" item="orderId" open="" close="" separator=",">
+		  #{orderId}
+	  </foreach>
+	  )
+	  AND o.pay_type=25
+	  AND o.pay_status = 1
+	  GROUP BY o.order_id
+			) t
+		 GROUP BY t.order_id
+  </select>
+  <!-- PCP5支付结果查询接口 -->
+  <select id="getPayResult" parameterType="java.util.Map" resultType="java.util.Map">
+        select 
+			t.status as payStatus,
+			t.transaction_id as transactionId,
+			t.pay_amount as payMoney
+		from
+			1dcq_transaction t
+		where
+			transaction_id = #{transactionId}
+		limit 1
+  </select>
+  
+  	<!-- 获取时间段收入总和 -->
+	<select id="getIncomeTotalMoney" resultType="java.util.Map" parameterType="java.util.Map">
+	
+	select 
+		SUM(pay_amount)  as incomeTotalMoney
+	from 
+		1dcq_order_pay op 
+	where 
+		shop_id = #{shopId}
+	AND 
+		order_id is not null
+	<if test="payStatus != null">
+		AND op.pay_status = #{payStatus} 
+	</if>
+	<if test="payeeType != null">
+		AND op.payee_type = #{payeeType}
+	</if>
+	
+	<if test="startTime != null">
+	    AND op.last_update_time > #{startTime} 
+	</if>
+	 <if test="endTime != null">
+		 <![CDATA[
+		    AND op.last_update_time <= #{endTime}
+		  ]]>
+	  </if>
+		
+	</select>
+</mapper>

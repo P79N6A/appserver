@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.user.PushUserTableDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.user.PushUserTableDto" >
+    <id column="reg_id" property="regId" jdbcType="VARCHAR" />
+    <result column="os_info" property="osInfo" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+     <result column="user_type" property="userType" jdbcType="INTEGER" />
+  </resultMap>
+
+
+  <sql id="Base_Column_List" >
+    reg_id, os_info, user_id, user_type, create_time
+  </sql>
+  <select id="getPushUserByRegId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from 1dcq_push_user_table
+    where reg_id = #{regId,jdbcType=VARCHAR}
+    limit 1
+  </select>
+    <select id="getPushUserByUserId" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    <include refid="Base_Column_List" />
+    from 1dcq_push_user_table
+    where user_id = #{userId,jdbcType=VARCHAR}
+    <if test="userType != null">
+      and user_type = #{userType,jdbcType=VARCHAR}
+    </if>
+  </select>
+  
+  <insert id="savePushUser" parameterType="com.idcq.appserver.dto.user.PushUserTableDto" >
+    insert into 1dcq_push_user_table
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="regId != null" >
+        reg_id,
+      </if>
+      <if test="osInfo != null" >
+        os_info,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+       <if test="userType != null" >
+        user_type,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="regId != null" >
+        #{regId,jdbcType=VARCHAR},
+      </if>
+      <if test="osInfo != null" >
+        #{osInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+        <if test="userType != null" >
+        #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updatePushUser" parameterType="com.idcq.appserver.dto.user.PushUserTableDto" >
+    update 1dcq_push_user_table
+    <set >
+      <if test="osInfo != null" >
+        os_info = #{osInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+        <if test="userType != null" >
+        user_type = #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where reg_id = #{regId,jdbcType=VARCHAR}
+  </update>
+  
+   <select id="getPushUserByRegion" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    <include refid="Base_Column_List" />
+    from 1dcq_push_user_table
+    where user_id in
+	(	select user_id from 1dcq_user u 
+		where u.user_type=#{userType}
+		<if test="provinceId !=null ">
+			and province_id=#{provinceId}
+		</if>
+		<if test="cityId !=null ">
+			and city_id=#{cityId}
+		</if>
+		<if test="districtId !=null ">
+			and district_id=#{districtId}
+		</if>
+		<if test="townId !=null ">
+			and town_id=#{townId}
+		</if>
+	) 
+  </select>
+  
+  <update id="updatePushUserByUserId">
+  update 1dcq_push_user_table
+    <set >
+      <if test="osInfo != null" >
+        os_info = #{osInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        reg_id = #{regId,jdbcType=VARCHAR},
+      </if>
+        <if test="userType != null" >
+        user_type = #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="deletePushUserByRedId" parameterType="java.util.Map">
+      delete from 1dcq_push_user_table 
+      where user_type = #{userType,jdbcType=INTEGER}
+      and  (reg_id = #{regId,jdbcType=VARCHAR} or user_id = #{userId,jdbcType=INTEGER})
+  </delete>
+  
+</mapper>

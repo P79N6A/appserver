@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shopCoupon.ShopCouponAvailableShopDto" >
+  	<resultMap id="shopCouponAvailableShopResultMap" type="com.idcq.appserver.dto.shopCoupon.ShopCouponAvailableShopDto" >
+		 <id column="available_shop_id" property="availableShopId" jdbcType="INTEGER" />
+    	 <result column="shop_coupon_id" property="shopCouponId" jdbcType="INTEGER" />
+    	 <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+  	</resultMap>
+  	
+  	<insert id="insertShopCouponAvailableShop" parameterType="com.idcq.appserver.dto.shopCoupon.ShopCouponAvailableShopDto">
+		    insert into 1dcq_shop_coupon_available_shop 
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="shopCouponId != null" >
+	        shop_coupon_id,
+	      </if>
+	      <if test="shopId != null" >
+	        shop_id
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="shopCouponId != null" >
+	        #{shopCouponId},
+	      </if>
+	      <if test="shopId != null" >
+	        #{shopId}
+	      </if>
+	    </trim>
+	</insert>
+	
+	<delete id="delShopCouponAvailableShopDao" parameterType="com.idcq.appserver.dto.shopCoupon.ShopCouponDto">
+		DELETE FROM 1dcq_shop_coupon_available_shop
+		<where>
+			<if test="shopCouponId != null">
+				and shop_coupon_id = #{shopCouponId} 
+			</if>
+		</where>
+	</delete>
+	
+	<select id="getShopCouponAvailableShopByMap" parameterType="java.util.Map" resultMap="shopCouponAvailableShopResultMap">
+		select * from 1dcq_shop_coupon_available_shop
+		<where>
+			<if test="shopCouponId != null">
+				and shop_coupon_id = #{shopCouponId}
+			</if>
+		</where>
+	</select>
+</mapper>

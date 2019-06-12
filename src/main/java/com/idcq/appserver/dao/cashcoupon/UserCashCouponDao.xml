@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.cashcoupon.UserCashCouponDto">
+	<resultMap type="com.idcq.appserver.dto.cashcoupon.UserCashCouponDto" id="userCouponMap">
+		<result column="ucc_id" property="uccId" />
+    	<result column="user_id" property="userId" />
+   	 	<result column="cash_coupon_id" property="cashCouponId"  />
+    	<result column="price" property="price" />
+    	<result column="coupon_status" property="couponStatus"  />
+    	<result column="used_price" property="usedPrice"  />
+    	<result column="obtain_time" property="obtainTime" />
+		
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+    	ucc_id, user_id, cash_coupon_id, price, coupon_status, used_price, obtain_time
+  	</sql>
+  	
+	<select id="selectUserCoupon" resultMap="userCouponMap" parameterType="com.idcq.appserver.dto.cashcoupon.UserCashCouponDto" >
+    	select 
+    	<include refid="Base_Column_List" />
+    	from 1dcq_user_cash_coupon
+    	where cash_coupon_id = #{cashCouponId}
+     	and user_id = #{userId}
+  	</select>
+	<select id="getCashUsedNumOfOrder" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) from 1dcq_order_pay 
+		where pay_type = 2 
+		and order_pay_type = #{orderPayType}
+		and order_id = #{orderId}
+		and pay_id = #{ccId}
+	</select>	
+    <insert id="obtainUserCoupon"  parameterType="com.idcq.appserver.dto.cashcoupon.UserCashCouponDto" >
+    	<selectKey resultType="java.lang.Long" keyProperty="uccId" order="AFTER" >
+			SELECT @@IDENTITY
+		</selectKey>
+    	insert into 1dcq_user_cash_coupon ( user_id, cash_coupon_id, 
+      	price, coupon_status, used_price, obtain_time)
+    	values ( #{userId}, #{cashCouponId},#{price}, #{couponStatus}, #{usedPrice}, 
+      		#{obtainTime})
+  	</insert>
+    
+    <update id="consumeUserCoupon" parameterType="java.util.Map" >
+    	update 1dcq_user_cash_coupon
+    	<set >
+    		coupon_status = 1,
+    		used_price = #{usedPrice}
+    	</set>
+    		where ucc_id = #{uccId} and user_id=#{userId}
+ 	 </update>
+    
+    <delete id="deleteUserCoupon0" parameterType="com.idcq.appserver.dto.cashcoupon.UserCashCouponDto" >
+    	delete from 1dcq_user_cash_coupon
+    	where cash_coupon_id = #{cashCouponId}
+      	and user_id = #{userId}
+  </delete>
+  
+  <select id="getUserCouponDto" resultMap="userCouponMap" parameterType="com.idcq.appserver.dto.cashcoupon.UserCashCouponDto" >
+    	select 
+    	<include refid="Base_Column_List" />
+    	from 1dcq_user_cash_coupon
+    	where ucc_id = #{uccId} and user_id=#{userId}
+  	</select>
+  	
+  	<update id="updateUserCashCoupon" parameterType="java.util.Map" >
+    	update 1dcq_user_cash_coupon
+    	set used_price = #{usedPrice}
+    	where ucc_id = #{payId}
+ 	 </update>
+ 	 
+ 	 <select id="selectPerDayPerPerson" resultType="int" parameterType="java.util.Map" >
+    	select 
+    	count(1) 
+    	from 1dcq_user_cash_coupon
+    	where user_id = #{userId} 
+    	and obtain_time>#{curDateBegin}
+    	and obtain_time &lt;=#{curDateEnd}
+  	</select>
+    
+    <select id="selectCountUseNumber" resultType="int" parameterType="java.util.Map" >
+    	select count(1) 
+    	from 1dcq_order_pay
+    	where order_id=#{orderId}
+    	and pay_type = 2
+  	</select>
+    
+    <!-- 获取代金券信息-->
+    <select id="getUserCashCouponInfo" resultMap="userCouponMap" parameterType="java.lang.Long" >
+    	select 
+    	<include refid="Base_Column_List" />
+    	from 1dcq_user_cash_coupon
+    	where ucc_id = #{uccId}
+  	</select>
+    <select id="queryUserCashCouponsByUccIds" resultType="java.util.Map" parameterType="java.util.List">
+  		SELECT
+			ucc.ucc_id,
+			ucc.user_id,
+			ucc.cash_coupon_id,
+			ucc.end_time,
+			ucc.price,
+			ucc.used_price,
+			cc.stop_time,
+			cc.shop_id
+		FROM
+			1dcq_user_cash_coupon ucc
+		INNER JOIN 1dcq_cash_coupon cc ON ucc.cash_coupon_id = cc.cash_coupon_id
+		WHERE
+		 ucc.ucc_id IN (
+		 	<foreach collection="list" item="uccId" separator=",">
+		 		#{uccId}
+		 	</foreach>
+		 )  	
+    </select>
+    <select id="queryUserCashCouponsByUserId" resultType="java.util.Map" parameterType="java.lang.Long">
+  		SELECT
+			ucc.ucc_id,
+			ucc.user_id,
+			ucc.cash_coupon_id,
+			ucc.end_time,
+			ucc.price,
+			ucc.used_price,
+			cc.stop_time,
+			cc.shop_id
+		FROM
+			1dcq_user_cash_coupon ucc
+		INNER JOIN 1dcq_cash_coupon cc ON ucc.cash_coupon_id = cc.cash_coupon_id
+		WHERE
+		 ucc.user_id = #{userId} 	
+    </select>
+    
+    <!-- 获取用户消费金余额 -->
+    <select id="getUserCashCouponBalance" resultType="java.lang.Double" parameterType="java.lang.Long">
+         SELECT IFNULL(SUM(accountAmount), 0) 
+         FROM (SELECT c.price - c.used_price AS accountAmount FROM 1dcq_user_cash_coupon c WHERE c.user_id = #{userId} AND  end_time &gt; NOW()) t ;
+    </select>
+    
+  <select id="getUserCashCouponByUserId" resultMap="userCouponMap" parameterType="java.lang.Long" >
+    	select 
+    	<include refid="Base_Column_List" />
+    	from 1dcq_user_cash_coupon
+    	where user_id = #{userId}
+    	AND end_time &gt; NOW()
+  	</select>
+</mapper> 
+   

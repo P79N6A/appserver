@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.region.CitiesDto">
+	<resultMap type="com.idcq.appserver.dto.region.CitiesDto" id="cityMap">
+		<result property="cityId" column="city_id"/>
+		<result property="cityName" column="city_name"/>
+		<result property="zipCode" column="zip_code"/>
+		<result property="provinceId" column="province_id"/>
+		<result property="dateCreated" column="date_created"/>
+		<result property="dateUpdated" column="date_updated"/>
+		<result property="firstLetter" column="first_letter"/>
+		<result property="cityShort" column="city_short"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+	  city_id, 
+	  city_name, 
+	  zip_code, 
+	  province_id, 
+	  date_created, 
+	  date_updated, 
+	  first_letter,
+	  city_short
+	</sql>
+	
+	
+    <select id="getCitis" parameterType="java.util.Map"  resultMap="cityMap">
+    	select city_id,city_name from 1dcq_city 
+    	 where 1=1
+    	 <if test="provinceId !=null ">
+    	 	and province_id = #{provinceId}
+    	 </if>
+    	 <if test="cityName !=null ">
+    	 	and city_name like concat('%',#{cityName},'%')
+    	 </if> 
+    	 limit #{n},#{m}
+    </select>
+    
+    <select id="getCitisTotal" parameterType="java.util.Map" resultType="int">
+    	select count(1) from 1dcq_city
+	    where 1=1
+    	 <if test="provinceId !=null ">
+    	 	and province_id = #{provinceId}
+    	 </if>
+    	 <if test="cityName !=null ">
+    	 	and city_name like concat('%',#{cityName},'%')
+    	 </if> 
+  </select>
+    
+  <select id="getAllCitis" parameterType="java.util.Map" resultType="java.util.Map">
+    	select c.province_id provinceId,
+    	       p.province_name provinceName, 
+    	       city_id cityId,
+    	       city_name cityName,
+    	       first_letter firstLetterOfCity,
+    	       city_short  cityShort
+		from 1dcq_city c LEFT JOIN 1dcq_province p 
+		on c.province_id=p.province_id
+  </select>
+  
+   <select id="getById" parameterType="java.lang.Long"  resultMap="cityMap">
+    	select  
+    	    <include refid="Base_Column_List" /> 
+    	from 1dcq_city 
+    	where city_id = #{primaryKeyId}
+  </select>
+  
+  <select id="getCityInfoByName" parameterType="java.lang.String" resultType="java.util.Map">
+    	select c.province_id provinceId,
+    	       p.province_name provinceName, 
+    	       c.city_id cityId,
+    	       c.city_name cityName,
+    	       c.city_short cityShort,
+    	       c.first_letter firstLetterOfCity
+		from 1dcq_city c
+		left join 1dcq_province p 
+		on c.province_id = p.province_id
+		where c.city_name = #{cityName} 
+		  or c.city_short = #{cityName}
+		limit 1 
+  </select>
+    
+</mapper> 
+   
+   

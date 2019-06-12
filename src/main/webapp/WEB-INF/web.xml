@@ -1,0 +1,140 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+	<display-name>Archetype Created Web Application</display-name>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:/spring/application-*.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>classpath:/properties/log4j.properties</param-value>
+	</context-param>
+	<context-param>
+		<param-name>log4jRefreshInterval</param-name>
+		<param-value>600000</param-value>
+	</context-param>
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>appServer.root</param-value>
+	</context-param>
+	<!-- 添加encoding filtter解决post请求中文乱码问题，get请求中文乱码需要在tomcat server.xml配置文件中添加URIEncoding -->
+	 <filter>
+		<filter-name>encoding</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+
+  	 <!-- <filter>
+	      <filter-name>AuthFilter</filter-name>
+	      <filter-class>com.idcq.appserver.web.filter.AuthFilter</filter-class>
+	      <init-param>
+			<param-name>doNotFilterURL</param-name>
+			<param-value>/user/login,/user/register,/user/addRegId,/user/modifyPwd,/user/getRefecode,/shopManage/getUser,shopManage/getTechReserves,/shopManage/getShopTechGrade,/user/commonUploadFile
+			</param-value>
+		</init-param>
+	</filter>  -->
+	<filter-mapping>
+		<filter-name>encoding</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+  	<!-- <filter-mapping>
+		<filter-name>AuthFilter</filter-name>
+		<url-pattern>/interface/shopManage/*</url-pattern>
+	</filter-mapping>  
+	<filter-mapping>
+		<filter-name>AuthFilter</filter-name>
+		<url-pattern>/interface/goodsGroup/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>AuthFilter</filter-name>
+		<url-pattern>/interface/pay/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>AuthFilter</filter-name>
+		<url-pattern>/interface/user/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>AuthFilter</filter-name>
+		<url-pattern>/interface/order/*</url-pattern>
+	</filter-mapping>
+     <filter-mapping>
+		<filter-name>AuthFilter</filter-name>
+		<url-pattern>/interface/myorder/*</url-pattern>
+	</filter-mapping>
+		<filter-mapping>
+		<filter-name>AuthFilter</filter-name>
+		<url-pattern>/interface/session/*</url-pattern>
+	</filter-mapping>	
+	<filter-mapping>
+		<filter-name>AuthFilter</filter-name>
+		<url-pattern>/interface/token/*</url-pattern>
+	</filter-mapping>  -->
+	<!--接口签名校验过滤器，暂时没启用  -->
+	<!--  <filter>
+	      <filter-name>encryptFilter</filter-name>
+	      <filter-class>com.idcq.appserver.web.filter.EncryptFilter</filter-class>
+	      <init-param>
+			<param-name>doNotFilterURL</param-name>
+			<param-value>
+			/user/login,/user/register
+			</param-value>
+		</init-param>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>encryptFilter</filter-name>
+		<url-pattern>/interface/*</url-pattern>
+	</filter-mapping>--> 
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>com.idcq.appserver.listeners.ContextInitListener</listener-class>
+	</listener> 
+	<listener>
+		<listener-class>com.idcq.appserver.listeners.ConfigPropertiesInitListener</listener-class>
+	</listener> 
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<servlet>
+		<servlet-name>springMVC</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value></param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>springMVC</servlet-name>
+		<url-pattern>/interface/*</url-pattern>
+		<!-- 如下拦截路径，在controller中无需再声明interface -->
+<!-- 		<url-pattern>/interface/*</url-pattern> -->
+	</servlet-mapping>
+
+	
+	<!-- 
+	<listener>
+		<listener-class>com.idcq.appserver.web.listener.JobScheduleListener</listener-class>
+	</listener>
+	 -->
+	<!-- error Configuration -->
+	<welcome-file-list>
+		<welcome-file>Version.jsp</welcome-file>
+	</welcome-file-list>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/error.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/error.jsp</location>
+	</error-page>
+</web-app>

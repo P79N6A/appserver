@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.help.HelpDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.help.HelpDto" >
+    <result column="info_id" property="infoId" jdbcType="INTEGER" />
+    <result column="audience_type" property="audienceType" jdbcType="VARCHAR" />
+    <result column="help_category_id" property="categoryId" jdbcType="INTEGER" />
+    <result column="info_title" property="infoTitle" jdbcType="VARCHAR" />
+    <result column="info_content" property="infoContent" jdbcType="VARCHAR" />
+    <result column="create_time" property="createtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithCategoryName" type="com.idcq.appserver.dto.help.HelpDto" extends="BaseResultMap" >
+    <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="helpOf1dsxyMap" type="com.idcq.appserver.dto.common.HelpOf1dsxyDto" >
+    <result column="help_id" property="helpId"/>
+    <result column="help_key" property="helpKey"/>
+    <result column="help_title" property="helpTitle"/>
+    <result column="help_cont" property="helpContent"/>
+    <result column="column_id" property="columnId"/>
+    <result column="column_name" property="columnName"/>
+    <result column="click_num" property="clickNum"/>
+    <result column="column_no" property="columnNo"/>
+    <result column="create_time" property="createTime"/>
+  </resultMap>
+ 
+ <!-- 获取帮助信息接口，仅返回投放受众为“APP端”的帮助信息，根据创建时间倒排序 -->
+  <select id="getHelpList" resultMap="ResultMapWithCategoryName" parameterType="java.util.Map" >
+    select
+    	t1.info_id, 
+    	t1.audience_type, 
+    	t1.help_category_id,
+    	t1.info_title,
+    	t1.info_content,
+    	t1.create_time,
+    	t2.category_name 
+     from 1dcq_help_info t1, 1dcq_help_info_category t2 where t1.help_category_id = t2.help_category_id
+     <if test="help.mode == 0" >
+    	and t1.audience_type = 'APP端'
+    </if>
+    <if test="help.mode == 1" >
+    	and t1.audience_type = '店铺端'
+    </if>
+    <if test="help.categoryId != null" >
+    	and t1.help_category_id = #{help.categoryId}
+    </if>
+     <if test="help.infoTitle != null">
+    	and t1.info_title like concat('%',trim(#{help.infoTitle}),'%') 
+    </if>
+      order by t1.create_time desc limit #{n},#{m}
+  </select>
+  
+  <!-- 获取帮助信息总记录数 -->
+  <select id="getHelpCount" resultType="int" parameterType="java.util.Map" >
+    select count(1)
+     from 1dcq_help_info t1, 1dcq_help_info_category t2 where t1.help_category_id = t2.help_category_id
+    <if test="help.mode == 0" >
+    	and t1.audience_type = 'APP端'
+    </if>
+    <if test="help.mode == 1" >
+    	and t1.audience_type = '店铺端'
+    </if>
+       	
+    <if test="help.categoryId != null" >
+    	and t1.help_category_id = #{help.categoryId}
+    </if>
+    <if test="help.infoTitle != null">
+    	and t1.info_title like concat('%',trim(#{help.infoTitle}),'%') 
+    </if>
+  </select>
+  
+  <select id="getHelpOfYDSXYList" resultMap="helpOf1dsxyMap" parameterType="java.util.Map" >
+    select
+    	t1.help_id,
+    	t1.help_key,
+    	t1.help_title,
+    	t1.help_cont,
+    	t1.column_id,
+    	t2.column_name,
+    	t1.click_num,
+    	t2.column_no,
+    	t1.create_time
+     from 1dsxy_help_info t1 
+     inner join 1dsxy_column t2 on t1.column_id = t2.column_id
+     <where>
+     	<if test="helpTitle != null" >
+	    	and t1.help_title like concat('%',trim(#{helpTitle}),'%') 
+	    </if>
+	    <if test="columnId != null" >
+	    	and t1.column_id = #{columnId}
+	    </if>
+	    <if test="columnNo != null" >
+	    	and t2.column_no = #{columnNo}
+	    </if>
+     </where>
+     
+    order by t1.create_time desc limit #{pageNo},#{pageSize}
+  </select>
+  
+  <!-- 获取一点商学院帮助信息总记录数 -->
+  <select id="getHelpOfYDSXYCount" resultType="int" parameterType="java.util.Map" >
+    select count(1)
+    from 1dsxy_help_info t1
+    inner join 1dsxy_column t2 on t1.column_id = t2.column_id
+    <where>
+    	<if test="helpTitle != null" >
+	    	and t1.help_title like concat('%',trim(#{helpTitle}),'%') 
+	    </if>
+	    <if test="columnId != null" >
+	    	and t1.column_id = #{columnId}
+	    </if>
+	    <if test="columnNo != null" >
+	    	and t2.column_no = #{columnNo}
+	    </if>
+    </where>
+     
+  </select>
+  
+  
+</mapper>

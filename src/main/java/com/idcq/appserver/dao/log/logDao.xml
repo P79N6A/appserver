@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.log.UserOperatorLogDto" >
+	
+<!-- 
+CREATE TABLE `1dcq_user_operator_log` (
+  `log_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '日志ID,唯一主键',
+  `log_content` varchar(2000) DEFAULT NULL COMMENT '日志内容',
+  `request_message` varchar(2000) DEFAULT NULL COMMENT '请求报文',
+  `log_type` tinyint(2) unsigned NOT NULL DEFAULT 1 COMMENT '日志类型:1=登陆,2=修改资料,3=注册,4=下单,5=退单,6=支付,7=充值,8=提现,9=商圈活动',
+  `client_system_type` tinyint(2) unsigned NOT NULL DEFAULT 3 COMMENT '客户端系统类型:1=收银机,2=一点管家,3=消费者APP,4=微信商城,5=公众号,6=商铺后台,7=收银PAD,8=路由器,9=O2O管理后台',
+  `operate_user_id` bigint(20) unsigned DEFAULT NULL COMMENT '操作人id',
+  `operate_user_ip` varchar(100) DEFAULT NULL COMMENT '操作人ip',
+  `audit_user_id` bigint(20) unsigned DEFAULT NULL COMMENT '审核人user_id',
+  `operate_desc` varchar(100) DEFAULT NULL COMMENT '操作说明',
+  `alarm_level` tinyint(2) unsigned NOT NULL DEFAULT 1 COMMENT '告警等级',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间', 
+  -->
+	
+	 <insert id="insertLog" parameterType="com.idcq.appserver.dto.log.UserOperatorLogDto" useGeneratedKeys="true" keyProperty="logid" >
+   		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="logId">
+           SELECT LAST_INSERT_ID() AS logId
+  		</selectKey>
+	    insert into 1dcq_user_operator_log
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="logId != null" >
+	        log_id,
+	      </if>
+	      <if test="logContent != null" >
+	        log_content,
+	      </if>
+	      <if test="requestMessage != null" >
+	        request_message,
+	      </if>
+	      <if test="logType != null" >
+	        log_type,
+	      </if>
+	      <if test="clientSystemType != null" >
+	        client_system_type,
+	      </if>
+	      <if test="operateUserId != null" >
+	        operate_user_id,
+	      </if>
+	      <if test="operateDesc!= null" >
+	        operate_desc!=,
+	      </if>
+	      <if test="alarmLevel != null" >
+	        alarm_level,
+	      </if>
+	      <if test="createTime != null" >
+	        create_time,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="logId != null" >
+	        #{logId},
+	      </if>
+	      <if test="logContent != null" >
+	        #{logContent},
+	      </if>
+	      <if test="requestMessage != null" >
+	        #{requestMessage},
+	      </if>
+	      <if test="logType != null" >
+	        #{logType},
+	      </if>
+	      <if test="clientSystemType != null" >
+	        #{clientSystemType},
+	      </if>
+	      <if test="operateUserId != null" >
+	        #{operateUserId},
+	      </if>
+	      <if test="operateDesc null" >
+	        #{operateDesc},
+	      </if>
+	      <if test="alarmLevel != null" >
+	        #{alarmLevel},
+	      </if>
+	      <if test="createTime != null" >
+	        #{createTime},
+	      </if>
+	    </trim>
+	  </insert>
+	 <insert id="addShopOperatorLog" useGeneratedKeys="true" keyProperty="logId" parameterType="com.idcq.appserver.dto.log.ShopOperationLog">
+		 INSERT INTO
+		 1dcq_shop_operator_log(
+		 <trim suffixOverrides=",">
+		 <if test="shopId != null">
+			 shop_id,
+		 </if>
+		 <if test="logContent != null">
+			 log_content,
+		 </if>
+		 <if test="requestMessage != null">
+			 request_message,
+		 </if>
+		 <if test="logType != null">
+			 log_type,
+		 </if>
+		 <if test="clientSystemTypel != null">
+			 client_system_type,
+		 </if>
+		 <if test="operateUserId != null">
+			 operate_user_id,
+		 </if>
+		 <if test="userTypeId != null">
+			 user_type_id,
+		 </if>
+		 <if test="handlerUserIp != null">
+			 handler_user_ip,
+		 </if>
+		 <if test="auditUserId != null">
+			 audit_user_id,
+		 </if>
+		 <if test="operateDesc != null">
+			 operate_desc,
+		 </if>
+		 <if test="alarmLevel != null">
+			 alarm_level,
+		 </if>
+		 <if test="createTime != null">
+			 create_time,
+		 </if>
+		 <if test="mobile != null">
+			 mobile,
+		 </if>
+		 </trim>
+		 )VALUES (
+		 <trim suffixOverrides=",">
+		 <if test="shopId != null">
+			 #{shopId},
+		 </if>
+		 <if test="logContent != null">
+			 #{logContent},
+		 </if>
+		 <if test="requestMessage != null">
+			 #{requestMessage},
+		 </if>
+		 <if test="logType != null">
+			 #{logType},
+		 </if>
+		 <if test="clientSystemTypel != null">
+			 #{clientSystemTypel},
+		 </if>
+		 <if test="operateUserId != null">
+			 #{operateUserId},
+		 </if>
+		 <if test="userTypeId != null">
+			 #{userTypeId},
+		 </if>
+		 <if test="handlerUserIp != null">
+			 #{handlerUserIp},
+		 </if>
+		 <if test="auditUserId != null">
+			 #{auditUserId},
+		 </if>
+		 <if test="operateDesc != null">
+			 #{operateDesc},
+		 </if>
+		 <if test="alarmLevel != null">
+			 #{alarmLevel},
+		 </if>
+		 <if test="createTime != null">
+			 #{createTime},
+		 </if>
+		 <if test="mobile != null">
+			 #{mobile},
+		 </if>
+		 </trim>
+		 );
+	 </insert>
+</mapper>

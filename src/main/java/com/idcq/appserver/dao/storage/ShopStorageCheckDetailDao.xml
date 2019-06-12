@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.storage.ShopStorageCheckDetailDto">
+
+   
+	<resultMap id="shopStorageCheckDetailMap" type="com.idcq.appserver.dto.storage.ShopStorageCheckDetailDto">
+	
+		<result column="check_detail_id" property="checkDetailId" />
+		<result column="storage_check_id" property="storageCheckId" />
+		<result column="goods_id" property="goodsId" />
+		<result column="shop_id" property="shopId"/>
+		<result column="storage_price" property="storagePrice" />
+		<result column="goods_total_num" property="goodsTotalNum"/>
+		<result column="goods_total_price" property="goodsTotalPrice"/>
+		<result column="check_num" property="checkNum"/>
+		<result column="check_total_price" property="checkTotalPrice" />
+		<result column="storage_check_type" property="storageCheckType" />
+		<result column="difference_num" property="differenceNum" />
+		<result column="storage_check_remark" property="storageCheckRemark" />
+		<result column="create_time" property="createTime" />
+		
+	</resultMap>
+
+	
+	<!-- 批量插入盘点详情 -->
+	<insert id="batchInsertShopStorageCheckDetail" parameterType="java.util.List">
+	
+	  	insert into 1dcq_shop_storage_check_detail
+		(
+			storage_check_id,
+			goods_id,
+			shop_id,
+			storage_price,
+			goods_total_num,
+			goods_total_price,
+			check_num,
+			check_total_price,
+			storage_check_type,
+			difference_num,
+			storage_check_remark,
+			create_time
+		 )
+		 values
+		 <foreach collection="shopStorageCheckDetailDtos" item="item" separator=",">
+		 	(
+		  	#{item.storageCheckId},
+		  	#{item.goodsId},
+		  	#{item.shopId},
+		  	#{item.storagePrice},
+		  	#{item.goodsTotalNum},
+		  	#{item.goodsTotalPrice},
+		  	#{item.checkNum},
+		  	#{item.checkTotalPrice},
+		  	#{item.storageCheckType},
+		  	#{item.differenceNum},
+		  	#{item.storageCheckRemark},
+		  	#{item.createTime}
+	  		)
+		 </foreach>
+	  </insert>
+	  
+	<select id="getShopStorageCheckDetailList" resultType="java.util.Map" parameterType="java.util.Map">
+	  
+		SELECT
+			sscd.check_detail_id AS storageDetailId,
+			sscd.goods_id AS goodsId,
+			g.goods_name AS goodsName,
+			g.barcode AS barcode,
+			g.goods_no as goodsNo,
+			sscd.goods_total_num AS storageNumber,
+			sscd.check_num AS storageAfterNumber,
+			sscd.storage_check_remark AS storageCheckRemark,
+			sscd.storage_check_type AS storageCheckType
+		FROM
+			1dcq_shop_storage_check_detail sscd
+		LEFT JOIN 1dcq_goods g ON g.goods_id = sscd.goods_id
+		WHERE
+			sscd.storage_check_id = #{storageCheckId}
+		<if test="goodsId != null">
+			AND sscd.goods_id = #{goodsId} 
+		</if>
+		
+		
+	 </select>	
+	 
+</mapper>

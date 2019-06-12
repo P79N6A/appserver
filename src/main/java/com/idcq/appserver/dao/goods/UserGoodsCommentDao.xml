@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.goods.UserGoodsCommentDto" >
+  <resultMap id="userGoodsCommentMap" type="com.idcq.appserver.dto.goods.UserGoodsCommentDto" >
+    <id column="comment_id" property="commentId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="star_level_grade" property="starLevelGrade" jdbcType="INTEGER" />
+    <result column="comment_content" property="commentContent" jdbcType="VARCHAR" />
+    <result column="comment_time" property="commentTime" jdbcType="TIMESTAMP" />
+    <result column="username" property="userName" jdbcType="VARCHAR" />
+    <result column="big_logo" property="imgBig" jdbcType="VARCHAR" />
+    <result column="small_logo" property="imgSmall" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="getGoodsComments" resultMap="userGoodsCommentMap" parameterType="java.lang.Long" >
+    select c.user_id,c.star_level_grade,c.comment_content,c.comment_time,u.username,u.big_logo,u.small_logo
+	from 1dcq_user_goods_comment c LEFT JOIN 1dcq_user u
+	on c.user_id=u.user_id
+	where c.goods_id=#{goodsId}
+	and comment_status=1
+	order by c.comment_time desc
+	limit #{n},#{m}
+  </select>
+  
+  <select id="getGoodsCommentsTotal" parameterType="java.lang.Long" resultType="int">
+    	select count(1) from 1dcq_user_goods_comment c 
+    	where c.goods_id=#{goodsId} and comment_status=1
+  </select>
+  
+</mapper>

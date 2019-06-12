@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shop.BookTimeRuleDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.shop.BookTimeRuleDto" >
+    <id column="time_rule_id" property="timeRuleId" jdbcType="INTEGER" />
+    <result column="setting_id" property="settingId" jdbcType="INTEGER" />
+    <result column="rule_type" property="ruleType" jdbcType="TINYINT" />
+    <result column="begin_time" property="beginTime" jdbcType="TIME" />
+    <result column="end_time" property="endTime" jdbcType="TIME" />
+    <result column="stop_begin_date" property="stopBeginDate" jdbcType="DATE" />
+    <result column="stop_end_date" property="stopEndDate" jdbcType="DATE" />
+    <result column="week_day" property="weekDay" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+ 
+  <sql id="Base_Column_List" >
+    time_rule_id, setting_id, rule_type, begin_time, end_time, stop_begin_date, stop_end_date, 
+    week_day, create_time
+  </sql>
+
+  <select id="getTimeRuleListBySettingId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from 1dcq_book_time_rule
+    where setting_id = #{settingId}
+  </select>
+  <delete id="delTimeRuleDtoBySettingId" parameterType="java.lang.Long">
+  	delete from 1dcq_book_time_rule where setting_id = #{settingId}
+  </delete>
+  <insert id="addTimeRuleDto" parameterType="com.idcq.appserver.dto.shop.BookTimeRuleDto" >
+    insert into 1dcq_book_time_rule
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="timeRuleId != null" >
+        time_rule_id,
+      </if>
+      <if test="settingId != null" >
+        setting_id,
+      </if>
+      <if test="ruleType != null" >
+        rule_type,
+      </if>
+      <if test="beginTime != null" >
+        begin_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="stopBeginDate != null" >
+        stop_begin_date,
+      </if>
+      <if test="stopEndDate != null" >
+        stop_end_date,
+      </if>
+      <if test="weekDay != null" >
+        week_day,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="timeRuleId != null" >
+        #{timeRuleId,jdbcType=INTEGER},
+      </if>
+      <if test="settingId != null" >
+        #{settingId,jdbcType=INTEGER},
+      </if>
+      <if test="ruleType != null" >
+        #{ruleType,jdbcType=TINYINT},
+      </if>
+      <if test="beginTime != null" >
+        #{beginTime,jdbcType=TIME},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIME},
+      </if>
+      <if test="stopBeginDate != null" >
+        #{stopBeginDate,jdbcType=DATE},
+      </if>
+      <if test="stopEndDate != null" >
+        #{stopEndDate,jdbcType=DATE},
+      </if>
+      <if test="weekDay != null" >
+        #{weekDay,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+</mapper>

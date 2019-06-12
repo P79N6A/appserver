@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.goods.ShopTechRefGoodsDto" >
+ 	<resultMap type="com.idcq.appserver.dto.goods.ShopTechRefGoodsDto" id="BaseResultMap">
+ 		<result column="refGoodsId" property="ref_goods_id" jdbcType="INTEGER"/>
+ 		<result column="goods_group_id" property="goodsGroupId"/>
+ 		<result column="technician_name" property="techName"/>
+ 		<result column="technician_id" property="techId"/>
+ 	</resultMap>
+ 		
+ 	<select id="queryListByGoodsGroupId" resultMap="BaseResultMap" parameterType="java.util.Map">
+ 		select p.*,te.technician_name
+ 		 from 1dcq_shop_technician_ref_goods p left join 1dcq_shop_technician
+ 		  te on p.technician_id=te.technician_id
+ 		  where p.goods_group_id=#{groupId}
+ 	</select>
+</mapper>

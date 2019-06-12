@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.idianmgr.dto.shop.ShopTechnicianClassesDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.idianmgr.dto.shop.ShopTechnicianClassesDto" >
+    <id column="tc_id" property="tcId" jdbcType="INTEGER" />
+    <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    <result column="classes_date" property="classesDate" jdbcType="DATE" />
+    <result column="technician_id" property="technicianId" jdbcType="INTEGER" />
+    <result column="classes_type" property="classesType" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="last_update_time" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  
+  <select id="getScheduleSetting" resultMap="BaseResultMap">
+  		select classes_date,classes_type from 1dcq_shop_technician_classes
+  		where shop_id=#{shopId}
+  		<if test="startDate!=null">
+  			<![CDATA[ and classes_date>=#{startDate}]]>
+  		</if>
+  		<if test="endDate!=null">
+  			<![CDATA[ and classes_date<=#{endDate}]]>
+  		</if>
+  		<if test="techId!=null">
+  			<![CDATA[ and technician_id=#{techId}]]>
+  		</if>
+  </select>
+  
+  <insert id="setScheduleSetting" >
+  		insert into 1dcq_shop_technician_classes (shop_id,classes_date,technician_id,classes_type,create_time)   
+	    values  
+	    <foreach collection="list" item="item" index="index" separator="," >  
+	        (#{item.shopId},#{item.classesDate},#{item.techId},#{item.classesType},#{item.createTime})  
+	    </foreach> 
+  </insert>
+  
+  <delete id="deleteByCondition">
+  		delete from 1dcq_shop_technician_classes
+  		where 1=1
+  		<if test="techId!=null">
+  			and technician_id=#{techId}
+  		</if>
+  		<if test="shopId!=null">
+  			and shop_id=#{shopId}
+  		</if>
+  		<if test="startDate!=null">
+  			and classes_date>=#{startDate}
+  		</if>
+  		<if test="endDate!=null">
+  			<![CDATA[ and classes_date<=#{endDate}]]>
+  		</if>
+  </delete>
+</mapper>

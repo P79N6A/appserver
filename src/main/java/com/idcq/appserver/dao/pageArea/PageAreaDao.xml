@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.pageArea.PageAreaDto" >
+
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.pageArea.PageAreaDto" >
+    <id column="page_area_id" property="pageAreaId" jdbcType="BIGINT" />
+    <result column="province_id" property="provinceId" jdbcType="BIGINT" />
+    <result column="city_id" property="cityId" jdbcType="INTEGER" />
+    <result column="districe_id" property="districeId" jdbcType="DECIMAL" />
+    <result column="position_type" property="positionType" jdbcType="DOUBLE" />
+    <result column="page_area_url" property="pageAreaUrl" jdbcType="DECIMAL" />
+    <result column="create_time" property="createTime" jdbcType="DECIMAL" />
+  </resultMap>
+	
+ <select id="getPageAreaUrl" resultMap="BaseResultMap">
+ 	select * from 1dcq_page_area where 1=1
+ 	<if test="cityId==null">
+ 		and city_id is null
+ 	</if>
+ 	<if test="cityId!=null">
+ 		 and city_id=#{cityId}
+ 	</if>
+ 	<if test="positionType!=null">
+ 	 	and position_type=#{positionType}
+ 	</if>
+ </select>
+   
+</mapper>

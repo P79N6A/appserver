@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shopCoupon.UserShopCouponDto" >
+  	<resultMap id="userShopCouponResultMap" type="com.idcq.appserver.dto.shopCoupon.UserShopCouponDto" >
+		 <id column="user_shop_coupon_id" property="userShopCouponId" jdbcType="INTEGER" />
+    	 <result column="shop_memeber_id" property="shopMemeberId" jdbcType="INTEGER" />
+    	 <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    	 <result column="user_id" property="userId" jdbcType="INTEGER" />
+    	 <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    	 <result column="shop_coupon_id" property="shopCouponId" jdbcType="INTEGER" />
+    	 <result column="coupon_status" property="couponStatus" jdbcType="INTEGER" />
+    	 <result column="begin_date" property="beginDate" jdbcType="TIMESTAMP" />
+    	 <result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
+         <result column="shop_coupon_index" property="shopCouponIndex" jdbcType="INTEGER" />
+         <result column="get_coupon_time" property="getCouponTime" jdbcType="TIMESTAMP" />
+         <result column="used_coupon_time" property="usedCouponTime" jdbcType="TIMESTAMP" />
+         <result column="order_id" property="orderId" jdbcType="INTEGER" />
+  	</resultMap>
+  	
+  	<insert id="insertUserShopCoupon" parameterType="com.idcq.appserver.dto.shopCoupon.UserShopCouponDto">
+		    insert into 1dcq_user_shop_coupon 
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="shopMemeberId != null" >
+	        shop_memeber_id,
+	      </if>
+	      <if test="shopId != null" >
+	        shop_id,
+	      </if>
+	      <if test="userId != null" >
+	        user_id,
+	      </if>
+	      <if test="mobile != null" >
+	        mobile,
+	      </if>
+	      <if test="shopCouponId != null" >
+	        shop_coupon_id,
+	      </if>
+	      <if test="couponStatus != null" >
+	        coupon_status,
+	      </if>
+	      <if test="beginDate != null" >
+	        begin_date,
+	      </if>
+	      <if test="endDate != null" >
+	        end_date,
+	      </if>
+	      <if test="shopCouponIndex != null" >
+	        shop_coupon_index,
+	      </if>
+	      <if test="getCouponTime != null" >
+	        get_coupon_time,
+	      </if>
+	      <if test="usedCouponTime != null" >
+	        used_coupon_time,
+	      </if>
+	      <if test="orderId != null" >
+	        order_id,
+	      </if>		      
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="shopMemeberId != null" >
+	         #{shopMemeberId},
+	      </if>
+	      <if test="shopId != null" >
+	         #{shopId},
+	      </if>
+	      <if test="userId != null" >
+	         #{userId},
+	      </if>
+	      <if test="mobile != null" >
+	         #{mobile},
+	      </if>
+	      <if test="shopCouponId != null" >
+	         #{shopCouponId},
+	      </if>
+	      <if test="couponStatus != null" >
+	        #{couponStatus},
+	      </if>
+	      <if test="beginDate != null" >
+	         #{beginDate},
+	      </if>
+	      <if test="endDate != null" >
+	         #{endDate},
+	      </if>
+	      <if test="shopCouponIndex != null" >
+	         #{shopCouponIndex},
+	      </if>
+	      <if test="getCouponTime != null" >
+	         #{getCouponTime},
+	      </if>
+	      <if test="usedCouponTime != null" >
+	         #{usedCouponTime},
+	      </if>
+	      <if test="orderId != null" >
+	         #{orderId},
+	      </if>		
+	    </trim>
+	</insert>
+
+	<insert id="beachInsertUserShopCoupon"  parameterType="java.util.List">
+		insert into 1dcq_user_shop_coupon (
+	        shop_memeber_id,
+	        shop_id,
+	        user_id,
+	        mobile,
+	        shop_coupon_id,
+	        coupon_status,
+	        begin_date,
+	        end_date,
+	        shop_coupon_index,
+	        get_coupon_time,
+	        used_coupon_time,
+	        order_id
+		) 
+		values
+		<foreach collection="list" item="item" index="index" separator="," >
+			(
+			 #{item.shopMemeberId},
+	         #{item.shopId},
+	         #{item.userId},
+	         #{item.mobile},
+	         #{item.shopCouponId},
+	         #{item.couponStatus},
+	         #{item.beginDate},
+	         #{item.endDate},
+	         #{item.shopCouponIndex},
+	         #{item.getCouponTime},
+	         #{item.usedCouponTime},
+	         #{item.orderId}
+		)
+		</foreach>
+	</insert>
+
+	<select id="getUserShopCouponList" parameterType="com.idcq.appserver.dto.shopCoupon.UserShopCouponDto" resultMap="userShopCouponResultMap">
+	    select 
+	        user_shop_coupon_id,
+	        shop_memeber_id,
+	        shop_id,
+	        user_id,
+	        mobile,
+	        shop_coupon_id,
+	        coupon_status,
+	        begin_date,
+	        end_date,
+	        shop_coupon_index,
+	        get_coupon_time,
+	        used_coupon_time,
+	        order_id
+	    from 
+	    	1dcq_user_shop_coupon usc
+	    where
+	    	1=1
+	      <if test="userShopCouponId != null" >
+	         and user_shop_coupon_id = #{userShopCouponId}
+	      </if>
+          <if test="shopMemeberId != null" >
+	         and shop_memeber_id = #{shopMemeberId}
+	      </if>
+	      <if test="shopId != null" >
+	         and shop_id = #{shopId}
+	      </if>
+	      <if test="userId != null" >
+	         and user_id = #{userId}
+	      </if>
+	      <if test="mobile != null" >
+	         and mobile = #{mobile}
+	      </if>
+	      <if test="shopCouponId != null" >
+	         and shop_coupon_id =  #{shopCouponId}
+	      </if>
+	      <if test="couponStatus != null" >
+	        and coupon_status = #{couponStatus}
+	      </if>
+	      <if test="beginDate != null" >
+	         and begin_date = #{beginDate}
+	      </if>
+	      <if test="endDate != null" >
+	         and end_date = #{endDate}
+	      </if>
+	      <if test="shopCouponIndex != null" >
+	         and shop_coupon_index = #{shopCouponIndex}
+	      </if>
+	      <if test="getCouponTime != null" >
+	         and get_coupon_time = #{getCouponTime}
+	      </if>
+	      <if test="usedCouponTime != null" >
+	         and used_coupon_time = #{usedCouponTime}
+	      </if>
+	      <if test="orderId != null" >
+	         and order_id = #{orderId}
+	      </if>		
+	    order by get_coupon_time 
+	    	limit #{pageNo},#{pageSize}
+	</select>
+	<select id="getUserShopCouponCount" parameterType="com.idcq.appserver.dto.shopCoupon.UserShopCouponDto" resultType="java.lang.Integer">
+	    select 
+	        count(*)
+	    from 
+	    	1dcq_user_shop_coupon
+	    where
+	    	1=1
+	      <if test="userShopCouponId != null" >
+	         and user_shop_coupon_id = #{userShopCouponId}
+	      </if>
+          <if test="shopMemeberId != null" >
+	         and shop_memeber_id = #{shopMemeberId}
+	      </if>
+	      <if test="shopId != null" >
+	         and shop_id = #{shopId}
+	      </if>
+	      <if test="userId != null" >
+	         and user_id = #{userId}
+	      </if>
+	      <if test="mobile != null" >
+	         and mobile = #{mobile}
+	      </if>
+	      <if test="shopCouponId != null" >
+	         and shop_coupon_id =  #{shopCouponId}
+	      </if>
+	      <if test="couponStatus != null" >
+	        and coupon_status = #{couponStatus}
+	      </if>
+	      <if test="beginDate != null" >
+	         and begin_date = #{beginDate}
+	      </if>
+	      <if test="endDate != null" >
+	         and end_date = #{endDate}
+	      </if>
+	      <if test="shopCouponIndex != null" >
+	         and shop_coupon_index = #{shopCouponIndex}
+	      </if>
+	      <if test="getCouponTime != null" >
+	         and get_coupon_time = #{getCouponTime}
+	      </if>
+	      <if test="usedCouponTime != null" >
+	         and used_coupon_time = #{usedCouponTime}
+	      </if>
+	      <if test="orderId != null" >
+	         and order_id = #{orderId}
+	      </if>		
+	</select>		
+	
+  <update id="updateUserShopCouponByCouponId" parameterType="com.idcq.appserver.dto.shopCoupon.UserShopCouponDto">
+	  	update 1dcq_user_shop_coupon
+	  	<set>
+  	      <if test="shopMemeberId != null" >
+	          shop_memeber_id = #{shopMemeberId},
+	      </if>
+	      <if test="shopId != null" >
+	          shop_id = #{shopId},
+	      </if>
+	      <if test="userId != null" >
+	          user_id = #{userId},
+	      </if>
+	      <if test="mobile != null" >
+	          mobile = #{mobile},
+	      </if>
+	      <if test="shopCouponId != null" >
+	          shop_coupon_id =  #{shopCouponId},
+	      </if>
+	      <if test="couponStatus != null" >
+	         coupon_status = #{couponStatus},
+	      </if>
+	      <if test="beginDate != null" >
+	          begin_date = #{beginDate},
+	      </if>
+	      <if test="endDate != null" >
+	          end_date = #{endDate},
+	      </if>
+	      <if test="shopCouponIndex != null" >
+	          shop_coupon_index = #{shopCouponIndex},
+	      </if>
+	      <if test="getCouponTime != null" >
+	          get_coupon_time = #{getCouponTime},
+	      </if>
+	      <if test="orderId != null" >
+	          order_id = #{orderId},
+	      </if>
+	      <if test="usedCouponTime != null" >
+	          used_coupon_time = #{usedCouponTime},
+	      </if>
+	  	</set>
+	  	where 
+	         user_shop_coupon_id =  #{userShopCouponId}
+	      	
+	</update>
+	
+	<update id="batchUpdateUserShopCoupon" parameterType="java.util.Map">
+		  	 <foreach collection="userShopCouponDtoList" item="item" index="index" open="" close="" separator=";">  
+		        update 1dcq_user_shop_coupon usc
+			  	<set>
+		  			<if test="item.couponStatus != null">
+		  				usc.coupon_status = #{item.couponStatus},
+		  			</if>
+			  	</set>
+			  	<where>
+			  		<if test="item.userShopCouponId != null">
+			  			and usc.user_shop_coupon_id = #{item.userShopCouponId}
+			  		</if>
+			  	</where>
+				</foreach> 	
+		</update>
+	
+	
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.essential.Unit">
+
+	<resultMap type="com.idcq.appserver.dto.essential.Unit" id="UnitMap">
+ 		<result column="unit_id" property="unitId" jdbcType="INTEGER"/>
+ 		<result column="unit_index" property="unitIndex" jdbcType="INTEGER"/>
+ 		<result column="unit_name" property="unitName" jdbcType="VARCHAR"/>
+ 		<result column="status" property="status" jdbcType="INTEGER"/>
+ 		<result column="unit_type" property="unitType" jdbcType="INTEGER"/>
+ 		<result column="digit_scale" property="digitScale" jdbcType="INTEGER"/>
+ 		<result column="source_type" property="sourceType" jdbcType="INTEGER"/>
+ 	</resultMap>
+	
+	<select id="getUnitByPage" resultMap="UnitMap" parameterType="java.util.Map">
+		select * from 1dcq_goods_unit limit #{start},#{limit}
+	</select>
+	<select id="getUnitTotalCount" resultType="java.lang.Integer">
+		select count(*) from 1dcq_goods_unit 
+	</select>
+	
+	<select id="queryUnitById" resultMap="UnitMap">
+		select * from 1dcq_goods_unit where unit_id=#{unitId}
+	</select>
+	
+	<select id="getById" resultMap="UnitMap">
+		select * from 1dcq_goods_unit where unit_id=#{unitId}
+	</select>
+	
+	<!-- 根据条形码和shopId获取商品数量 -->
+	<select id="getUnitIdByName" parameterType="java.util.Map" resultType="java.lang.Long">
+	    select unit_id from 1dcq_goods_unit 
+	    where unit_name = #{unitName} 
+	    <if test="digitScale != null">
+	        and digit_scale = #{digitScale} 
+	    </if>
+	    and (shop_id = #{shopId} or shop_id is null)
+	    limit 1
+	</select>
+	
+	<!-- 根据条形码和shopId获取商品数量 -->
+	<select id="queryUnit" parameterType="java.util.Map" resultMap="UnitMap">
+	    select 
+	    unit_id,unit_name,digit_scale,shop_id ,unit_type,status
+	    from 
+	    1dcq_goods_unit 
+	    <where>
+	    	<choose>
+	    		<when test="shopId != null">shop_id = #{shopId}</when>
+	    		<otherwise>shop_id IS NULL</otherwise>
+	    	</choose>
+	    	
+	    	<if test="unitName != null"> AND unit_name = #{unitName}</if>
+	    	<if test="digitScale != null"> AND digit_scale = #{digitScale}</if>
+	    	<if test="sourceType != null"> AND source_type = #{sourceType}</if>
+	    	<if test="status != null"> AND status = #{status}</if>
+	    </where>
+	</select>
+	
+	<insert id="addGoodsUnit" useGeneratedKeys="true" parameterType="com.idcq.appserver.dto.essential.Unit">  
+    <selectKey resultType="long" keyProperty="unitId" order="AFTER">  
+        SELECT LAST_INSERT_ID()  
+    </selectKey>  
+    insert into 1dcq_goods_unit(unit_index, unit_name, digit_scale, status, unit_type, shop_id)   
+    values  
+    (#{unitIndex}, #{unitName}, #{digitScale}, #{status}, #{unitType}, #{shopId})  
+  </insert>   
+</mapper>

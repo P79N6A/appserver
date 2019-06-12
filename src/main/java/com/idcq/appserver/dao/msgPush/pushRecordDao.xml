@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.message.pushRecord">
+	<insert id="saveRecord" parameterType="com.idcq.appserver.dto.message.AppPushRecordDto"
+		useGeneratedKeys="true" keyProperty="messageId">
+		insert into
+		1dcq_app_push_record(target_id,message_content,message_status,send_time_server,receive_time_client,report_time,is_used)
+		values(#{targetId},#{messageContent},#{messageStatus},#{sendTimeServer},#{receiveTimeClient},#{reportTime},#{isUsed});
+	</insert>
+	<insert id="updateRecordById" parameterType="com.idcq.appserver.dto.message.AppPushRecordDto">
+		update
+		1dcq_app_push_record
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="messageContent != null">message_content=#{messageContent},</if>
+			<if test="messageStatus != null">message_status=#{messageStatus},</if>
+			<if test="sendTimeServer != null">send_time_server=#{sendTimeServer},</if>
+			<if test="receiveTimeClient != null">receive_time_client=#{receiveTimeClient},</if>
+			<if test="reportTime != null">report_time=#{reportTime},</if>
+			<if test="isUsed != null">is_used=#{isUsed},</if>
+		</trim>
+		WHERE
+		message_id=#{messageId}
+	</insert>
+
+</mapper> 
+   

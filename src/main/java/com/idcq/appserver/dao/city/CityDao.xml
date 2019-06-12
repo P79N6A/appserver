@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.city.CityDto">
+	<resultMap type="com.idcq.appserver.dto.city.CityDto" id="cityMap">
+		<result column="id" property="id"/>
+		<result column="msg_type" property="msgType"/>
+		<result column="msg_title" property="msgTitle"/>
+		<result column="msg_desc" property="msgDesc"/>
+		<result column="merchant_id" property="merchantId"/>
+		<result column="merchant_name" property="merchantName"/>
+		<result column="pub_time" property="pubTime"/>
+	</resultMap>
+	
+    <select id="getCityList" parameterType="java.util.Map"  resultMap="cityMap">
+    	select * from 1dcq_messag e where msg_type = #{message.msgType} order by pub_time desc limit #{n},#{m}
+    </select>
+    
+    
+</mapper> 
+   

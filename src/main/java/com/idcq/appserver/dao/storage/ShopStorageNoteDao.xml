@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.storage.ShopStorageNoteDto">
+
+	<!-- storage_id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '出/入库ID', 
+		storage_no VARCHAR(100) NOT NULL COMMENT '出/入库单号,销售出库时填写订单号', storage_type 
+		TINYINT(2) UNSIGNED NOT NULL DEFAULT 1 COMMENT '出/入库类型:进货入库=1,其他入库=2,销售出库=3,其他出库=4', 
+		total_price DECIMAL(12,2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '总价', shop_id 
+		INT(10) UNSIGNED DEFAULT NULL COMMENT '商铺ID', operater_id INT(10) UNSIGNED 
+		DEFAULT NULL COMMENT '经手人ID（店铺管理者=0）', operater_name VARCHAR(1000) DEFAULT 
+		NULL COMMENT '经手人', storage_remark VARCHAR(50) DEFAULT NULL COMMENT '备注', 
+		storage_time DATETIME DEFAULT NULL COMMENT '出/入库时间', create_time TIMESTAMP 
+		NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间', -->
+   
+	<resultMap id="shopStorageNoteMap" type="com.idcq.appserver.dto.storage.ShopStorageNoteDto">
+	
+		<result column="storage_id" property="storageId" />
+		<result column="storage_no" property="storageNo" />
+		<result column="storage_type" property="storageType"/>
+		<result column="total_price" property="totalPrice" />
+		<result column="shop_id" property="shopId" />
+		<result column="operater_id" property="operaterId" />
+		<result column="operater_name" property="operaterName" />
+		<result column="storage_remark" property="storageRemark" />
+		<result column="create_time" property="createTime"  />
+		
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		storage_id, 
+		storage_no, 
+		storage_type, 
+		total_price, 
+		shop_id, 
+		operater_id, 
+		operater_name,
+		storage_remark, 
+		create_time
+	</sql>
+
+
+	<insert id="insertShopStorageNote" useGeneratedKeys="true" keyProperty="storageId" parameterType="com.idcq.appserver.dto.storage.ShopStorageNoteDto">
+		insert into 1dcq_shop_storage_note
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="storageId != null">
+			 storage_id,
+			</if>
+			<if test="storageNo != null">
+			 storage_no,
+			</if>
+			<if test="storageType != null">
+			 storage_type,
+			</if>  
+			<if test="totalPrice != null">
+			 total_price,
+			</if> 
+			<if test="shopId != null">
+			 shop_id,
+			</if>   
+			<if test="operaterId != null">
+			 operater_id,
+			</if>    
+			<if test="operaterName != null">
+			 operater_name,
+			</if>    
+			<if test="storageRemark != null">
+			  storage_remark,
+			</if>   
+			<if test="createTime != null">
+			  create_time,
+			</if>
+			<if test="storageTime != null">
+			  storage_time,
+			</if>
+			<if test="buyer != null"> 
+			  buyer,
+			</if> 
+			<if test="vender != null">
+			  vender,
+			</if>      
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="storageId != null">
+			 #{storageId},
+			</if>
+			<if test="storageNo != null">
+			 #{storageNo},
+			</if>
+			<if test="storageType != null">
+			 #{storageType},
+			</if>  
+			<if test="totalPrice != null">
+			 #{totalPrice},
+			</if> 
+			<if test="shopId != null">
+			 #{shopId},
+			</if>   
+			<if test="operaterId != null">
+			 #{operaterId},
+			</if>    
+			<if test="operaterName != null">
+			 #{operaterName},
+			</if>    
+			<if test="storageRemark != null">
+			  #{storageRemark},
+			</if>   
+			<if test="createTime != null">
+			  #{createTime},
+			</if> 
+			<if test="storageTime != null">
+			  #{storageTime},
+			</if>
+			<if test="buyer != null"> 
+			  #{buyer},
+			</if> 
+			<if test="vender != null">
+			  #{vender},
+			</if>    
+		</trim>
+	</insert>
+	
+ <update id="updateShopStorageNoteByStorageNo" parameterType="com.idcq.appserver.dto.storage.ShopStorageNoteDto">
+	  	update 1dcq_shop_storage_note
+	  	<set>
+	  		<if test="storageId != null">
+			 storage_id = #{storageId},
+			</if>
+			<if test="storageNo != null">
+			 storage_no = #{storageNo},
+			</if>
+			<if test="storageType != null">
+			 storage_type = #{storageType},
+			</if>  
+			<if test="totalPrice != null">
+			 total_price = #{totalPrice},
+			</if> 
+			<if test="shopId != null">
+			 shop_id = #{shopId},
+			</if>   
+			<if test="operaterId != null">
+			 operater_id = #{operaterId},
+			</if>    
+			<if test="operaterName != null">
+			 operater_name = #{operaterName},
+			</if>    
+			<if test="storageRemark != null">
+			  storage_remark = #{storageRemark},
+			</if>   
+			<if test="createTime != null">
+			  create_time = #{createTime},
+			</if>
+			<if test="storageTime != null">
+			  storage_time = #{storageTime},
+			</if>
+			<if test="buyer != null"> 
+			  buyer = #{buyer},
+			</if> 
+			<if test="vender != null">
+			  vender = #{vender},
+			</if> 
+	  	</set>
+	  	 where 1=1
+		    <if test="storageId != null">
+			  and storage_id = #{storageId}
+			</if>
+			<if test="storageNo != null">
+			  and storage_no = #{storageNo}
+			</if>
+			<if test="storageType != null">
+			  and storage_type = #{storageType}
+			</if>  
+			<if test="totalPrice != null">
+			  and  total_price = #{totalPrice}
+			</if> 
+			<if test="shopId != null">
+			  and shop_id = #{shopId}
+			</if>   
+			<if test="operaterId != null">
+			  and operater_id = #{operaterId}
+			</if>    
+			<if test="operaterName != null">
+			  and operater_name = #{operaterName}
+			</if>    
+			<if test="storageRemark != null">
+			  and  storage_remark = #{storageRemark}
+			</if>   
+			<if test="createTime != null">
+			   and create_time = #{createTime}
+			</if>
+			<if test="storageTime != null">
+			   and storage_time = #{storageTime}
+			</if>
+			<if test="buyer != null"> 
+			   and buyer = #{buyer}
+			</if> 
+			<if test="vender != null">
+			   and  vender = #{vender}
+			</if> 
+	</update>
+
+	
+  <select id="getShopStorageByMap" resultType="java.util.Map" parameterType="java.util.Map">
+	  
+	  select * from
+		  (
+		SELECT
+			ssd.biz_id as bizId,
+			ssd.biz_type as bizType,
+			ssn.storage_no as bizNo,
+			ssn.total_price as totalPrice,
+			ssn.storage_time as storageTime,
+			ssn.storage_remark as storageRemark,
+			ssn.operater_id as operaterId,
+			ssn.operater_name as operaterName,
+			ssn.shop_id as shopId,
+			ssn.buyer,
+			ssn.vender,
+			ssd.unit_name as unitName,
+			ssd.unit_id as unitId,
+			ssd.change_type as changeType,
+			ssd.storage_detail_id as storageDetailId,
+			ssd.goods_id as goodsId,
+			g.goods_name as goodsName,
+			g.barcode as barcode,
+			g.pinyinCode as pinyinCode,
+			g.goods_status as goodsStatus,
+			g.goods_no as goodsNo,
+			ssd.storage_price as storagePrice,
+			ssd.goods_total_price as goodsTotalPrice,
+			ssd.storage_number as storageNumber,
+			ssd.storage_after_number as storageAfterNumber,
+			ssd.detail_remark as detailRemark
+		FROM
+			1dcq_shop_storage_note ssn
+		INNER JOIN 1dcq_shop_storage_detail ssd 
+		ON ssn.storage_id = ssd.biz_id
+       AND ssd.biz_type = 17
+		INNER JOIN 1dcq_goods g
+		ON ssd.goods_id = g.goods_id
+		WHERE ssn.shop_Id = #{shopId}
+		
+     UNION 
+    
+		SELECT
+			ssd.biz_id as bizId,
+			ssd.biz_type as bizType,
+			sscn.storage_check_no as bizNo,
+			sscn.goods_total_price as totalPrice,
+			sscn.storage_check_time as storageTime,
+			sscn.storage_check_remark as storageRemark,
+			sscn.operater_id as operaterId,
+			sscn.operater_name as operaterName,
+			sscn.shop_id as shopId,
+			'' as buyer,
+			'' as vender,
+			'个' as unitName,
+			0 as unitId,
+			ssd.change_type as changeType,
+			ssd.storage_detail_id as storageDetailId,
+			ssd.goods_id as goodsId,
+			g.goods_name as goodsName,
+			g.barcode as barcode,
+			g.pinyinCode as pinyinCode,
+			g.goods_status as goodsStatus,
+			g.goods_no as goodsNo,
+			ssd.storage_price as storagePrice,
+			ssd.goods_total_price as goodsTotalPrice,
+			ssd.storage_number as storageNumber,
+			ssd.storage_after_number as storageAfterNumber,
+			ssd.detail_remark as detailRemark
+		FROM
+			1dcq_shop_storage_check_note sscn
+		INNER JOIN 1dcq_shop_storage_detail ssd 
+		ON sscn.storage_check_id = ssd.biz_id
+        AND ssd.biz_type = 18
+		INNER JOIN 1dcq_goods g
+		ON ssd.goods_id = g.goods_id
+		WHERE sscn.shop_Id = #{shopId}
+		) u
+			WHERE
+				1=1
+			<if test="goodsId != null">
+				AND u.goodsId = #{goodsId}
+			</if>
+			<if test="querydata != null">
+				AND 
+				  (
+					u.goodsName LIKE concat('%',#{querydata},'%') 
+					OR u.barcode LIKE concat('%',#{querydata},'%')
+					OR u.goodsNo LIKE concat('%',#{querydata},'%')
+					OR u.pinyinCode LIKE concat('%',#{querydata},'%')
+					OR u.vender LIKE concat('%',#{querydata},'%') 
+			      )
+			</if>
+			<if test="goodsStatus != null">
+				AND u.goodsStatus = #{goodsStatus}
+			</if>
+			<if test="bizType != null">
+				AND u.bizType = #{bizType}
+			</if>
+			<if test="changeType != null">
+			      AND u.changeType IN 
+	 		    <foreach collection="changeType" open="(" close=")" separator="," item="item">
+	 		        #{item}
+	 		    </foreach>
+			</if>
+			<if test="bizNo != null">
+				AND u.bizNo LIKE concat('%',#{bizNo},'%')
+			</if>
+			<if test="startTime != null">
+				AND u.storageTime > #{startTime}
+			</if>
+			<if test="endTime != null">
+				AND u.storageTime &lt; #{endTime}
+			</if>
+		ORDER BY u.storageTime DESC
+		LIMIT #{limit},#{pSize}
+	  </select>
+
+   <select id="getShopStorageCountByMap" resultType="java.lang.Integer" parameterType="java.util.Map">
+	  
+	  SELECT 
+	  	count(*) 
+	  FROM
+		  (
+		SELECT
+			ssd.biz_id as bizId,
+			ssd.biz_type as bizType,
+			ssn.storage_no as bizNo,
+			ssn.total_price as totalPrice,
+			ssn.storage_time as storageTime,
+			ssn.storage_remark as storageRemark,
+			ssn.operater_id as operaterId,
+			ssn.operater_name as operaterName,
+			ssn.shop_id as shopId,
+			ssn.buyer,
+			ssn.vender,
+			ssd.change_type as changeType,
+			ssd.storage_detail_id as storageDetailId,
+			ssd.goods_id as goodsId,
+			g.goods_name as goodsName,
+			g.barcode as barcode,
+			g.pinyinCode as pinyinCode,
+			g.goods_status as goodsStatus,
+			g.goods_no as goodsNo,
+			ssd.storage_price as storagePrice,
+			ssd.goods_total_price as goodsTotalPrice,
+			ssd.storage_number as storageNumber,
+			ssd.storage_after_number as storageAfterNumber,
+			ssd.detail_remark as detailRemark
+		FROM
+			1dcq_shop_storage_note ssn
+		INNER JOIN 1dcq_shop_storage_detail ssd 
+		ON ssn.storage_id = ssd.biz_id
+        AND ssd.biz_type = 17
+		INNER JOIN 1dcq_goods g
+		ON ssd.goods_id = g.goods_id
+		WHERE ssn.shop_Id = #{shopId}
+		
+     UNION 
+    
+		SELECT
+			ssd.biz_id as bizId,
+			ssd.biz_type as bizType,
+			sscn.storage_check_no as bizNo,
+			sscn.goods_total_price as totalPrice,
+			sscn.storage_check_time as storageTime,
+			sscn.storage_check_remark as storageRemark,
+			sscn.operater_id as operaterId,
+			sscn.operater_name as operaterName,
+			sscn.shop_id as shopId,
+			'' as buyer,
+			'' as vender,
+			ssd.change_type as changeType,
+			ssd.storage_detail_id as storageDetailId,
+			ssd.goods_id as goodsId,
+			g.goods_name as goodsName,
+			g.barcode as barcode,
+			g.pinyinCode as pinyinCode,
+			g.goods_status as goodsStatus,
+			g.goods_no as goodsNo,
+			ssd.storage_price as storagePrice,
+			ssd.goods_total_price as goodsTotalPrice,
+			ssd.storage_number as storageNumber,
+			ssd.storage_after_number as storageAfterNumber,
+			ssd.detail_remark as detailRemark
+		FROM
+			1dcq_shop_storage_check_note sscn
+		INNER JOIN 1dcq_shop_storage_detail ssd 
+		ON sscn.storage_check_id = ssd.biz_id
+        AND ssd.biz_type = 18
+		INNER JOIN 1dcq_goods g
+		ON ssd.goods_id = g.goods_id
+		WHERE sscn.shop_Id = #{shopId}
+		) u
+			WHERE
+				1=1
+			<if test="goodsId != null">
+				AND u.goodsId = #{goodsId}
+			</if>
+			<if test="querydata != null">
+				AND 
+				  (
+					u.goodsName LIKE concat('%',#{querydata},'%') 
+					OR u.barcode LIKE concat('%',#{querydata},'%')
+					OR u.pinyinCode LIKE concat('%',#{querydata},'%')
+				    OR u.vender LIKE concat('%',#{querydata},'%') 
+				    OR u.goodsNo LIKE concat('%',#{querydata},'%')
+			      )
+			</if>
+			<if test="goodsStatus != null">
+				AND u.goodsStatus = #{goodsStatus}
+			</if>
+			<if test="bizType != null">
+				AND u.bizType = #{bizType}
+			</if>
+			<if test="changeType != null">
+				AND u.changeType IN 
+	 		    <foreach collection="changeType" open="(" close=")" separator="," item="item">
+	 		        #{item}
+	 		    </foreach>
+			</if>
+			<if test="bizNo != null">
+				AND u.bizNo LIKE concat('%',#{bizNo},'%')
+			</if>
+			<if test="startTime != null">
+				AND u.storageTime > #{startTime}
+			</if>
+			<if test="endTime != null">
+				AND u.storageTime &lt; #{endTime}
+			</if>
+	</select>
+	
+	<select id="getShopStorageNoteBeseInfo" resultType="java.util.Map" parameterType="java.util.Map">
+	  
+		SELECT
+			DISTINCT(storage_id) AS bizId,
+			storage_no AS bizNo,
+			storage_type AS storageType,
+			total_price AS totalPrice,
+			ssn.shop_id AS shopId,
+			operater_id AS operaterId,
+			operater_name AS operaterName,
+			storage_remark AS storageRemark,
+			storage_time AS storageTime,
+			buyer,
+			vender
+		FROM
+			1dcq_shop_storage_note ssn 
+		left join 1dcq_shop_storage_detail ssd on ssn.storage_id = ssd.biz_id
+		INNER JOIN 1dcq_goods AS g
+		ON g.goods_id = ssd.goods_id
+		WHERE
+			ssn.shop_id = #{shopId}
+		<if test="bizNo">
+			AND ssn.storage_no LIKE concat('%',#{bizNo},'%') 
+		</if>
+ 		<if test="bizType">
+			AND ssd.biz_type = #{bizType}
+		</if> 
+ 		<if test="changeType != null">
+			AND ssd.change_type IN 
+ 		    <foreach collection="changeType" open="(" close=")" separator="," item="item">
+ 		        #{item}
+ 		    </foreach>
+		</if> 
+		<if test="startTime">
+			AND ssn.storage_time > #{startTime}
+		</if>
+		<if test="goodsStatus != null">
+			AND g.goods_status = #{goodsStatus}
+		</if>
+		<if test="endTime">
+			AND ssn.storage_time &lt; #{endTime} 
+		</if>
+		<if test="querydata != null">
+			AND 
+				(
+					g.goods_name LIKE concat('%',#{querydata},'%') 
+					OR g.barcode LIKE concat('%',#{querydata},'%')
+					OR g.pinyinCode LIKE concat('%',#{querydata},'%')
+					OR ssn.vender LIKE concat('%',#{querydata},'%') 
+				 )
+		</if>
+		<if test="goodsId">
+			AND ssd.goods_id=#{goodsId}
+		</if>
+		ORDER by ssn.storage_time desc 
+		limit #{limit},#{pSize}
+	 </select>
+	 
+	<select id="getShopStorageNoteBeseInfoCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+	  
+		SELECT
+			count(DISTINCT(ssn.storage_id))
+		FROM
+			1dcq_shop_storage_note ssn  
+		left join 1dcq_shop_storage_detail ssd on ssn.storage_id = ssd.biz_id
+		INNER JOIN 1dcq_goods AS g
+		ON g.goods_id = ssd.goods_id
+		WHERE
+			ssn.shop_id = #{shopId}
+		<if test="bizNo">
+			AND ssn.storage_no LIKE concat('%',#{bizNo},'%') 
+		</if>
+		<if test="bizType">
+			AND ssd.biz_type = #{bizType} 
+		</if> 
+ 		<if test="changeType != null">
+			AND ssd.change_type IN 
+ 		    <foreach collection="changeType" open="(" close=")" separator="," item="item">
+ 		        #{item}
+ 		    </foreach>
+		</if>
+		<if test="goodsStatus != null">
+			AND g.goods_status = #{goodsStatus}
+		</if>
+		<if test="startTime">
+			AND ssn.storage_time > #{startTime}
+		</if>
+		<if test="endTime">
+			AND ssn.storage_time &lt; #{endTime} 
+		</if>
+		<if test="goodsId">
+			AND ssd.goods_id=#{goodsId}
+		</if>
+		<if test="querydata != null">
+			AND 
+				(
+					g.goods_name LIKE concat('%',#{querydata},'%') 
+					OR g.barcode LIKE concat('%',#{querydata},'%')
+					OR g.pinyinCode LIKE concat('%',#{querydata},'%')
+					OR ssn.vender LIKE concat('%',#{querydata},'%') 
+				 )
+		</if>
+	 </select>
+	 
+	 <select id="getStorageNoByStorageNo" resultMap="shopStorageNoteMap" parameterType="java.lang.String">
+	  
+		SELECT
+				storage_id,
+				storage_no,
+				storage_type,
+				total_price,
+				shop_id,
+				operater_id,
+				operater_name,
+				storage_remark,
+				create_time
+		FROM
+			1dcq_shop_storage_note
+		WHERE	
+			storage_no = #{storageNo}
+		
+	 </select>	 
+	 
+	 <select id="isStorageNoExist" resultType="java.lang.Integer" parameterType="java.util.Map">
+	  
+		SELECT
+			count(*)
+		FROM
+			1dcq_shop_storage_note ssn
+		<where>
+			<if test="storageNo">
+				AND ssn.storage_no = #{storageNo} 
+			</if>
+			<if test="shopId">
+				AND ssn.shop_id = #{shopId} 
+			</if> 
+		</where>  
+		
+	 </select>
+
+</mapper>

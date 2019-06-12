@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.goods.ShopTimeIntevalDto">
+	<resultMap type="com.idcq.appserver.dto.goods.ShopTimeIntevalDto" id="shopTimeIntevalMap">
+	
+		<id column="inteval_id" property="intevalId" jdbcType="INTEGER" />
+    	<result column="inteval_name" property="intevalName" jdbcType="VARCHAR" />
+    	<result column="start_time" property="startTime" jdbcType="VARCHAR" />
+    	<result column="end_time" property="endTime" jdbcType="VARCHAR" />
+    	<result column="show_index" property="showIndex" jdbcType="INTEGER" />
+    	
+	</resultMap>
+	<sql id="Base_Column_List" >
+    	inteval_id, shop_id, inteval_name, start_time, end_time, show_index, create_time
+  	</sql>
+    <select id="getListSTI" parameterType="java.util.Map"  resultMap="shopTimeIntevalMap">
+    	select 
+    	<include refid="Base_Column_List" />
+    	from 1dcq_shop_time_inteval 
+    	where shop_id = #{shopId} 
+    	<if test="bookRuleId != null">
+    		and book_rule_id=#{bookRuleId}
+    	</if>
+    	order by start_time asc limit #{n},#{m}
+    </select>
+    <select id="getCountSTI" parameterType="java.lang.Long" resultType="int">
+    	select count(1) from 1dcq_shop_time_inteval where shop_id = #{shopId}
+    </select>
+    
+</mapper> 
+   

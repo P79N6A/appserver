@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.membercard.UserMemberCardDto">
+	<resultMap type="com.idcq.appserver.dto.membercard.UserMemberCardDto" id="userMemberCardMap">
+		
+		<result column="umc_id" property="accountId" />
+    	<result column="user_id" property="userId" />
+    	<result column="card_type_id" property="cardTypeId" />
+    	<result column="shop_id" property="shopId" />
+    	<result column="card_no" property="cardNo" />
+    	<result column="amount" property="amount" />
+    	<result column="create_time" property="createTime" />
+
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+    	umc_id, user_id, card_type_id, shop_id, card_no, amount, create_time
+  	</sql>
+	
+    <select id="getLeftMoney" parameterType="java.util.Map"  resultMap="userMemberCardMap">
+    	select amount from 1dcq_user_membership_card 
+    	<if test="queryType == 2" >
+      		where umc_id = #{accountId}
+    	</if>
+    	<if test="queryType == 1" >
+      		where user_id = #{userId} and shop_id = #{shopId}
+    	</if>
+    </select>
+    
+    <select id="getMemberCardInfoById" parameterType="java.lang.Long"  resultMap="userMemberCardMap">
+	    select 
+	    <include refid="Base_Column_List" />
+	    from 1dcq_user_membership_card
+	    where umc_id = #{accountId}
+    </select>
+    <!-- 根据会员卡编号查询shop编号 -->
+    <select id="queryShopIdByUmcId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    	select 
+    		s.shop_id 
+    	from 1dcq_user_membership_card umc 
+    	inner join 1dcq_shop s on umc.shop_id = s.shop_id
+		where umc.umc_id = #{umcId}
+    </select>
+</mapper> 
+   

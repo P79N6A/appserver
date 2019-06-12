@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.column.ColumnDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.column.ColumnDto" >
+    <id column="column_id" property="columnId" jdbcType="INTEGER" />
+    <result column="column_name" property="columnName" jdbcType="VARCHAR" />
+    <result column="column_desc" property="columnDesc" jdbcType="VARCHAR" />
+    <result column="column_index" property="columnIndex" jdbcType="INTEGER" />
+    <result column="column_status" property="columnStatus" jdbcType="INTEGER" />
+    <result column="parent_column_id" property="parentColumnId" jdbcType="INTEGER" />
+    <result column="column_img_url" property="columnImgUrl" jdbcType="VARCHAR" />
+    <result column="column_url" property="columnUrl" jdbcType="VARCHAR" />
+    <result column="city_id" property="cityId" jdbcType="INTEGER" />
+    <result column="column_type" property="columnType" />
+    <result column="shop_id" property="shopId" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    column_id, 
+    column_name, 
+    column_desc, 
+    column_index, 
+    column_status, 
+    parent_column_id, 
+    column_img_url, 
+    column_url,
+    city_id,
+    column_type
+  </sql>
+  <!-- 获取栏目列表 -->
+  <select id="getColumnList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from 1dcq_column where 1 = 1
+    <if test="column.cityId != null" >
+    	and city_id = #{column.cityId}
+    </if>
+    <if test="column.parentColumnId != null" >
+    	and parent_column_id = #{column.parentColumnId}
+    </if>
+     <if test="column.parentColumnId == null" >
+    	and (parent_column_id is null or parent_column_id = 0)
+    </if>
+     <if test="column.columnType != null" >
+    	and column_type = #{column.columnType}
+    </if>
+    <if test="column.shopClassify == 1">
+    	and is_personal = 1
+    </if>
+     <if test="column.shopClassify == 2">
+    	and is_self_employed = 1 
+    </if>
+     <if test="column.shopClassify == 3">
+    	and is_company = 1
+    </if>
+      order by column_index limit #{n},#{m}
+  </select>
+  <select id="getColumnListCount" resultType="int" parameterType="java.util.Map" >
+    select count(1)
+    from 1dcq_column where 1 = 1
+    <if test="column.cityId != null" >
+    	and city_id = #{column.cityId}
+    </if>
+    <if test="column.parentColumnId != null" >
+    	and parent_column_id = #{column.parentColumnId}
+    </if>
+     <if test="column.parentColumnId == null" >
+    	and (parent_column_id is null or parent_column_id = 0)
+    </if>
+    <if test="column.columnType != null" >
+    	and column_type = #{column.columnType}
+    </if>
+    <if test="column.shopClassify == 1">
+    	and is_personal = 1
+    </if>
+     <if test="column.shopClassify == 2">
+    	and is_self_employed = 1
+    </if>
+     <if test="column.shopClassify == 3">
+    	and is_company = 1
+    </if>
+  </select>
+  
+   <!-- 判断是否有子分类 2015.12.2 add by huangrui-->
+   <select id="hasChildrenColumn" resultType="int" parameterType="java.lang.Long" >
+    select count(1) from 1dcq_column where 	parent_column_id = #{parentColumnId}
+  </select>
+  <insert id="insertSelective" parameterType="com.idcq.appserver.dto.column.ColumnDto" >
+    insert into 1dcq_column
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="columnId != null" >
+        column_id,
+      </if>
+      <if test="columnName != null" >
+        column_name,
+      </if>
+      <if test="columnDesc != null" >
+        column_desc,
+      </if>
+      <if test="index != null" >
+        index,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="parentColumnId != null" >
+        parent_column_id,
+      </if>
+      <if test="columnImgUrl != null" >
+        column_img_url,
+      </if>
+      <if test="columnUrl != null" >
+        column_url,
+      </if>
+      <if test="cityId != null" >
+        city_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="columnId != null" >
+        #{columnId,jdbcType=INTEGER},
+      </if>
+      <if test="columnName != null" >
+        #{columnName,jdbcType=VARCHAR},
+      </if>
+      <if test="columnDesc != null" >
+        #{columnDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="index != null" >
+        #{index,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="parentColumnId != null" >
+        #{parentColumnId,jdbcType=INTEGER},
+      </if>
+      <if test="columnImgUrl != null" >
+        #{columnImgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="columnUrl != null" >
+        #{columnUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null" >
+        #{cityId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <select id="getColumnIdByChildId" resultType="java.lang.Integer">
+  	 select parent_column_id from 1dcq_column where column_id=#{columnId}
+  </select>
+  
+  <!-- 新增商铺和二级行业关联关系 -->
+  <insert id="insertColumnRelation" parameterType="java.util.Map">
+      insert into 1dcq_shop_column2 
+      (
+      	column_id,
+      	shop_id,
+      	create_time
+      )
+      values
+      (
+      	#{columnId},
+      	#{shopId},
+      	now()
+      )
+  </insert>
+   <!-- 删除商铺和二级行业关联关系 -->
+   <delete id="delColumnRelation" parameterType="java.lang.Long">
+       delete from 1dcq_shop_column2 where shop_id = #{shopId}
+   </delete>
+  
+  <select id="getMultiColumnByShopId" resultMap="BaseResultMap">
+  	 select c.column_id,a.shop_id,c.column_name from 1dcq_shop_column2 a left join 1dcq_column c on a.column_id=c.column_id where a.shop_id=#{shopId}
+  </select>
+  <select id="getMultiColumnByShopIdList" resultMap="BaseResultMap">
+  	 select a.column_id,shop_id,c.column_name from 1dcq_shop_column2 a left join 1dcq_column c on a.column_id=c.column_id where shop_id in
+  	 <foreach collection="shopIdList" item="item" open="(" separator="," close=")">
+     	#{item}
+     </foreach>
+  </select>
+  <select id="getColumnInfoByColumnId" resultMap="BaseResultMap">
+  	 select * from 1dcq_column where column_id in
+  	 <foreach collection="columnIdList" item="item" open="(" separator="," close=")">
+     	#{item}
+     </foreach>
+  </select>
+</mapper>

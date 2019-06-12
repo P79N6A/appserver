@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shop.ShopWithDrawDto" >
+<!-- cast(br.total_money_flag AS signed) as totalMoneyFlag, -->
+  <select id="getShopWithdrawList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			sw.withdraw_id AS withdrawId,
+			sw.amount AS amount,
+			sw.apply_time AS applyTime,
+			cast(sw.withdraw_status AS signed) as withdrawStatus,
+			sw.terminal_type AS terminalType,
+			sw.bank_name AS bankName,
+			sw.handle_mark AS handleMark,
+			sw.online_income_freeze AS  onlineIncomeFreeze, 
+			sw.reward_freeze AS  rewardFreeze,
+			sw.next_withdraw_amount AS nextWithdrawAmount,
+			sw.online_income_freeze AS onlineIncomeFreeze,
+			sw.reward_freeze AS rewardFreeze,
+			sw.card_number AS cardNumber,
+			sw.user_name AS userName,
+			sw.handle_time AS handleTime,
+			s.shop_name AS shopName,
+			sw.withdraw_commission AS withdrawCommission
+		FROM
+			1dcq_shop_withdraw sw
+		LEFT JOIN
+			1dcq_shop s
+		ON
+			sw.shop_id = s.shop_id
+		WHERE
+			sw.shop_id IN
+		<foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">  
+            #{item}   
+        </foreach>  
+		<if test="withdrawId!=null">
+			AND sw.withdraw_id=#{withdrawId}
+		</if>
+		<if test="startTime!=null">
+			AND sw.apply_time>=#{startTime}
+		</if>
+		<if test="endTime!=null">
+			<![CDATA[
+				AND sw.apply_time<=#{endTime}
+			]]>
+		</if>
+		order by sw.apply_time desc
+		LIMIT #{n},#{m} 
+  </select>
+  <!-- 查询提现总记录数 -->
+  <select id="getShopWithdrawCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM
+			1dcq_shop_withdraw sw
+		LEFT JOIN
+			1dcq_shop s
+		ON
+			sw.shop_id = s.shop_id
+		WHERE
+			sw.shop_id IN
+		<foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">  
+            #{item}   
+        </foreach>  
+		<if test="withdrawId!=null">
+			AND sw.withdraw_id=#{withdrawId}
+		</if>
+		<if test="startTime!=null">
+			AND sw.apply_time>=#{startTime}
+		</if>
+		<if test="endTime!=null">
+			<![CDATA[
+				AND sw.apply_time<=#{endTime}
+			]]>
+		</if>
+  </select>
+  <!-- 用户提现接口 -->
+  <insert id="shopWithdraw" useGeneratedKeys="true" keyProperty="withDrawId" parameterType="com.idcq.appserver.dto.shop.ShopWithDrawDto">  
+	INSERT INTO 1dcq_shop_withdraw(
+	  withdraw_id,
+	  shop_id,
+	  bank_name,
+	  bank_subbranch_name,
+	  card_number,
+	  amount,
+	  apply_time,
+	  transaction_id,
+	  withdraw_status,
+	  handle_user_id,
+	  handle_time,
+	  handle_mark,
+	  withdraw_time,
+	  terminal_type,
+	  user_name,
+	  online_income_freeze,
+	  reward_freeze,
+	  next_withdraw_amount,
+	  withdraw_commission
+	)
+	VALUES(
+	  #{withDrawId},
+	  #{shopId},
+	  #{bankName},
+	  #{bankSubbranchName},
+	  #{cardNumber},
+	  #{amount},
+	  now(),
+	  #{transactionId},
+	  #{withdrawStatus},
+	  #{handleUserId},
+	  #{handleTime},
+	  #{handleMark},
+	  #{withDrawTime},
+	  #{terminalType},
+	  #{userName},
+	  #{onlineIncomeFreeze},
+	  #{rewardFreeze},
+	  #{nextWithdrawAmount},
+	  #{withdrawCommission}
+	)
+  </insert> 
+  
+   	
+	<!-- 根据提现ID查询记录 -->
+   <select id="getShopWithDrawById" resultType="com.idcq.appserver.dto.shop.ShopWithDrawDto" parameterType="java.lang.Long">
+    SELECT 
+    	a.withdraw_id as withdrawId,
+    	a.shop_id as shopId,
+    	a.bank_name as bankName,
+    	a.bank_subbranch_name as bankSubbranchName,
+    	a.card_number as cardNumber,
+    	a.amount as amount,
+    	a.apply_time as applyTime,
+    	a.transaction_id as transactionId,
+    	a.withdraw_status as withdrawStatus,
+    	a.handle_user_id  as handleUserId,
+    	a.handle_time as handleTime,
+    	a.handle_mark as handleMark,
+    	a.withdraw_time as withdrawTime,
+    	a.terminal_type as terminalType,
+    	a.user_name as userName,
+    	a.online_income_freeze as onlineIncomeFreeze, 
+    	a.reward_freeze as rewardFreeze,
+    	a.next_withdraw_amount as nextWithdrawAmount,
+    	a.withdraw_commission as withdrawCommission
+	FROM 
+		1dcq_shop_withdraw a
+		WHERE a.withdraw_id=#{withdrawId} 
+	</select>
+	
+	
+	<!-- 更新提现信息 -->
+ 	<update id="updateShopWithdraw" parameterType="com.idcq.appserver.dto.shop.ShopWithDrawDto">
+	 	update 1dcq_shop_withdraw 
+	 	<set>
+	 		<if test="withdrawStatus != null">
+	 			withdraw_status = #{withdrawStatus}, 
+	 		</if>
+	 		<if test="handleUserId != null">
+	 			handle_user_id = #{handleUserId}, 
+	 		</if>
+	 		<if test="handleTime != null">
+	 			handle_time = #{handleTime}, 
+	 		</if>
+	 		<if test="handleMark != null">
+	 			handle_mark = #{handleMark}, 
+	 		</if>
+	 		<if test="withDrawTime != null">
+	 			withdraw_time = #{withDrawTime}
+	 		</if>
+	 	</set>
+	 	where withdraw_id = #{withDrawId}
+	</update>  
+  
+	<!-- 获取基准余额,用于商铺后台 '提现状态：0（未审核），1（审核不通过），2（审核通过，提现中），3（支付失败），4（已成功提现）', -->
+	<select id="getStandardMoney" resultType="java.util.Map" parameterType="java.lang.Long">
+	 <![CDATA[
+		SELECT
+			sw.apply_time AS withdrawTime,
+			sw.amount,
+			sw.next_withdraw_amount AS nextWithdrawAmount,
+			sw.withdraw_id AS maxId
+		FROM
+			1dcq_shop_withdraw sw
+		WHERE
+			sw.shop_id = #{shopId}
+		AND sw.withdraw_status = 4
+		AND sw.withdraw_id < (
+			SELECT
+				MIN(w.withdraw_id)
+			FROM
+				1dcq_shop_withdraw w
+			WHERE
+				w.shop_id = #{shopId}
+			AND w.withdraw_status = 0
+		)
+		order by sw.withdraw_id desc
+		limit 1
+		 ]]>
+	</select>
+	
+	
+	<!-- 获取时间段提现总额,用于商铺后台 -->
+	<select id="getWithdrawTotalMoney" resultType="java.util.Map" parameterType="java.util.Map">
+	
+	    SELECT 
+	        sum(w.amount) as withdrawTotalMoney
+	    FROM  
+	    	1dcq_shop_withdraw w 
+	    WHERE 
+	    	w.shop_id =  #{shopId}
+	    <if test="withdrawStatus != null"> 
+	    	AND w.withdraw_status = #{withdrawStatus}	
+	    </if>
+	    <if test="startTime != null">
+	    	AND w.apply_time > #{startTime}
+	    </if>
+	    <if test="endTime != null">
+		    <![CDATA[
+		    	AND w.apply_time <= #{endTime}
+		    ]]>
+	    </if>
+		
+	</select>
+	
+	<!-- 获取时间段提现总额,用于商铺后台 ，不查询审核不通过和支付失败的-->
+	<select id="getWithdrawCommissionTotal" resultType="java.util.Map" parameterType="java.util.Map">
+	
+		SELECT
+			SUM(op.cnt) as withdrawCommissionTotalMoney,
+			MAX(CASE op.withdraw_status WHEN 0 THEN op.cnt ELSE 0 END)
+			as withdrawCommissionforTodo,
+			MAX(CASE op.withdraw_status WHEN 2 THEN op.cnt ELSE 0 END) as
+			withdrawCommissionforPass,
+			MAX(CASE op.withdraw_status WHEN 4 THEN op.cnt ELSE 0 END) as
+			withdrawCommissionforSuccess
+		FROM
+		(
+		select shop_id,withdraw_status,sum(withdraw_commission) as cnt from 1dcq_shop_withdraw
+		where
+		  	<![CDATA[withdraw_status <> 1 and withdraw_status <> 3]]>
+		 <if test="shopId != null">
+		   and shop_id = #{shopId}
+		 </if>
+		 <if test="startTime != null">
+		 	AND apply_time > #{startTime}
+		 </if>
+		<if test="endTime != null">
+			<![CDATA[ AND apply_time <= #{endTime}]]>
+		</if>
+		group by withdraw_status
+		) as op
+		
+	</select>
+  
+</mapper>

@@ -1,0 +1,3237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.order.OrderDto">
+    <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.order.OrderDto">
+        <id column="order_id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="order_type" property="orderType" jdbcType="INTEGER"/>
+        <result column="order_time" property="orderTime" jdbcType="TIMESTAMP"/>
+        <result column="pay_status" property="payStatus" jdbcType="TINYINT"/>
+        <result column="goods_price_before_discount" property="goodsPriceBeforeDiscount" jdbcType="DECIMAL"/>
+        <result column="goods_price" property="goodsPrice" jdbcType="DECIMAL"/>
+        <result column="logistics_price" property="logisticsPrice" jdbcType="DECIMAL"/>
+        <result column="order_total_price" property="orderTotalPrice" jdbcType="DECIMAL"/>
+        <result column="settle_price" property="settlePrice" jdbcType="DECIMAL"/>
+        <result column="settle_flag" property="settleFlag" jdbcType="TINYINT"/>
+        <result column="distribution_type" property="distributionType" jdbcType="BIT"/>
+        <result column="distribution_time" property="distributionTime" jdbcType="TIMESTAMP"/>
+        <result column="pay_time_type" property="payTimeType" jdbcType="BIT"/>
+        <result column="address_id" property="addressId" jdbcType="INTEGER"/>
+        <result column="order_service_type" property="orderServiceType" jdbcType="INTEGER"/>
+        <result column="service_time_from" property="serviceTimeFrom" jdbcType="TIMESTAMP"/>
+        <result column="service_time_to" property="serviceTimeTo" jdbcType="TIMESTAMP"/>
+        <result column="prepay_money" property="prepayMoney" jdbcType="DECIMAL"/>
+
+        <result column="user_remark" property="userRemark" jdbcType="VARCHAR"/>
+        <result column="user_remark_time" property="userRemarkTime" jdbcType="TIMESTAMP"/>
+        <result column="kefu_id" property="kefuId" jdbcType="INTEGER"/>
+        <result column="kefu_remark" property="kefuRemark" jdbcType="VARCHAR"/>
+        <result column="kefu_remark_time" property="kefuRemarkTime" jdbcType="TIMESTAMP"/>
+        <result column="order_title" property="orderTitle" jdbcType="VARCHAR"/>
+
+        <result column="shop_id" property="shopId" jdbcType="INTEGER"/>
+        <result column="shop_name" property="shopName" jdbcType="VARCHAR"/>
+        <result column="member_discount" property="memberDiscount" jdbcType="DECIMAL"/>
+        <result column="order_status" property="orderStatus" jdbcType="INTEGER"/>
+        <result column="order_scene_type" property="orderSceneType" jdbcType="INTEGER"/>
+        <!-- 20150520 -->
+        <result column="last_update_time" property="lastUpdateTime"/>
+        <result column="refuse_reason" property="refuseReason"/>
+        <!-- 20150703 -->
+        <result column="consumer_num" property="consumerNum"/>
+        <result column="seat_ids" property="seatIds"/>
+        <!-- 20150704 -->
+        <result column="order_source" property="orderSource"/>
+        <result column="order_goods_number" property="goodsNumber"/>
+        <!-- 20150712 -->
+        <result column="is_maling" property="isMaling"/>
+        <!-- 20150727 -->
+        <result column="is_comment" property="isComment"/>
+        <result column="delete_type" property="deleteType"/>
+
+        <!-- 20150801 -->
+        <result column="confirm_minute" property="confirmMinute"/>
+        <result column="settle_type" property="settleType"/>
+        <result column="order_channel_type" property="orderChannelType"/>
+        <result column="client_system_type" property="clientSystemType"/>
+        <result column="shop_settle_flag" property="shopSettleFlag"/>
+        <result column="settle_flag" property="settleFlag"/>
+        <result column="order_real_settle_price" property="orderRealSettlePrice"/>
+        <result column="address" property="address"/>
+        <result column="cashier_username" property="cashierUsername"/>
+        <result column="cashier_id" property="cashierId"/>
+        <!-- 20151204 -->
+        <result column="remark" property="remark"/>
+        <result column="is_member" property="isMember"/>
+        <result column="order_mobile" property="mobile"/>
+        <result column="telephone" property="shopTelephone"/>
+        <result column="business_area_activity_id" property="businessAreaActivityId"/>
+        <result column="send_red_packet_money" property="sendRedPacketMoney"/>
+        <result column="settle_time" property="settleTime"/>
+
+        <result column="pay_code" property="payCode"/>
+        <result column="coupon_discount_price" property="couponDiscountPrice"/>
+        <result column="client_finish_time" property="clientFinishTime"/>
+        <result column="is_wait" property="isWait"/>
+        <result column="shop_member_discount" property="shopMemberDiscount"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    o.order_id, o.user_id, o.order_type, o.order_time, o.pay_status, o.goods_price_before_discount,
+    o.goods_price, o.logistics_price, o.order_total_price, o.settle_price, o.settle_flag, o.distribution_type,
+    o.distribution_time, o.pay_time_type, o.address_id,o.order_service_type,o.service_time_from,o.service_time_to,
+    o.prepay_money,o.user_remark,o.user_remark_time,o.kefu_id,o.kefu_remark,o.kefu_remark_time,o.order_title,o.shop_id,o.client_finish_time,
+    o.order_status,o.order_scene_type,o.order_source, o.is_comment, o.delete_type,o.settle_type, o.client_system_type,o.order_channel_type,o.is_wait,
+    s.shop_name, s.confirm_minute,o.is_member,o.order_mobile,o.business_area_activity_id,o.send_red_packet_money,o.member_discount,o.pay_code,o.shop_member_discount
+  </sql>
+    <sql id="Detail_Column_List">
+    t1.order_id as order_id, t1.user_id as user_id,
+    t1.cashier_id as cashier_id,
+    t1.order_type as order_type, t1.order_time as order_time,
+    t1.pay_status as pay_status, t1.goods_price_before_discount as goods_price_before_discount,
+    t1.goods_price as goods_price, t1.logistics_price as logistics_price,
+    t1.order_total_price as order_total_price, t1.settle_price as settle_price,
+    t1.settle_flag as settle_flag, t1.distribution_type as distribution_type,
+    t1.distribution_time as distribution_time, t1.pay_time_type as pay_time_type,
+    t1.address_id as address_id,t1.order_service_type as order_service_type,
+    t1.service_time_from as service_time_from,t1.service_time_to as service_time_to,
+    t1.prepay_money as prepay_money,t1.user_remark as user_remark,
+    t1.user_remark_time as user_remark_time,t1.kefu_id as kefu_id,
+    t1.kefu_remark as kefu_remark,t1.kefu_remark_time as kefu_remark_time,
+    t1.order_title as order_title,t1.shop_id as shop_id,
+    t1.order_status as order_status,t1.order_scene_type as order_scene_type,
+    t1.input_address  as inputAddress,t1.refuse_reason as refuse_reason,
+    t1.order_goods_number as order_goods_number,
+    t1.order_source as order_source,
+    t1.is_comment as is_comment,
+    t1.delete_type as delete_type,
+    t1.settle_type as settle_type,
+    t1.client_system_type as client_system_type,
+    t1.order_channel_type as order_channel_type,
+    t1.shop_settle_flag as shop_settle_flag,
+    t1.settle_flag as settle_flag,
+    t2.shop_name as shop_name,
+    t1.member_discount as member_discount,
+    t2.telephone as shopTelephone,
+    t2.column_id as columnId,
+    t1.order_real_settle_price as order_real_settle_price,
+    t1.is_member as is_member,
+    t1.order_mobile as order_mobile,
+    t1.seat_ids as seat_ids,
+    t1.business_area_activity_id as business_area_activity_id,
+    t1.send_red_packet_money as send_red_packet_money,
+    t1.pay_code as pay_code,
+    t1.client_finish_time as client_finish_time,
+    t1.is_wait as is_wait
+  </sql>
+    <insert id="saveTestOrderId" parameterType="java.lang.String">
+  	insert into 1dcq_test(test_id) values(#{orderId})
+  </insert>
+    <select id="getOrderStatus" parameterType="java.lang.String" resultType="java.lang.Integer">
+  	select order_status from 1dcq_order where order_id = #{orderId}
+  </select>
+    <select id="getListByMember" parameterType="java.util.Map" resultMap="BaseResultMap">
+    	select * from 1dcq_message where msg_type = #{message.msgType} order by pub_time desc limit #{n},#{m}
+    </select>
+
+    <select id="queryOrderExists" parameterType="java.lang.String" resultType="java.lang.Integer">
+  	select count(1) from 1dcq_order where order_id = #{orderId}
+  </select>
+    <select id="getOrderStatusById" parameterType="java.lang.String" resultType="java.lang.Integer">
+  	select order_status
+  	from 1dcq_order
+  	where order_id = #{orderId}
+  </select>
+    <select id="getOrderById" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Detail_Column_List"/>
+        from 1dcq_order t1
+        left join 1dcq_shop t2
+        on t1.shop_id = t2.shop_id
+        where t1.order_id = #{orderId}
+    </select>
+
+    <select id="getOrderMainById" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        1dcq_order o
+        left join
+        1dcq_shop s
+        on
+        s.shop_id = o.shop_id
+        where order_id = #{orderId}
+    </select>
+
+    <select id="getSeatOrder" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        o.order_id AS orderId, o.is_member AS isMember
+        FROM
+        1dcq_order AS o
+        <if test="openId != null">
+            INNER JOIN
+            1dcq_user AS u
+            ON
+            u.user_id = o.user_id
+        </if>
+        WHERE
+        o.shop_id = #{shopId}
+        AND CONCAT(',',o.seat_ids,',') LIKE '%,${seatId},%'
+        <if test="openId != null">
+            AND u.weixin_no = #{openId}
+        </if>
+        <if test="orderStatus != null and orderStatus == 1">
+            AND o.order_status not in (3, 4, 5)
+            <!-- AND o.pay_status = 0 AND o.order_status != 4 AND o.order_status != 5 -->
+        </if>
+        <if test="orderStatus != null and orderStatus == 2">
+            AND o.order_status = 3
+        </if>
+        AND o.order_time &gt;= #{startTime}
+        AND o.order_time &lt;= #{endTime}
+    </select>
+
+    <insert id="saveOrder" parameterType="com.idcq.appserver.dto.order.OrderDto" keyProperty="orderId"
+            useGeneratedKeys="true">
+        insert into 1dcq_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="orderType != null">
+                order_type,
+            </if>
+            <if test="orderTime != null">
+                order_time,
+            </if>
+            <if test="payStatus != null">
+                pay_status,
+            </if>
+            <if test="goodsPriceBeforeDiscount != null">
+                goods_price_before_discount,
+            </if>
+            <if test="goodsPrice != null">
+                goods_price,
+            </if>
+            <if test="logisticsPrice != null">
+                logistics_price,
+            </if>
+            <if test="orderTotalPrice != null">
+                order_total_price,
+            </if>
+            <if test="settlePrice != null">
+                settle_price,
+            </if>
+            <if test="settleFlag != null">
+                settle_flag,
+            </if>
+            <if test="distributionType != null">
+                distribution_type,
+            </if>
+            <if test="distributionTime != null">
+                distribution_time,
+            </if>
+            <if test="payTimeType != null">
+                pay_time_type,
+            </if>
+            <if test="addressId != null">
+                address_id,
+            </if>
+            <if test="orderServiceType != null">
+                order_service_type,
+            </if>
+            <if test="serviceTimeFrom != null">
+                service_time_from,
+            </if>
+            <if test="serviceTimeTo != null">
+                service_time_to,
+            </if>
+            <if test="prepayMoney != null">
+                prepay_money,
+            </if>
+            <if test="userRemark != null">
+                user_remark,
+            </if>
+            <if test="userRemarkTime != null">
+                user_remark_time,
+            </if>
+            <if test="kefuId != null">
+                kefu_id,
+            </if>
+            <if test="kefuRemark != null">
+                kefu_remark,
+            </if>
+            <if test="kefuRemarkTime != null">
+                kefu_remark_time,
+            </if>
+            <if test="orderTitle != null">
+                order_title,
+            </if>
+            <if test="shopId != null">
+                shop_id,
+            </if>
+            <if test="orderStatus != null">
+                order_status,
+            </if>
+            <if test="orderSceneType != null">
+                order_scene_type,
+            </if>
+            <if test="consumerNum != null">
+                consumer_num,
+            </if>
+            <if test="seatIds != null">
+                seat_ids,
+            </if>
+            <if test="orderSource != null">
+                order_source,
+            </if>
+            <if test="goodsNumber != null">
+                order_goods_number,
+            </if>
+            <if test="isMaling != null">
+                is_maling,
+            </if>
+            <if test="lastUpdateTime != null">
+                last_update_time,
+            </if>
+            <if test="isComment != null">
+                is_comment,
+            </if>
+            <if test="deleteType != null">
+                delete_type,
+            </if>
+            <if test="orderDiscount != null">
+                order_discount,
+            </if>
+            <if test="cashierId != null">
+                cashier_id,
+            </if>
+            <if test="orderRealSettlePrice != null">
+                order_real_settle_price,
+            </if>
+            <if test="clientSystemType != null">
+                client_system_type,
+            </if>
+            <if test="orderChannelType != null">
+                order_channel_type,
+            </if>
+            <if test="settleType != null">
+                settle_type,
+            </if>
+            <if test="inputAddress != null">
+                input_address,
+            </if>
+            <if test="memberDiscount != null">
+                member_discount,
+            </if>
+            <if test="remark!=null">
+                remark,
+            </if>
+            <if test="cashierUsername!=null">
+                cashier_username,
+            </if>
+            <if test="orderFinishTime != null">
+                order_finish_time,
+            </if>
+            <if test="isMember != null">
+                is_member,
+            </if>
+            <if test="mobile != null">
+                order_mobile,
+            </if>
+            <if test="clientLastTime != null">
+                client_last_time,
+            </if>
+            <if test="serverLastTime != null">
+                server_last_time,
+            </if>
+            <if test="businessAreaActivityId != null">
+                business_area_activity_id,
+            </if>
+            <if test="sendRedPacketMoney != null">
+                send_red_packet_money,
+            </if>
+            <if test="payCode != null">
+                pay_code,
+            </if>
+            <if test="couponDiscountPrice != null">
+                coupon_discount_price,
+            </if>
+            <if test="clientFinishTime != null">
+                client_finish_time,
+            </if>
+            <if test="isWait != null">
+                is_wait,
+            </if>
+            <if test="orderDiscountPrice != null">
+                order_discount_price,
+            </if>
+            <if test="shopMemberDiscount != null">
+                shop_member_discount,
+            </if>
+            <if test="tokenId != null">
+                token_id,
+            </if>
+            <if test="consumeType != null">
+                consume_type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">
+                #{orderId,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="orderType != null">
+                #{orderType,jdbcType=INTEGER},
+            </if>
+            <if test="orderTime != null">
+                #{orderTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="payStatus != null">
+                #{payStatus,jdbcType=TINYINT},
+            </if>
+            <if test="goodsPriceBeforeDiscount != null">
+                #{goodsPriceBeforeDiscount,jdbcType=DECIMAL},
+            </if>
+            <if test="goodsPrice != null">
+                #{goodsPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="logisticsPrice != null">
+                #{logisticsPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="orderTotalPrice != null">
+                #{orderTotalPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="settlePrice != null">
+                #{settlePrice,jdbcType=DECIMAL},
+            </if>
+            <if test="settleFlag != null">
+                #{settleFlag,jdbcType=TINYINT},
+            </if>
+            <if test="distributionType != null">
+                #{distributionType,jdbcType=BIT},
+            </if>
+            <if test="distributionTime != null">
+                #{distributionTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="payTimeType != null">
+                #{payTimeType,jdbcType=BIT},
+            </if>
+            <if test="addressId != null">
+                #{addressId,jdbcType=INTEGER},
+            </if>
+            <if test="orderServiceType != null">
+                #{orderServiceType,jdbcType=INTEGER},
+            </if>
+            <if test="serviceTimeFrom != null">
+                #{serviceTimeFrom,jdbcType=TIMESTAMP},
+            </if>
+            <if test="serviceTimeTo != null">
+                #{serviceTimeTo,jdbcType=TIMESTAMP},
+            </if>
+            <if test="prepayMoney != null">
+                #{prepayMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="userRemark != null">
+                #{userRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="userRemarkTime != null">
+                #{userRemarkTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="kefuId != null">
+                #{kefuId,jdbcType=INTEGER},
+            </if>
+            <if test="kefuRemark != null">
+                #{kefuRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="kefuRemarkTime != null">
+                #{kefuRemarkTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="orderTitle != null">
+                #{orderTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="shopId != null">
+                #{shopId,jdbcType=INTEGER},
+            </if>
+            <if test="orderStatus != null">
+                #{orderStatus,jdbcType=INTEGER},
+            </if>
+            <if test="orderSceneType != null">
+                #{orderSceneType,jdbcType=INTEGER},
+            </if>
+            <if test="consumerNum != null">
+                #{consumerNum},
+            </if>
+            <if test="seatIds != null">
+                #{seatIds},
+            </if>
+            <if test="orderSource != null">
+                #{orderSource},
+            </if>
+            <if test="goodsNumber != null">
+                #{goodsNumber},
+            </if>
+            <if test="isMaling != null">
+                #{isMaling},
+            </if>
+            <if test="lastUpdateTime != null">
+                #{lastUpdateTime},
+            </if>
+            <if test="isComment != null">
+                #{isComment},
+            </if>
+            <if test="deleteType != null">
+                #{deleteType},
+            </if>
+            <if test="orderDiscount != null">
+                #{orderDiscount},
+            </if>
+            <if test="cashierId != null">
+                #{cashierId},
+            </if>
+            <if test="orderRealSettlePrice != null">
+                #{orderRealSettlePrice},
+            </if>
+            <if test="clientSystemType != null">
+                #{clientSystemType},
+            </if>
+            <if test="orderChannelType != null">
+                #{orderChannelType},
+            </if>
+            <if test="settleType != null">
+                #{settleType},
+            </if>
+            <if test="inputAddress != null">
+                #{inputAddress},
+            </if>
+            <if test="memberDiscount != null">
+                #{memberDiscount},
+            </if>
+            <if test="remark!=null">
+                #{remark},
+            </if>
+            <if test="cashierUsername!=null">
+                #{cashierUsername},
+            </if>
+            <if test="orderFinishTime != null">
+                #{orderFinishTime},
+            </if>
+            <if test="isMember != null">
+                #{isMember},
+            </if>
+            <if test="mobile != null">
+                #{mobile},
+            </if>
+            <if test="clientLastTime != null">
+                #{clientLastTime},
+            </if>
+            <if test="serverLastTime != null">
+                #{serverLastTime},
+            </if>
+            <if test="businessAreaActivityId != null">
+                #{businessAreaActivityId},
+            </if>
+            <if test="sendRedPacketMoney != null">
+                #{sendRedPacketMoney},
+            </if>
+            <if test="payCode != null">
+                #{payCode},
+            </if>
+            <if test="couponDiscountPrice != null">
+                #{couponDiscountPrice},
+            </if>
+            <if test="clientFinishTime != null">
+                #{clientFinishTime},
+            </if>
+            <if test="isWait != null">
+                #{isWait},
+            </if>
+            <if test="orderDiscountPrice != null">
+                #{orderDiscountPrice},
+            </if>
+            <if test="shopMemberDiscount != null">
+                #{shopMemberDiscount},
+            </if>
+            <if test="tokenId != null">
+                #{tokenId},
+            </if>
+            <if test="consumeType != null">
+                #{consumeType},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateOrderPayed" parameterType="java.lang.String">
+  	update 1dcq_order set pay_status = 1 where order_id = #{orderId}
+  </update>
+    <update id="updateUserId" parameterType="java.util.Map">
+  	update 1dcq_order set user_id = #{newUserId} , kefu_remark = #{kefuRemark}, server_last_time = #{serverLastTime}, last_update_time = NOW()  where user_id = #{userId}
+  </update>
+    <update id="updateOrder" parameterType="com.idcq.appserver.dto.order.OrderDto">
+        update 1dcq_order
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="orderType != null">
+                order_type = #{orderType,jdbcType=INTEGER},
+            </if>
+            <if test="orderTime != null">
+                order_time = #{orderTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="payStatus != null">
+                pay_status = #{payStatus,jdbcType=TINYINT},
+            </if>
+            <if test="goodsPriceBeforeDiscount != null">
+                goods_price_before_discount = #{goodsPriceBeforeDiscount,jdbcType=DECIMAL},
+            </if>
+            <if test="goodsPrice != null">
+                goods_price = #{goodsPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="logisticsPrice != null">
+                logistics_price = #{logisticsPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="orderTotalPrice != null">
+                order_total_price = #{orderTotalPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="settlePrice != null">
+                settle_price = #{settlePrice,jdbcType=DECIMAL},
+            </if>
+            <if test="settleFlag != null">
+                settle_flag = #{settleFlag,jdbcType=TINYINT},
+            </if>
+            <if test="distributionType != null">
+                distribution_type = #{distributionType,jdbcType=BIT},
+            </if>
+            <if test="distributionTime != null">
+                distribution_time = #{distributionTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="payTimeType != null">
+                pay_time_type = #{payTimeType,jdbcType=BIT},
+            </if>
+            <if test="addressId != null">
+                address_id = #{addressId,jdbcType=INTEGER},
+            </if>
+            <if test="orderServiceType != null">
+                order_service_type = #{orderServiceType,jdbcType=INTEGER},
+            </if>
+            <if test="serviceTimeFrom != null">
+                service_time_from = #{serviceTimeFrom,jdbcType=TIMESTAMP},
+            </if>
+            <if test="serviceTimeTo != null">
+                service_time_to = #{serviceTimeTo,jdbcType=TIMESTAMP},
+            </if>
+            <if test="prepayMoney != null">
+                prepay_money = #{prepayMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="userRemark != null">
+                user_remark = #{userRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="userRemarkTime != null">
+                user_remark_time = #{userRemarkTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="kefuId != null">
+                kefu_id = #{kefuId,jdbcType=INTEGER},
+            </if>
+            <if test="kefuRemark != null">
+                kefu_remark = #{kefuRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="kefuRemarkTime != null">
+                kefu_remark_time = #{kefuRemarkTime,jdbcType=DECIMAL},
+            </if>
+            <if test="orderTitle != null">
+                order_title = #{orderTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="shopId != null">
+                shop_id = #{shopId,jdbcType=INTEGER},
+            </if>
+            <if test="orderStatus != null">
+                order_status = #{orderStatus,jdbcType=INTEGER},
+            </if>
+            <if test="orderSceneType != null">
+                order_scene_type = #{orderSceneType,jdbcType=INTEGER},
+            </if>
+            <if test="lastUpdateTime != null">
+                last_update_time = #{lastUpdateTime},
+            </if>
+            <if test="refuseReason != null">
+                refuse_reason = #{refuseReason},
+            </if>
+            <if test="consumerNum != null">
+                consumer_num = #{consumerNum},
+            </if>
+            <if test="seatIds != null">
+                seat_ids = #{seatIds},
+            </if>
+            <if test="orderSource != null">
+                order_source = #{orderSource},
+            </if>
+            <if test="goodsNumber != null">
+                order_goods_number = #{goodsNumber},
+            </if>
+            <if test="isActiveRefund != null">
+                is_active_refund = #{isActiveRefund},
+            </if>
+            <if test="isMaling != null">
+                is_maling = #{isMaling},
+            </if>
+            <if test="isComment != null">
+                is_comment = #{isComment},
+            </if>
+            <if test="deleteType != null">
+                delete_type = #{deleteType},
+            </if>
+            <if test="orderDiscount != null">
+                order_discount = #{orderDiscount},
+            </if>
+            <if test="cashierId != null">
+                cashier_id = #{cashierId},
+            </if>
+            <if test="orderRealSettlePrice != null">
+                order_real_settle_price = #{orderRealSettlePrice},
+            </if>
+            <if test="orderFinishTime != null">
+                order_finish_time = #{orderFinishTime},
+            </if>
+            <if test="orderDebookTime != null">
+                order_debook_time = #{orderDebookTime},
+            </if>
+            <if test="orderChannelType != null">
+                order_channel_type = #{orderChannelType},
+            </if>
+            <if test="settleType != null">
+                settle_type = #{settleType},
+            </if>
+            <if test="shopSettleFlag != null">
+                shop_settle_flag = #{shopSettleFlag},
+            </if>
+            <if test="shopSettleTime != null">
+                shop_settle_time = #{shopSettleTime},
+            </if>
+            <if test="settleTime != null">
+                settle_time = #{settleTime},
+            </if>
+            <if test="inputAddress != null">
+                input_address = #{inputAddress},
+            </if>
+            <if test="memberDiscount != null">
+                member_discount = #{memberDiscount},
+            </if>
+            <if test="isMember != null">
+                is_member = #{isMember},
+            </if>
+            <if test="mobile != null">
+                order_mobile = #{mobile},
+            </if>
+            <if test="clientLastTime != null">
+                client_last_time = #{clientLastTime},
+            </if>
+            <if test="serverLastTime != null">
+                server_last_time = #{serverLastTime},
+            </if>
+            <if test="businessAreaActivityId != null">
+                business_area_activity_id = #{businessAreaActivityId,jdbcType=INTEGER},
+            </if>
+            <if test="sendRedPacketMoney != null">
+                send_red_packet_money = #{sendRedPacketMoney},
+            </if>
+            <if test="couponDiscountPrice != null">
+                coupon_discount_price = #{couponDiscountPrice},
+            </if>
+            <if test="clientFinishTime != null">
+                client_finish_time = #{clientFinishTime},
+            </if>
+            <if test="isWait != null">
+                is_wait = #{isWait},
+            </if>
+            <if test="platformTotalIncomePrice != null">
+                platform_total_income_price = #{platformTotalIncomePrice},
+            </if>
+            <if test="shopMemberDiscount != null">
+                shop_member_discount = #{shopMemberDiscount},
+            </if>
+            <if test="orderDiscountPrice != null">
+                order_discount_price = #{orderDiscountPrice},
+            </if>
+            <if test="tokenId != null">
+                token_id = #{tokenId},
+            </if>
+            <if test="consumeType != null">
+                consume_type = #{consumeType},
+            </if>
+        </set>
+        where order_id = #{orderId,jdbcType=VARCHAR}
+    </update>
+    <!--   获取已结算状态的订单中的shopid -->
+    <select id="getOrderByStatus" parameterType="java.lang.Integer" resultType="java.util.Map">
+  	SELECT
+    	shop_id as shopId,
+    	user_id as userId,
+    	order_id as orderId,
+    	last_update_time as lastUpdateTime
+    FROM
+    	1dcq_order
+    WHERE
+        order_status = #{orderStatus}
+  </select>
+
+    <select id="getOrderGoodsSettleSetting" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT user_share_ratio userShareRatio,user_ref_share_ratio userRefShareRatio,shop_ref_share_ratio
+        shopRefShareRatio,shop_serve_share_ratio shopServeShareRatio,
+        level1_agent_share_ratio level1AgentShareRatio,level2_agent_share_ratio
+        level2AgentShareRatio,level3_agent_share_ratio level3AgentShareRatio,
+        shop_settle_delay_days shopSettleDelayDays,user_settle_delay_days userSettleDelayDays, operator_share_ratio
+        operatorsShareRatio
+        FROM 1dcq_order_goods_settle_setting
+        WHERE valid_flag=1
+        <if test="orderTime != null">
+            and valid_from &lt; #{orderTime} and valid_to &gt; #{orderTime}
+        </if>
+        LIMIT 1
+    </select>
+    <select id="getNumberByOrder" parameterType="java.lang.Integer" resultType="java.lang.String">
+		SELECT
+			resource_number
+		FROM
+			1dcq_order_shop_resource osr
+		WHERE
+			osr.order_id = #{orderId}
+	</select>
+    <!-- 修改订单状态为：已完成 -->
+    <update id="updateOrderStatusById" parameterType="java.lang.String">
+  	update 1dcq_order set is_comment = 1 where order_id = #{orderId}
+  </update>
+    <select id="getOrder8List" parameterType="java.util.Map" resultType="java.util.Map">
+  <![CDATA[
+
+		SELECT
+			 o.user_id as userId,
+			 o.order_time as orderTime,
+			 o.order_id as orderId,
+			 sr.resource_id as seatId,
+			 o.order_total_price as orderTotalPrice
+		FROM
+			1dcq_order o
+		LEFT JOIN
+			1dcq_shop_resource sr
+		ON
+			o.order_id = sr.order_id
+		WHERE
+			o.shop_id = #{shopId}
+		AND
+			o.order_status = 8
+		AND
+			o.order_time >= #{startTime}
+		ORDER BY
+			o.order_time DESC
+
+        ]]>
+	</select>
+
+    <!-- 删除订单 -->
+    <delete id="delOrder" parameterType="String">
+    	delete from 1dcq_order  where order_id = #{orderId}
+  </delete>
+
+    <!-- 删除订单商品 -->
+    <delete id="delOrderGoods" parameterType="String">
+    	delete from 1dcq_order_goods  where order_id = #{orderId}
+  </delete>
+
+    <!-- 查询商铺设置 2015.7.14 -->
+    <select id="getDistributionTakeoutSetting" parameterType="java.util.Map" resultType="java.util.Map">
+  <![CDATA[
+
+		SELECT
+			is_cancel_anytime as cancelAnyTime,
+			cancel_before_minute as cancelBeforeMinute
+		FROM
+			1dcq_distribution_takeout_setting
+		WHERE
+			shop_id = #{shopId} and setting_type = #{orderServiceType}
+
+        ]]>
+	</select>
+
+    <!-- 查询订单预定时间 -->
+    <select id="getUserReserveTime" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			reserve_resource_date,
+			start_time
+		FROM
+			1dcq_order_shop_resource
+		WHERE
+			order_id = #{orderId}
+	</select>
+
+    <update id="updateOrderDeleteType" parameterType="java.util.Map">
+	UPDATE 1dcq_order SET delete_type = #{deleteType} where order_id = #{orderId}
+	</update>
+
+    <!-- 查询 多少分钟后某个状态的订单-->
+    <select id="getOrderDtoByStatus" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from 1dcq_order o
+        inner join 1dcq_shop s
+        on s.shop_id = o.shop_id
+        where o.order_status = #{orderStatus}
+        <![CDATA[and s.confirm_minute <> 0
+             and o.order_time < SUBDATE(NOW(), INTERVAL s.confirm_minute MINUTE)
+    ]]>
+        LIMIT 10000
+    </select>
+
+    <select id="getNeedAutoFinishOrder" resultMap="BaseResultMap" parameterType="java.lang.String">
+  	select order_id from 1dcq_order o where o.order_status in(0,1) and o.last_update_time <![CDATA[<=#{lastUpdateTime}]]> limit 10000
+  </select>
+
+    <update id="batchUpdateOrderStatus" parameterType="java.util.Map">
+        update 1dcq_order set order_status=#{status},server_last_time =
+        #{serverLastTime},order_finish_time=NOW(),last_update_time=NOW() where order_id in
+        <foreach collection="orderIdList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="getNeedPushFinishOrderForPage" resultMap="BaseResultMap" parameterType="java.util.Map">
+  	select sr.order_id,ord.user_id,sh.shop_name from 1dcq_order_shop_resource sr,1dcq_order ord,1dcq_shop sh where	 CONCAT(sr.reserve_resource_date,' ', sr.start_time)>=#{endTime}  and   CONCAT(sr.reserve_resource_date,' ', sr.start_time)<![CDATA[<=#{startTime}]]>
+  		 and ord.order_id=sr.order_id and ord.shop_id=sh.shop_id and ord.order_status in(0,1) and sr.resource_type in(2,3) and ord.pay_status=1 limit #{start},#{limit}
+  </select>
+
+    <!-- 查询已开单的且时间已过了预定时间的订单 -->
+    <select id="getOrderIdsByCondition" resultType="String">
+  	select
+  		sr.order_id
+  	from 1dcq_order_shop_resource sr,1dcq_order ord
+  	where  ord.order_status = 1  and
+	sr.resource_type = 3 and   CONCAT(sr.reserve_resource_date,' ', sr.end_time)<![CDATA[<=now()]]>
+  	and ord.order_id=sr.order_id  limit 10000
+  </select>
+
+    <!-- 修改订单状态 -->
+    <update id="updateOrderStatus" parameterType="java.util.Map">
+        update 1dcq_order
+        <set>
+            <if test="orderFinishTime != null">
+                order_finish_time = #{orderFinishTime},
+            </if>
+            <if test="status != null">
+                order_status = #{status},
+            </if>
+            <if test="serverLastTime != null">
+                server_last_time = #{serverLastTime},
+            </if>
+        </set>
+        where order_id = #{orderId}
+    </update>
+
+    <!-- 修改订单分账信息 -->
+    <update id="updateorderSettleMsg" parameterType="java.util.Map">
+        update 1dcq_order
+        <set>
+            <if test="shop_income_price != null">
+                shop_income_price = #{shop_income_price},
+            </if>
+            <if test="platform_total_income_price != null">
+                platform_total_income_price = #{platform_total_income_price},
+            </if>
+            <if test="platform_net_income_price != null">
+                platform_net_income_price = #{platform_net_income_price},
+            </if>
+            <if test="user_share_price != null">
+                user_share_price = #{user_share_price},
+            </if>
+            <if test="user_ref_share_price != null">
+                user_ref_share_price = #{user_ref_share_price},
+            </if>
+            <if test="user_ref_share_user_name != null">
+                user_ref_share_user_name = #{user_ref_share_user_name},
+            </if>
+            <if test="shop_ref_share_price != null">
+                shop_ref_share_price = #{shop_ref_share_price},
+            </if>
+            <if test="shop_ref_share_user_name != null">
+                shop_ref_share_user_name = #{shop_ref_share_user_name},
+            </if>
+            <if test="shop_serve_share_price != null">
+                shop_serve_share_price = #{shop_serve_share_price},
+            </if>
+            <if test="shop_serve_share_user_name != null">
+                shop_serve_share_user_name = #{shop_serve_share_user_name},
+            </if>
+            <if test="level1_agent_price != null">
+                level1_agent_price = #{level1_agent_price},
+            </if>
+            <if test="level1_agent_share_user_name != null">
+                level1_agent_share_user_name = #{level1_agent_share_user_name},
+            </if>
+            <if test="level2_agent_price != null">
+                level2_agent_price = #{level2_agent_price},
+            </if>
+            <if test="level2_agent_share_user_name != null">
+                level2_agent_share_user_name = #{level2_agent_share_user_name},
+            </if>
+            <if test="level3_agent_price != null">
+                level3_agent_price = #{level3_agent_price},
+            </if>
+            <if test="level3_agent_share_user_name != null">
+                level3_agent_share_user_name = #{level3_agent_share_user_name},
+            </if>
+
+            <if test="shop_income_ratio != null">
+                shop_income_ratio = #{shop_income_ratio},
+            </if>
+            <if test="platform_total_income_ratio != null">
+                platform_total_income_ratio = #{platform_total_income_ratio},
+            </if>
+            <if test="user_share_ratio != null">
+                user_share_ratio = #{user_share_ratio},
+            </if>
+            <if test="user_ref_share_ratio != null">
+                user_ref_share_ratio = #{user_ref_share_ratio},
+            </if>
+            <if test="user_ref_share_user_id != null">
+                user_ref_share_user_id = #{user_ref_share_user_id},
+            </if>
+            <if test="shop_ref_share_ratio != null">
+                shop_ref_share_ratio = #{shop_ref_share_ratio},
+            </if>
+            <if test="shop_ref_share_user_id != null">
+                shop_ref_share_user_id = #{shop_ref_share_user_id},
+            </if>
+            <if test="shop_serve_share_ratio != null">
+                shop_serve_share_ratio = #{shop_serve_share_ratio},
+            </if>
+            <if test="shop_serve_share_user_id != null">
+                shop_serve_share_user_id = #{shop_serve_share_user_id},
+            </if>
+            <if test="level1_agent_share_ratio != null">
+                level1_agent_share_ratio = #{level1_agent_share_ratio},
+            </if>
+            <if test="level1_agent_share_user_id != null">
+                level1_agent_share_user_id = #{level1_agent_share_user_id},
+            </if>
+            <if test="level2_agent_share_ratio != null">
+                level2_agent_share_ratio = #{level2_agent_share_ratio},
+            </if>
+            <if test="level2_agent_share_user_id != null">
+                level2_agent_share_user_id = #{level2_agent_share_user_id},
+            </if>
+            <if test="level3_agent_share_ratio != null">
+                level3_agent_share_ratio = #{level3_agent_share_ratio},
+            </if>
+            <if test="level3_agent_share_user_id != null">
+                level3_agent_share_user_id = #{level3_agent_share_user_id},
+            </if>
+            <if test="operator_share_price != null">
+                operator_share_price = #{operator_share_price},
+            </if>
+            <if test="operator_share_ratio != null">
+                operator_share_ratio = #{operator_share_ratio},
+            </if>
+            <if test="operator_share_user_name != null">
+                operator_share_user_name = #{operator_share_user_name},
+            </if>
+            <if test="operator_share_user_id != null">
+                operator_share_user_id = #{operator_share_user_id},
+            </if>
+            <!-- 20160504添加连锁店 -->
+            <if test="integration_promotion_price != null">
+                integration_promotion_price = #{integration_promotion_price},
+            </if>
+            <if test="integration_promotion_ratio != null">
+                integration_promotion_ratio = #{integration_promotion_ratio},
+            </if>
+            <if test="integration_promotion_user_name != null">
+                integration_promotion_user_name = #{integration_promotion_user_name},
+            </if>
+            <if test="integration_promotion_user_id != null">
+                integration_promotion_user_id = #{integration_promotion_user_id},
+            </if>
+
+            <if test="integration_facilitate_price != null">
+                integration_facilitate_price = #{integration_facilitate_price},
+            </if>
+            <if test="integration_facilitate_ratio != null">
+                integration_facilitate_ratio = #{integration_facilitate_ratio},
+            </if>
+            <if test="integration_facilitate_user_name != null">
+                integration_facilitate_user_name = #{integration_facilitate_user_name},
+            </if>
+            <if test="integration_facilitate_user_id != null">
+                integration_facilitate_user_id = #{integration_facilitate_user_id},
+            </if>
+
+            <if test="integration_principal_price != null">
+                integration_principal_price = #{integration_principal_price},
+            </if>
+            <if test="integration_principal_ratio != null">
+                integration_principal_ratio = #{integration_principal_ratio},
+            </if>
+            <if test="integration_principal_user_name != null">
+                integration_principal_user_name = #{integration_principal_user_name},
+            </if>
+            <if test="integration_principal_user_id != null">
+                integration_principal_user_id = #{integration_principal_user_id},
+            </if>
+        </set>
+        where order_id = #{orderId}
+    </update>
+
+    <select id="queryIdgjOrderDetail" resultMap="BaseResultMap" parameterType="java.lang.String">
+  	select o.* from 1dcq_order o   where o.order_id=#{orderId}
+  </select>
+    <!-- 获取订单列表，统计金额 -->
+    <select id="getAllOrderListAmountState" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT
+        IFNULL(SUM(k.settlePrice),0) AS orderTotalPriceTotal,
+        IFNULL(SUM(k.serviceAmount),0) AS platformTotalIncomePriceTotal
+        FROM
+        (
+        SELECT
+        t.cashier_id AS billerId,
+        t.shop_id,
+        t.settle_price AS settlePrice,
+        t.order_time AS orderTime,
+        t.order_status AS orderStatus,
+        t.platform_total_income_price AS serviceAmount
+        FROM
+        1dcq_order t
+        <if test="userId != null">
+            INNER JOIN 1dcq_user u ON t.order_mobile = u.mobile and u.user_id = #{userId}
+        </if>
+        <!-- INNER JOIN 1dcq_user u ON t.user_id = u.user_id -->
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id
+            AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+            <if test="payType == 4">
+                AND op.pay_type = 5
+            </if>
+            <if test="payType == 3">
+                AND op.pay_type not in (5,6,7)
+            </if>
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id
+            AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            AND og.biller_id = #{billerId}
+        </if>
+        WHERE t.shop_id In
+        <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+        <if test="orderTransactionType != null">
+            <if test="orderTransactionType == 1">
+                AND t.order_status NOT IN (3,5)
+            </if>
+            <if test="orderTransactionType == 2">
+                AND t.order_status IN (3,5)
+            </if>
+        </if>
+        <if test="userId != null">
+            and t.user_id = #{userId}
+        </if>
+        GROUP BY t.order_id
+        ) k
+    </select>
+    <!-- 查询订单列表总记录数 -->
+    <select id="getAllOrderListCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT
+        COUNT(*)
+        FROM
+        (
+        SELECT
+        t.cashier_id AS billerId,
+        t.shop_id,
+        t.order_time AS orderTime,
+        t.order_status AS orderStatus
+        FROM
+        1dcq_order t <!-- INNER JOIN 1dcq_user u ON t.user_id = u.user_id -->
+        <if test="userId != null">
+            INNER JOIN 1dcq_user u ON t.order_mobile = u.mobile and u.user_id = #{userId}
+        </if>
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id
+            AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+            <if test="payType == 4">
+                AND op.pay_type = 5
+            </if>
+
+            <if test="payType == 22">
+                AND op.pay_type = 22
+            </if>
+            <if test="payType == 23">
+                AND op.pay_type = 23
+            </if>
+            <if test="payType == 24">
+                AND op.pay_type = 24
+            </if>
+            <if test="payType == 25">
+                AND op.pay_type = 25
+            </if>
+
+
+            <if test="payType == 3">
+                AND op.pay_type not in (5,6,7,22,23,24,25)
+            </if>
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id
+            AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+
+            AND og.biller_id = #{billerId}
+        </if>
+        WHERE t.shop_id IN
+        <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+        <if test="orderTransactionType != null">
+            <if test="orderTransactionType == 1">
+                AND t.order_status NOT IN (3,5)
+            </if>
+            <if test="orderTransactionType == 2">
+                AND t.order_status IN (3,5)
+            </if>
+        </if>
+        <if test="userId != null">
+            and t.user_id = #{userId}
+        </if>
+        GROUP BY t.order_id
+        ) k
+    </select>
+    <!-- 查询订单列表详情 -->
+    <select id="getAllOrderListDetail" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT
+        k.orderId,k.orderTitle,ifnull(k.settlePrice,0) as settlePrice,
+        k.orderTime,k.orderStatus,
+        k.serviceAmount,k.mobile,
+        k.orderFlag,
+        k.remark,
+        k.resourceName,
+        k.seatIds,
+        k.tokenId,
+        k.consumeType
+        FROM
+        (
+        SELECT
+        t.cashier_id AS billerId,
+        t.shop_id,
+        t.order_id AS orderId,
+        t.order_title AS orderTitle,
+        t.remark AS remark,
+        t.settle_price AS settlePrice,
+        <if test="dateType == null || dateType == 1">
+            t.order_time AS orderTime,
+        </if>
+        <if test="dateType == 2">
+            t.order_finish_time AS orderTime,
+        </if>
+        <if test="dateType == 3">
+            t.shop_settle_time AS orderTime,
+        </if>
+        t.order_status AS orderStatus,
+        t.platform_total_income_price AS serviceAmount,
+        t.order_mobile AS mobile,
+        1 AS orderFlag,
+        res.resource_name as resourceName,
+        res.resource_id as seatIds,
+        t.token_id as tokenId,
+        t.consume_type as consumeType
+        FROM
+        1dcq_order t <!-- INNER JOIN 1dcq_user u ON t.user_id = u.user_id -->
+        LEFT JOIN 1dcq_shop_resource res ON t.seat_ids = res.resource_id AND t.shop_id = res.shop_id
+        <if test="userId != null">
+            INNER JOIN 1dcq_user u ON t.order_mobile = u.mobile and u.user_id = #{userId}
+        </if>
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id
+            AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+            <if test="payType == 4">
+                AND op.pay_type = 5
+            </if>
+
+            <if test="payType == 22">
+                AND op.pay_type = 22
+            </if>
+            <if test="payType == 23">
+                AND op.pay_type = 23
+            </if>
+            <if test="payType == 24">
+                AND op.pay_type = 24
+            </if>
+            <if test="payType == 25">
+                AND op.pay_type = 25
+            </if>
+
+
+            <if test="payType == 3">
+                AND op.pay_type not in (5,6,7,22,23,24,25)
+            </if>
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id
+            AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            AND og.biller_id = #{billerId}
+        </if>
+
+        WHERE t.shop_id IN
+        <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+        <if test="orderTransactionType != null">
+            <if test="orderTransactionType == 1">
+                AND t.order_status NOT IN (3,5)
+            </if>
+            <if test="orderTransactionType == 2">
+                AND t.order_status IN (3,5)
+            </if>
+        </if>
+        <if test="userId != null">
+            and t.user_id = #{userId}
+        </if>
+        GROUP BY t.order_id
+        ) k
+        ORDER BY k.orderTime DESC
+        LIMIT #{stNo},#{pSize}
+    </select>
+
+
+    <select id="getPayAmountStateByOrderIds" parameterType="java.util.Map" resultType="java.util.Map">
+    SELECT
+    SUM(k.cashPay) AS cashPayTotal,
+    SUM(k.posPay) AS posPayTotal,
+    SUM(k.onlinePay) AS onLinePayTotal,
+
+    SUM(k.freePay) AS freePayTotal,
+    SUM(k.customPay1) AS customPay1Total,
+    SUM(k.customPay2) AS customPay2Total,
+    SUM(k.customPay3) AS customPay3Total,
+
+    SUM(k.memberCardPayTotal) as memberCardPayTotal
+    FROM
+    (
+        SELECT
+        o.orderId,
+        SUM(IF(p.pay_type = 6,p.pay_amount,0)) AS cashPay,
+        SUM(IF(p.pay_type = 7,p.pay_amount,0)) AS posPay,
+        SUM(IF(p.pay_type = 5,p.pay_amount,0)) AS memberCardPayTotal,
+        SUM(IF(p.pay_type = 22,p.pay_amount,0)) AS freePay,
+        SUM(IF(p.pay_type = 23,p.pay_amount,0)) AS customPay1,
+        SUM(IF(p.pay_type = 24,p.pay_amount,0)) AS customPay2,
+        SUM(IF(p.pay_type =25,p.pay_amount,0)) AS customPay3,
+
+
+        SUM(IF(p.pay_type NOT IN (5,6,7,22,23,24,25),p.pay_amount,0)) AS onlinePay
+
+        FROM
+        1dcq_order_pay p
+        INNER JOIN (
+
+        SELECT
+        t.order_id AS orderId,
+        t.order_finish_time AS orderFinishTime,
+        t.shop_settle_time AS shopSettleTime,
+        t.order_time AS orderTime,
+        t.settle_price AS settlePrice,
+        t.platform_total_income_price AS serviceAmount,
+        1 AS orderFlag
+        FROM
+        1dcq_order t
+        <if test="userId != null">
+            INNER JOIN 1dcq_user u ON t.order_mobile = u.mobile and u.user_id = #{userId}
+        </if>
+        <!-- INNER JOIN 1dcq_user u ON t.user_id = u.user_id  -->
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id
+            AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+            <if test="payType == 4">
+                AND op.pay_type = 5
+            </if>
+            <if test="payType == 3">
+                AND op.pay_type not in (5,6,7,22,23,24,25)
+            </if>
+
+            <if test="payType == 22">
+                AND op.pay_type =22
+            </if>
+            <if test="payType == 23">
+                AND op.pay_type =23
+            </if>
+            <if test="payType == 24">
+                AND op.pay_type=24
+            </if>
+            <if test="payType == 25">
+                AND op.pay_type=25
+            </if>
+
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id
+            AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            AND og.biller_id = #{billerId}
+        </if>
+        WHERE t.shop_id IN
+        <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+        GROUP BY
+        t.order_id
+        ) o ON p.order_id = o.orderId
+        WHERE
+        p.pay_status = 1
+        GROUP BY
+        p.order_id
+     ) k
+    </select>
+    <!-- 获取订单列表，统计已完成订单的支付金额 -->
+    <select id="getPayAmountStateByOrderIds_old" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        SUM(k.cashPay) AS cashPayTotal,
+        SUM(k.posPay) AS posPayTotal,
+        SUM(k.onlinePay) AS onLinePayTotal,
+        SUM(k.memberCardPayTotal) as memberCardPayTotal
+        FROM
+        (
+
+        SELECT
+        o.orderId,
+        SUM(p.pay_amount) AS cashPay,
+        0 AS posPay,
+        0 AS onlinePay,
+        0 AS memberCardPayTotal
+        FROM
+        1dcq_order_pay p
+        INNER JOIN (
+
+        SELECT
+        t.order_id AS orderId,
+        t.order_finish_time AS orderFinishTime,
+        t.shop_settle_time AS shopSettleTime,
+        t.order_time AS orderTime,
+        t.settle_price AS settlePrice,
+        t.platform_total_income_price AS serviceAmount,
+        1 AS orderFlag
+        FROM
+        1dcq_order t
+        <if test="userId != null">
+            INNER JOIN 1dcq_user u ON t.order_mobile = u.mobile and u.user_id = #{userId}
+        </if>
+        <!-- INNER JOIN 1dcq_user u ON t.user_id = u.user_id  -->
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id
+            AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+            <if test="payType == 4">
+                AND op.pay_type = 5
+            </if>
+            <if test="payType == 3">
+                AND op.pay_type not in (5,6,7)
+            </if>
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id
+            AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            AND og.biller_id = #{billerId}
+        </if>
+        WHERE t.shop_id IN
+        <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+
+        GROUP BY
+        t.order_id
+        ) o ON p.order_id = o.orderId
+        WHERE
+        p.pay_type = 6
+        AND p.pay_status = 1
+        GROUP BY
+        p.order_id
+
+
+
+        UNION ALL
+
+
+        SELECT
+        o.orderId,
+        0 AS cashPay,
+        SUM(p.pay_amount) AS posPay,
+        0 AS onlinePay,
+        0 AS memberCardPayTotal
+        FROM
+        1dcq_order_pay p
+        INNER JOIN (
+        SELECT
+        t.order_id AS orderId,
+        t.order_finish_time AS orderFinishTime,
+        t.shop_settle_time AS shopSettleTime,
+        t.order_time AS orderTime,
+        t.settle_price AS settlePrice,
+        t.platform_total_income_price AS serviceAmount,
+        1 AS orderFlag
+        FROM
+        1dcq_order t
+        <if test="userId != null">
+            INNER JOIN 1dcq_user u ON t.order_mobile = u.mobile and u.user_id = #{userId}
+        </if>
+        <!-- INNER JOIN 1dcq_user u ON t.user_id = u.user_id -->
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id
+            AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+            <if test="payType == 4">
+                AND op.pay_type = 5
+            </if>
+            <if test="payType == 3">
+                AND op.pay_type not in (5,6,7)
+            </if>
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id
+            AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            AND og.biller_id = #{billerId}
+        </if>
+        WHERE t.shop_id IN
+        <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+        GROUP BY
+        t.order_id
+        ) o ON p.order_id = o.orderId
+        WHERE
+        p.pay_type = 7
+        AND p.pay_status = 1
+        GROUP BY
+        p.order_id
+
+        UNION ALL
+
+        SELECT
+        o.orderId,
+        0 AS cashPay,
+        0 AS posPay,
+        0 AS onlinePay,
+        SUM(p.pay_amount) AS memberCardPayTotal
+        FROM
+        1dcq_order_pay p
+        INNER JOIN (
+        SELECT
+        t.order_id AS orderId,
+        t.order_finish_time AS orderFinishTime,
+        t.shop_settle_time AS shopSettleTime,
+        t.order_time AS orderTime,
+        t.settle_price AS settlePrice,
+        t.platform_total_income_price AS serviceAmount,
+        1 AS orderFlag
+        FROM
+        1dcq_order t
+        <if test="userId != null">
+            INNER JOIN 1dcq_user u ON t.order_mobile = u.mobile and u.user_id = #{userId}
+        </if>
+        <!-- INNER JOIN 1dcq_user u ON t.user_id = u.user_id -->
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id
+            AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+            <if test="payType == 4">
+                AND op.pay_type = 5
+            </if>
+            <if test="payType == 3">
+                AND op.pay_type not in (5,6,7)
+            </if>
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id
+            AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            AND og.biller_id = #{billerId}
+        </if>
+        WHERE t.shop_id IN
+        <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+        GROUP BY
+        t.order_id
+        ) o ON p.order_id = o.orderId
+        WHERE
+        p.pay_type = 5
+        AND p.pay_status = 1
+        GROUP BY
+        p.order_id
+
+        UNION ALL
+
+
+        SELECT
+        o.orderId,
+        0 AS cashPay,
+        0 AS posPay,
+        SUM(p.pay_amount) AS onlinePay,
+        0 AS memberCardPayTotal
+        FROM
+        1dcq_order_pay p
+        INNER JOIN (
+        SELECT
+        t.order_id AS orderId,
+        t.order_finish_time AS orderFinishTime,
+        t.shop_settle_time AS shopSettleTime,
+        t.order_time AS orderTime,
+        t.settle_price AS settlePrice,
+        t.platform_total_income_price AS serviceAmount,
+        1 AS orderFlag
+        FROM
+        1dcq_order t
+        <if test="userId != null">
+            INNER JOIN 1dcq_user u ON t.order_mobile = u.mobile and u.user_id = #{userId}
+        </if>
+        <!-- INNER JOIN 1dcq_user u ON t.user_id = u.user_id  -->
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id
+            AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+            <if test="payType == 4">
+                AND op.pay_type = 5
+            </if>
+            <if test="payType == 3">
+                AND op.pay_type not in (5,6,7)
+            </if>
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id
+            AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            AND og.biller_id = #{billerId}
+        </if>
+        WHERE t.shop_id IN
+        <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+        GROUP BY
+        t.order_id
+        ) o ON p.order_id = o.orderId
+        WHERE
+        p.pay_type NOT IN (5,6, 7)
+        AND p.pay_status = 1
+        GROUP BY
+        p.order_id
+        ) k
+    </select>
+    <!-- 按日统计获取订单列表-获取订单列表 -->
+    <select id="getDayOrderStatDetail" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        DATE(t.orderTime) AS orderDate,
+        SUM(t.settlePrice) AS settlePrice,
+        SUM(t.serviceAmount) AS serviceAmount,
+        0 AS cashPay,
+        0 AS posPay,
+
+        0 AS freePay,
+        0 AS customPay1,
+        0 AS customPay2,
+        0 AS customPay3,
+
+        0 AS onLinePay
+        FROM
+        (
+        SELECT
+        <if test="dateType == null || dateType == 1">
+            k.orderTime AS orderTime,
+        </if>
+        <if test="dateType == 2">
+            k.orderFinishTime AS orderTime,
+        </if>
+        <if test="dateType == 3">
+            k.shopSettleTime AS orderTime,
+        </if>
+        SUM(k.settlePrice) AS settlePrice,
+        SUM(k.serviceAmount) AS serviceAmount
+        FROM
+        (
+        SELECT
+        t.order_finish_time AS orderFinishTime,
+        t.shop_settle_time AS shopSettleTime,
+        t.order_time AS orderTime,
+        t.settle_price AS settlePrice,
+        t.platform_total_income_price AS serviceAmount,
+        1 AS orderFlag
+        FROM
+        1dcq_order t
+        <!-- INNER JOIN 1dcq_user u ON t.user_id = u.user_id  -->
+        <if test="userId != null">
+            INNER JOIN 1dcq_user u ON t.user_id = u.user_id and u.user_id = #{userId}
+        </if>
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+
+            <if test="payType == 22">
+                AND op.pay_type = 22
+            </if>
+            <if test="payType == 23">
+                AND op.pay_type = 23
+            </if>
+            <if test="payType == 24">
+                AND op.pay_type = 24
+            </if>
+            <if test="payType == 25">
+                AND op.pay_type = 25
+            </if>
+
+            <if test="payType == 3">
+                AND op.pay_type not in (6,7,22,23,24,25)
+            </if>
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id AND t.shop_id = #{shopId} AND og.biller_id =
+            #{billerId}
+        </if>
+        WHERE t.shop_id IN
+        <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+        <if test="orderTransactionType != null">
+            <if test="orderTransactionType == 1">
+                AND t.order_status NOT IN (3,5)
+            </if>
+            <if test="orderTransactionType == 2">
+                AND t.order_status IN (3,5)
+            </if>
+        </if>
+        GROUP BY
+        t.order_id
+        ) k
+        GROUP BY
+        <if test="dateType == null || dateType == 1">
+            DATE(k.orderTime)
+        </if>
+        <if test="dateType == 2">
+            DATE(k.orderFinishTime)
+        </if>
+        <if test="dateType == 3">
+            DATE(k.shopSettleTime)
+        </if>
+        ) t
+        GROUP BY
+        DATE(t.orderTime)
+        ORDER BY
+        t.orderTime DESC
+        LIMIT #{stNo},#{pSize}
+    </select>
+    <!-- 按日统计获取订单列表-获取总记录数 -->
+    <select id="getDayOrderStatCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT COUNT(*) as num FROM
+        (
+        SELECT
+        DATE(t.orderTime) AS orderTime,
+        SUM(t.settlePrice) AS settlePrice,
+        SUM(t.serviceAmount) AS serviceAmount
+        FROM
+        (
+        SELECT
+        DATE(k.orderTime) AS orderTime,
+        SUM(k.settlePrice) AS settlePrice,
+        SUM(k.serviceAmount) AS serviceAmount
+        FROM
+        (
+        SELECT
+        t.order_finish_time AS orderFinishTime,
+        t.shop_settle_time AS shopSettleTime,
+        t.order_time AS orderTime,
+        t.settle_price AS settlePrice,
+        t.platform_total_income_price AS serviceAmount,
+        1 AS orderFlag
+        FROM
+        1dcq_order t
+        <if test="userId != null">
+            INNER JOIN 1dcq_user u ON t.user_id = u.user_id and u.user_id = #{userId}
+        </if>
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id AND t.shop_id IN
+            <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+            <if test="payType == 22">
+                AND op.pay_type = 22
+            </if>
+            <if test="payType == 23">
+                AND op.pay_type = 23
+            </if>
+            <if test="payType == 24">
+                AND op.pay_type = 24
+            </if>
+            <if test="payType == 25">
+                AND op.pay_type = 25
+            </if>
+            <if test="payType == 3">
+                AND op.pay_type not in (6,7,22,23,24,25)
+            </if>
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id AND t.shop_id = #{shopId} AND og.biller_id =
+            #{billerId}
+        </if>
+        WHERE t.shop_id IN
+        <foreach collection="shopId" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+        <if test="orderTransactionType != null">
+            <if test="orderTransactionType == 1">
+                AND t.order_status NOT IN (3,5)
+            </if>
+            <if test="orderTransactionType == 2">
+                AND t.order_status IN (3,5)
+            </if>
+        </if>
+        GROUP BY
+        t.order_id
+        ) k
+        GROUP BY
+        <if test="dateType == null || dateType == 1">
+            DATE(k.orderTime)
+        </if>
+        <if test="dateType == 2">
+            DATE(k.orderFinishTime)
+        </if>
+        <if test="dateType == 3">
+            DATE(k.shopSettleTime)
+        </if>
+        ) t
+        GROUP BY
+        t.orderTime
+        ) k
+    </select>
+    <!-- 按日统计获取订单列表-按日统计获取订单支付详情 -->
+    <select id="getDayOrderPayStat" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        SUM(t.cashPay) AS cashPay,
+        SUM(t.posPay) AS posPay,
+        SUM(t.onlinePay) AS onLinePay,
+
+        SUM(t.freePay) AS freePay,
+        SUM(t.customPay1) AS customPay1,
+        SUM(t.customPay2) AS customPay2,
+        SUM(t.customPay3) AS customPay3,
+
+
+        t.orderTime AS orderDate
+        FROM
+        (
+        SELECT
+        SUM(k.cashPay) AS cashPay,
+        SUM(k.posPay) AS posPay,
+        SUM(k.onlinePay) AS onlinePay,
+
+        SUM(k.freePay) AS freePay,
+        SUM(k.customPay1) AS customPay1,
+        SUM(k.customPay2) AS customPay2,
+        SUM(k.customPay3) AS customPay3,
+
+        DATE(k.orderTime) AS orderTime
+        FROM
+        (
+        SELECT
+        t.orderId,
+        SUM(t.cashPay) AS cashPay,
+        SUM(t.posPay) AS posPay,
+        SUM(t.onlinePay) AS onlinePay,
+
+        SUM(t.freePay) AS freePay,
+        SUM(t.customPay1) AS customPay1,
+        SUM(t.customPay2) AS customPay2,
+        SUM(t.customPay3) AS customPay3,
+
+        DATE(t.orderTime) AS orderTime
+        FROM
+        (
+        SELECT
+        p.order_id AS orderId,
+        SUM(p.pay_amount) AS cashPay,
+        0 AS posPay,
+        0 AS onlinePay,
+
+        0 AS freePay,
+        0 AS customPay1,
+        0 AS customPay2,
+        0 AS customPay3,
+
+
+
+        o.orderTime
+        FROM
+        1dcq_order_pay p
+        INNER JOIN (
+        SELECT
+        t.order_id AS orderId,
+        t.order_finish_time AS orderFinishTime,
+        t.shop_settle_time AS shopSettleTime,
+        t.order_time AS orderTime,
+        t.settle_price AS settlePrice,
+        t.platform_total_income_price AS serviceAmount,
+        1 AS orderFlag
+        FROM
+        1dcq_order t
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id AND t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+            <if test="payType == 3">
+                AND op.pay_type not in (6,7,22,23,24,25)
+            </if>
+
+            <if test="payType == 22">
+                AND op.pay_type = 22
+            </if>
+            <if test="payType == 23">
+                AND op.pay_type = 23
+            </if>
+            <if test="payType == 24">
+                AND op.pay_type = 24
+            </if>
+            <if test="payType == 25">
+                AND op.pay_type = 25
+            </if>
+
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id AND t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach> AND og.biller_id =
+            #{billerId}
+        </if>
+        WHERE t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+        <if test="orderTransactionType != null">
+            <if test="orderTransactionType == 1">
+                AND t.order_status NOT IN (3,5)
+            </if>
+            <if test="orderTransactionType == 2">
+                AND t.order_status IN (3,5)
+            </if>
+        </if>
+        GROUP BY
+        t.order_id
+        ) o ON p.order_id = o.orderId
+        WHERE
+        p.pay_type = 6
+        GROUP BY
+        p.order_id
+        UNION ALL
+        SELECT
+        p.order_id AS orderId,
+        0 AS cashPay,
+        SUM(p.pay_amount) AS posPay,
+        0 AS onlinePay,
+
+        0 AS freePay,
+        0 AS customPay1,
+        0 AS customPay2,
+        0 AS customPay3,
+
+        o.orderTime
+        FROM
+        1dcq_order_pay p
+        INNER JOIN (
+        SELECT
+        t.order_id AS orderId,
+        t.order_finish_time AS orderFinishTime,
+        t.shop_settle_time AS shopSettleTime,
+        t.order_time AS orderTime,
+        t.settle_price AS settlePrice,
+        t.platform_total_income_price AS serviceAmount,
+        1 AS orderFlag
+        FROM
+        1dcq_order t
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id AND t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+            <if test="payType == 3">
+                AND op.pay_type not in (6,7,22,23,24,25)
+            </if>
+
+            <if test="payType == 22">
+                AND op.pay_type = 22
+            </if>
+            <if test="payType == 23">
+                AND op.pay_type = 23
+            </if>
+            <if test="payType == 24">
+                AND op.pay_type = 24
+            </if>
+            <if test="payType == 25">
+                AND op.pay_type = 25
+            </if>
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id AND t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach> AND og.biller_id =
+            #{billerId}
+        </if>
+        WHERE t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+        <if test="orderTransactionType != null">
+            <if test="orderTransactionType == 1">
+                AND t.order_status NOT IN (3,5)
+            </if>
+            <if test="orderTransactionType == 2">
+                AND t.order_status IN (3,5)
+            </if>
+        </if>
+        GROUP BY
+        t.order_id
+        ) o ON p.order_id = o.orderId
+        WHERE
+        p.pay_type = 7
+        GROUP BY
+        p.order_id
+        UNION ALL
+        SELECT
+        p.order_id AS orderId,
+        0 AS cashPay,
+        0 AS posPay,
+        SUM(p.pay_amount) AS onlinePay,
+        0 AS freePay,
+        0 AS customPay1,
+        0 AS customPay2,
+        0 AS customPay3,
+        o.orderTime
+        FROM
+        1dcq_order_pay p
+        INNER JOIN (
+        SELECT
+        t.order_id AS orderId,
+        t.order_finish_time AS orderFinishTime,
+        t.shop_settle_time AS shopSettleTime,
+        t.order_time AS orderTime,
+        t.settle_price AS settlePrice,
+        t.platform_total_income_price AS serviceAmount,
+        1 AS orderFlag
+        FROM
+        1dcq_order t
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id AND t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+            <if test="payType == 3">
+                AND op.pay_type not in (6,7,22,23,24,25)
+            </if>
+
+            <if test="payType == 22">
+                AND op.pay_type = 22
+            </if>
+            <if test="payType == 23">
+                AND op.pay_type = 23
+            </if>
+            <if test="payType == 24">
+                AND op.pay_type = 24
+            </if>
+            <if test="payType == 25">
+                AND op.pay_type = 25
+            </if>
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id AND t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach> AND og.biller_id =
+            #{billerId}
+        </if>
+        WHERE t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+        <if test="orderTransactionType != null">
+            <if test="orderTransactionType == 1">
+                AND t.order_status NOT IN (3,5)
+            </if>
+            <if test="orderTransactionType == 2">
+                AND t.order_status IN (3,5)
+            </if>
+        </if>
+        GROUP BY
+        t.order_id
+        ) o ON p.order_id = o.orderId
+        WHERE
+        p.pay_type NOT IN (6, 7,22,23,24,25)
+        GROUP BY
+        p.order_id
+
+
+        UNION ALL
+
+        SELECT
+        p.order_id AS orderId,
+        0 AS cashPay,
+        0 AS posPay,
+        0 AS onlinePay,
+
+        SUM(p.pay_amount) AS freePay,
+        0 AS customPay1,
+        0 AS customPay2,
+        0 AS customPay3,
+
+        o.orderTime
+        FROM
+        1dcq_order_pay p
+        INNER JOIN (
+        SELECT
+        t.order_id AS orderId,
+        t.order_finish_time AS orderFinishTime,
+        t.shop_settle_time AS shopSettleTime,
+        t.order_time AS orderTime,
+        t.settle_price AS settlePrice,
+        t.platform_total_income_price AS serviceAmount,
+        1 AS orderFlag
+        FROM
+        1dcq_order t
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id AND t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+            <if test="payType == 3">
+                AND op.pay_type not in (6,7,22,23,24,25)
+            </if>
+
+            <if test="payType == 22">
+                AND op.pay_type = 22
+            </if>
+            <if test="payType == 23">
+                AND op.pay_type = 23
+            </if>
+            <if test="payType == 24">
+                AND op.pay_type = 24
+            </if>
+            <if test="payType == 25">
+                AND op.pay_type = 25
+            </if>
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id AND t.shop_id  IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach> AND og.biller_id =
+            #{billerId}
+        </if>
+        WHERE t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+        <if test="orderTransactionType != null">
+            <if test="orderTransactionType == 1">
+                AND t.order_status NOT IN (3,5)
+            </if>
+            <if test="orderTransactionType == 2">
+                AND t.order_status IN (3,5)
+            </if>
+        </if>
+        GROUP BY
+        t.order_id
+        ) o ON p.order_id = o.orderId
+        WHERE
+        p.pay_type = 22
+        GROUP BY
+        p.order_id
+
+        UNION ALL
+
+        SELECT
+        p.order_id AS orderId,
+        0 AS cashPay,
+        0 AS posPay,
+        0 AS onlinePay,
+
+        0 AS freePay,
+        SUM(p.pay_amount) AS customPay1,
+        0 AS customPay2,
+        0 AS customPay3,
+
+        o.orderTime
+        FROM
+        1dcq_order_pay p
+        INNER JOIN (
+        SELECT
+        t.order_id AS orderId,
+        t.order_finish_time AS orderFinishTime,
+        t.shop_settle_time AS shopSettleTime,
+        t.order_time AS orderTime,
+        t.settle_price AS settlePrice,
+        t.platform_total_income_price AS serviceAmount,
+        1 AS orderFlag
+        FROM
+        1dcq_order t
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id AND t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+            <if test="payType == 3">
+                AND op.pay_type not in (6,7,22,23,24,25)
+            </if>
+
+            <if test="payType == 22">
+                AND op.pay_type = 22
+            </if>
+            <if test="payType == 23">
+                AND op.pay_type = 23
+            </if>
+            <if test="payType == 24">
+                AND op.pay_type = 24
+            </if>
+            <if test="payType == 25">
+                AND op.pay_type = 25
+            </if>
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id AND t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach> AND og.biller_id =
+            #{billerId}
+        </if>
+        WHERE t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+        <if test="orderTransactionType != null">
+            <if test="orderTransactionType == 1">
+                AND t.order_status NOT IN (3,5)
+            </if>
+            <if test="orderTransactionType == 2">
+                AND t.order_status IN (3,5)
+            </if>
+        </if>
+        GROUP BY
+        t.order_id
+        ) o ON p.order_id = o.orderId
+        WHERE
+        p.pay_type = 23
+        GROUP BY
+        p.order_id
+
+        UNION ALL
+
+        SELECT
+        p.order_id AS orderId,
+        0 AS cashPay,
+        0 AS posPay,
+        0 AS onlinePay,
+
+        0 AS freePay,
+        0 AS customPay1,
+        SUM(p.pay_amount) AS customPay2,
+        0 AS customPay3,
+
+        o.orderTime
+        FROM
+        1dcq_order_pay p
+        INNER JOIN (
+        SELECT
+        t.order_id AS orderId,
+        t.order_finish_time AS orderFinishTime,
+        t.shop_settle_time AS shopSettleTime,
+        t.order_time AS orderTime,
+        t.settle_price AS settlePrice,
+        t.platform_total_income_price AS serviceAmount,
+        1 AS orderFlag
+        FROM
+        1dcq_order t
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id AND t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+            <if test="payType == 3">
+                AND op.pay_type not in (6,7,22,23,24,25)
+            </if>
+
+            <if test="payType == 22">
+                AND op.pay_type = 22
+            </if>
+            <if test="payType == 23">
+                AND op.pay_type = 23
+            </if>
+            <if test="payType == 24">
+                AND op.pay_type = 24
+            </if>
+            <if test="payType == 25">
+                AND op.pay_type = 25
+            </if>
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id AND t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach> AND og.biller_id =
+            #{billerId}
+        </if>
+        WHERE t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+        <if test="orderTransactionType != null">
+            <if test="orderTransactionType == 1">
+                AND t.order_status NOT IN (3,5)
+            </if>
+            <if test="orderTransactionType == 2">
+                AND t.order_status IN (3,5)
+            </if>
+        </if>
+        GROUP BY
+        t.order_id
+        ) o ON p.order_id = o.orderId
+        WHERE
+        p.pay_type = 24
+        GROUP BY
+        p.order_id
+
+        UNION ALL
+
+        SELECT
+        p.order_id AS orderId,
+        0 AS cashPay,
+        0 AS posPay,
+        0 AS onlinePay,
+
+        0 AS freePay,
+        0 AS customPay1,
+        0 AS customPay2,
+        SUM(p.pay_amount) AS customPay3,
+
+        o.orderTime
+        FROM
+        1dcq_order_pay p
+        INNER JOIN (
+        SELECT
+        t.order_id AS orderId,
+        t.order_finish_time AS orderFinishTime,
+        t.shop_settle_time AS shopSettleTime,
+        t.order_time AS orderTime,
+        t.settle_price AS settlePrice,
+        t.platform_total_income_price AS serviceAmount,
+        1 AS orderFlag
+        FROM
+        1dcq_order t
+        <if test="payType != null">
+            INNER JOIN 1dcq_order_pay op on op.order_id = t.order_id AND t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach>
+            <if test="payType == 1">
+                AND op.pay_type = 6
+            </if>
+            <if test="payType == 2">
+                AND op.pay_type = 7
+            </if>
+            <if test="payType == 3">
+                AND op.pay_type not in (6,7,22,23,24,25)
+            </if>
+
+            <if test="payType == 22">
+                AND op.pay_type = 22
+            </if>
+            <if test="payType == 23">
+                AND op.pay_type = 23
+            </if>
+            <if test="payType == 24">
+                AND op.pay_type = 24
+            </if>
+            <if test="payType == 25">
+                AND op.pay_type = 25
+            </if>
+            AND op.pay_status = 1
+        </if>
+        <if test="billerId != null">
+            INNER JOIN 1dcq_order_goods og ON og.order_id = t.order_id AND t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach> AND og.biller_id =
+            #{billerId}
+        </if>
+        WHERE t.shop_id IN <foreach collection="shopId" item="items" open="(" close=")" separator=",">#{items}</foreach>
+        <if test="dateType == null || dateType == 1">
+            AND t.order_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 2">
+            AND t.order_finish_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.order_finish_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="dateType == 3">
+            AND t.shop_settle_time >= #{startDate}
+            <if test="endDate != null">
+                AND DATE(t.shop_settle_time) &lt;= #{endDate}
+            </if>
+        </if>
+        <if test="cashierId != null">
+            AND t.cashier_id = #{cashierId}
+        </if>
+        <if test="orderStatuss != null">
+            AND t.order_status in (
+            <foreach collection="orderStatuss" item="orderStatus" open="" close="" separator=",">
+                #{orderStatus}
+            </foreach>
+            )
+        </if>
+        <if test="orderTransactionType != null">
+            <if test="orderTransactionType == 1">
+                AND t.order_status NOT IN (3,5)
+            </if>
+            <if test="orderTransactionType == 2">
+                AND t.order_status IN (3,5)
+            </if>
+        </if>
+        GROUP BY
+        t.order_id
+        ) o ON p.order_id = o.orderId
+        WHERE
+        p.pay_type = 25
+        GROUP BY
+        p.order_id
+        ) t
+        GROUP BY
+        t.orderId
+        ) k
+        GROUP BY
+        k.orderId
+        ) t
+        GROUP BY t.orderTime
+        ORDER BY t.orderTime DESC
+    </select>
+
+    <select id="getNotSettleOrderIds" resultType="java.lang.String" parameterType="java.util.Map">
+        SELECT o.order_id
+        FROM 1dcq_order o
+        INNER JOIN 1dcq_shop s
+        ON o.shop_id = s.shop_id
+        WHERE s.shop_status= 0
+        AND o.shop_settle_flag = 0
+        AND o.settle_flag = 0
+        AND o.is_member = 1
+        AND o.order_status = 3
+        AND o.pay_status = 1
+        <![CDATA[ AND s.shop_id <> 1 ]]>
+        <![CDATA[ AND o.order_real_settle_price > 0]]>
+        <if test="shopId != null">
+            AND o.shop_id = #{shopId}
+        </if>
+        ORDER BY o.order_time DESC
+        <if test="limit != null and pageSize != null">
+            LIMIT #{limit},#{pageSize}
+        </if>
+    </select>
+    <update id="updatePlatformServePrice" parameterType="java.util.Map">
+        update 1dcq_shop_income_stat set platform_serve_share_price = #{serveMoney} where order_id = #{orderId}
+    </update>
+    <update id="updateOrderRealSettlePrice" parameterType="java.util.Map">
+        update 1dcq_order set
+        <if test="sendRedPacketMoney != null">
+            send_red_packet_money = #{sendRedPacketMoney},
+        </if>
+        order_real_settle_price = #{orderRealSettlePrice}
+        where order_id = #{orderId}
+    </update>
+
+    <select id="getConsumeShopMembersCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(DISTINCT(o.order_mobile))
+        from 1dcq_order o
+        inner join 1dcq_shop_member s on s.user_id = o.user_id
+        and s.shop_id = #{shopId} and o.order_finish_time>=s.create_time and s.member_status != #{memberStatus}
+        where o.order_status = #{orderStatus}
+        and o.shop_id = #{shopId}
+        and o.user_id is not null
+        <if test="startTime != null">
+            AND Date(o.order_finish_time)>=#{startTime}
+        </if>
+        <if test="endTime != null">
+            <![CDATA[
+				AND Date(o.order_finish_time) <=#{endTime}
+			]]>
+        </if>
+        and o.order_mobile in (
+        select s.mobile
+        from 1dcq_shop_member s
+        where s.shop_id=#{shopId}
+        and s.member_status !=#{memberStatus}
+        )
+    </select>
+
+    <select id="getConsumeShopMembersAmount" parameterType="java.util.Map" resultType="java.lang.Double">
+        select sum(ifnull(settle_price,0)) as settlePriceSum
+        from 1dcq_order o
+        inner join 1dcq_shop_member s on s.user_id = o.user_id
+        and s.shop_id = #{shopId} and o.order_finish_time>=s.create_time and s.member_status != #{memberStatus}
+        where o.order_status = #{orderStatus}
+        and o.shop_id = #{shopId}
+        <if test="mobile != null">
+            and o.order_mobile = #{mobile} and s.mobile = #{mobile}
+        </if>
+        group by mobile
+    </select>
+
+    <!-- 	<select id="queryOrderByShopIdAndOrderCode" parameterType="java.util.Map" resultMap="BaseResultMap">
+            SELECT
+            t.order_id AS orderId, t2.shop_name AS shopName, t.pay_status AS payStatus, t.settle_price AS settlePrice, t.settle_time AS settleTime, t.order_title AS orderTitle
+            FROM 1dcq_order t LEFT JOIN 1dcq_shop t2 ON t.shop_id=t2.shop_id
+            WHERE t.shop_id=#{shopId}
+            <if test="payCode != null">
+            AND t.pay_code=#{payCode}
+            </if>
+            <if test="payCode == null">
+            AND t.pay_code IS NOT NULL
+            </if>
+            ORDER BY t.order_time DESC limit #{m},#{n};
+        </select> -->
+    <select id="queryOrderByShopIdAndOrderCode" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT
+        t.order_id AS orderId, t2.shop_name AS shopName, t.pay_status AS payStatus, t.settle_price AS settlePrice,
+        t.settle_time AS settleTime, t.order_title AS orderTitle
+        FROM 1dcq_order t LEFT JOIN 1dcq_shop t2 ON t.shop_id=t2.shop_id
+        INNER JOIN 1dcq_order_pay op
+        ON op.order_id = t.order_id
+        WHERE t.shop_id=#{shopId}
+        AND op.pay_status=1
+        <if test="payType != null">
+            AND op.pay_type=#{payType}
+        </if>
+        <if test="payStatus != null">
+            AND t.pay_status=#{payStatus}
+        </if>
+        <if test="payCode != null">
+            AND t.pay_code=#{payCode}
+        </if>
+        <if test="payCode == null">
+            AND t.pay_code IS NOT NULL
+        </if>
+        GROUP BY t.order_id
+        ORDER BY t.order_time DESC limit #{m},#{n};
+    </select>
+
+    <select id="countOrderByShopIdAndOrderCode" parameterType="java.util.Map" resultType="int">
+        SELECT COUNT(distinct t.order_id) AS res
+        FROM 1dcq_order t LEFT JOIN 1dcq_shop t2 ON t.shop_id=t2.shop_id
+        INNER JOIN 1dcq_order_pay op
+        ON op.order_id = t.order_id
+        WHERE t.shop_id=#{shopId}
+        AND op.pay_status=1
+        <if test="payType != null">
+            AND op.pay_type=#{payType}
+        </if>
+        <if test="payStatus != null">
+            AND t.pay_status=#{payStatus}
+        </if>
+        <if test="payCode != null">
+            AND t.pay_code=#{payCode}
+        </if>
+        <if test="payCode == null">
+            AND t.pay_code IS NOT NULL
+        </if>
+    </select>
+
+    <select id="getOrderCountAndSettleMoney" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT sum(ifnull(o.settle_price,0)) as purchaseMoney,
+        ifnull((select count(*) from 1dcq_order o1
+        <where>
+            <if test="shopId != null">
+                and o1.shop_id = #{shopId}
+            </if>
+            <if test="userId != null">
+                and o1.user_id = #{userId}
+            </if>
+            <if test="mobile != null">
+                and o1.order_mobile = #{mobile}
+            </if>
+            <if test="orderStatus != null">
+                and o1.order_status =#{orderStatus}
+            </if>
+            <if test="startDate != null">
+                <![CDATA[and o1.order_finish_time >=#{startDate}]]>
+            </if>
+        </where>
+        ),0) as purchaseNum
+        FROM 1dcq_order o
+        <where>
+            <if test="shopId != null">
+                and o.shop_id = #{shopId}
+            </if>
+            <if test="userId != null">
+                and o.user_id = #{userId}
+            </if>
+            <if test="mobile != null">
+                and o.order_mobile = #{mobile}
+            </if>
+            <if test="orderStatus != null">
+                and o.order_status =#{orderStatus}
+            </if>
+            <if test="startDate != null">
+                <![CDATA[and o.order_finish_time >=#{startDate}]]>
+            </if>
+        </where>
+        <if test="mobile != null">
+            group by o.order_mobile
+        </if>
+        <if test="mobile == null and userId != null">
+            group by o.user_id
+        </if>
+    </select>
+
+    <!-- 查询会员红包详情-->
+    <select id="getRedPacketOrderDetail" resultType="java.util.Map" parameterType="java.lang.Long">
+		 SELECT o.order_title AS orderTitle,
+		 o.settle_time AS settleTime
+		 FROM 1dcq_order o
+		 WHERE o.order_id = #{orderId}
+
+
+  </select>
+
+    <!-- 按消费时段分析客户消费记录数 -->
+    <select id="shopIncomeStatByTimePeriodCount" parameterType="java.util.Map" resultType="int">
+        select count(*)
+        from (
+        select
+        <if test="startDatePeriod ==null and endDatePeriod == null">
+            HOUR(o.order_finish_time) as period
+        </if>
+        <if test="startDatePeriod !=null and endDatePeriod != null">
+            CONCAT(#{startDatePeriod},'-',#{endDatePeriod}) as period
+        </if>
+        <if test="startDatePeriod !=null and endDatePeriod == null">
+            #{startDatePeriod} as period
+        </if>
+        <if test="startDatePeriod ==null and endDatePeriod != null">
+            #{endDatePeriod} as period
+        </if>
+        from 1dcq_order o
+        <where>
+            <if test="shopId != null">
+                and o.shop_id = #{shopId}
+            </if>
+            <if test="orderStatus != null">
+                and o.order_status = #{orderStatus}
+            </if>
+            <if test="startTime != null">
+                <![CDATA[AND Date(o.order_finish_time)>=#{startTime}]]>
+            </if>
+            <if test="endTime">
+                <![CDATA[AND Date(o.order_finish_time) <=#{endTime}]]>
+            </if>
+            <if test="startDatePeriod !=null">
+                <![CDATA[ and DATE_FORMAT(order_finish_time,'%H:%i') >= #{startDatePeriod}]]>
+            </if>
+            <if test="endDatePeriod != null">
+                <![CDATA[ and DATE_FORMAT(order_finish_time,'%H:%i') <= #{endDatePeriod}]]>
+            </if>
+        </where>
+        group by period
+        ) a
+
+    </select>
+
+    <!-- 按消费时段分析客户消费 -->
+    <select id="shopIncomeStatByTimePeriod" parameterType="java.util.Map" resultType="java.util.Map">
+        select
+        <if test="startDatePeriod ==null and endDatePeriod == null">
+            HOUR(o.order_finish_time) as period,
+        </if>
+        <if test="startDatePeriod !=null and endDatePeriod != null">
+            CONCAT(#{startDatePeriod},'-',#{endDatePeriod}) as period,
+        </if>
+        <if test="startDatePeriod !=null and endDatePeriod == null">
+            #{startDatePeriod} as period,
+        </if>
+        <if test="startDatePeriod ==null and endDatePeriod != null">
+            #{endDatePeriod} as period,
+        </if>
+        count(*) as orderTotalNum,
+        sum(settle_price) as orderTotalMoney
+        from 1dcq_order o
+        <where>
+            <if test="shopId != null">
+                and o.shop_id = #{shopId}
+            </if>
+            <if test="orderStatus != null">
+                and o.order_status = #{orderStatus}
+            </if>
+            <if test="startDate != null">
+                <![CDATA[AND Date(o.order_finish_time)>=#{startDate}]]>
+            </if>
+            <if test="endDate">
+                <![CDATA[AND Date(o.order_finish_time) <=#{endDate}]]>
+            </if>
+            <if test="startDatePeriod !=null">
+                <![CDATA[ and DATE_FORMAT(order_finish_time,'%H:%i') >= #{startDatePeriod}]]>
+            </if>
+            <if test="endDatePeriod != null">
+                <![CDATA[ and DATE_FORMAT(order_finish_time,'%H:%i') <= #{endDatePeriod}]]>
+            </if>
+        </where>
+        group by period
+        order by period asc
+    </select>
+
+
+</mapper>

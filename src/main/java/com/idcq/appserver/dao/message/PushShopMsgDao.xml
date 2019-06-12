@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.message.PushShopMsgDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.message.PushShopMsgDto" >
+    <id column="pm_id" property="pmId" jdbcType="INTEGER" />
+    <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    <result column="device_type" property="deviceType" jdbcType="VARCHAR" />
+    <result column="sn_id" property="snId" jdbcType="VARCHAR" />
+    <result column="reg_id" property="regId" jdbcType="VARCHAR" />
+    <result column="action" property="action" jdbcType="VARCHAR" />
+    <result column="message_content" property="messageContent" jdbcType="VARCHAR" />
+    <result column="message_status" property="messageStatus" jdbcType="TINYINT" />
+    <result column="send_time" property="sendTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+ 
+  <insert id="insertSelective" parameterType="com.idcq.appserver.dto.message.PushShopMsgDto" >
+    insert into 1dcq_push_shop_message
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pmId != null" >
+        pm_id,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+      <if test="deviceType != null" >
+        device_type,
+      </if>
+      <if test="snId != null" >
+        sn_id,
+      </if>
+      <if test="regId != null" >
+        reg_id,
+      </if>
+      <if test="action != null" >
+        action,
+      </if>
+      <if test="messageContent != null" >
+        message_content,
+      </if>
+      <if test="messageStatus != null" >
+        message_status,
+      </if>
+      <if test="sendTime != null" >
+        send_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pmId != null" >
+        #{pmId,jdbcType=INTEGER},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=INTEGER},
+      </if>
+      <if test="deviceType != null" >
+        #{deviceType,jdbcType=VARCHAR},
+      </if>
+      <if test="snId != null" >
+        #{snId,jdbcType=VARCHAR},
+      </if>
+      <if test="regId != null" >
+        #{regId,jdbcType=VARCHAR},
+      </if>
+      <if test="action != null" >
+        #{action,jdbcType=VARCHAR},
+      </if>
+      <if test="messageContent != null" >
+        #{messageContent,jdbcType=VARCHAR},
+      </if>
+      <if test="messageStatus != null" >
+        #{messageStatus,jdbcType=TINYINT},
+      </if>
+      <if test="sendTime != null" >
+        #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <insert id="batchInsertSelective" parameterType="java.util.List">
+  	insert into 1dcq_push_shop_message(shop_id,device_type,sn_id,reg_id,action,message_content,message_status,send_time)values
+		<foreach collection="list" item="shop" close="" open="" separator=",">
+			(#{shop.shopId,jdbcType=INTEGER},#{shop.deviceType,jdbcType=VARCHAR},#{shop.snId,jdbcType=VARCHAR},#{shop.regId,jdbcType=VARCHAR},
+			#{shop.action,jdbcType=VARCHAR},#{shop.messageContent,jdbcType=VARCHAR},#{shop.messageStatus,jdbcType=TINYINT},#{shop.sendTime,jdbcType=TIMESTAMP})
+		</foreach>
+  </insert>
+
+  <select id="countMsgByConditions" parameterType="java.util.Map" resultType="java.lang.Integer">
+    SELECT COUNT(1)
+    FROM
+    1dcq_push_shop_message
+    WHERE
+    shop_id=#{bizId}
+    AND send_time BETWEEN #{startDate} AND  #{endDate}
+    AND 
+    <choose>
+      <when test="messageStatus == 1">
+        (message_status IN (1, 2) OR  message_status IS NULL )
+      </when>
+      <otherwise>
+        message_status=#{messageStatus}
+      </otherwise>
+    </choose>
+    <if test="actions != null">
+      AND action in
+      <foreach collection="actions" item="items" open="(" close=")" separator=",">
+        #{items}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="searchMsgByConditions" parameterType="java.util.Map" resultMap="BaseResultMap">
+    SELECT * FROM 1dcq_push_shop_message
+    WHERE
+    shop_id=#{bizId}
+    AND send_time BETWEEN #{startDate} AND  #{endDate}
+    AND
+    <choose>
+      <when test="messageStatus == 1">
+        (message_status IN (1, 2) OR  message_status IS NULL )
+      </when>
+      <otherwise>
+        message_status=#{messageStatus}
+      </otherwise>
+    </choose>
+    <if test="actions != null">
+      AND action in
+      <foreach collection="actions" item="items" open="(" close=")" separator=",">
+        #{items}
+      </foreach>
+    </if>
+    ORDER BY send_time DESC
+    LIMIT #{startNum}, #{offset}
+  </select>
+
+  <update id="updateShopPushMsgStatus" parameterType="java.util.Map">
+    UPDATE 1dcq_push_shop_message SET
+    message_status=#{messageStatus}
+    WHERE
+    shop_id=#{bizId}
+    <if test="messageIds != null">
+      AND pm_id IN
+      <foreach collection="messageIds" open="(" separator="," close=")" item="items">
+        #{items}
+      </foreach>
+    </if>
+    <if test="actions != null">
+      AND action IN
+      <foreach collection="actions" item="items" open="(" close=")" separator=",">
+        #{items}
+      </foreach>
+    </if>
+  </update>
+
+</mapper>

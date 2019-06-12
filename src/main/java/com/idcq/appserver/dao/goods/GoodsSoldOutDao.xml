@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.goods.GoodsSoldOutDto" >
+	<resultMap id="baseResultMap" type="com.idcq.appserver.dto.goods.GoodsSoldOutDto">
+		<result column="shop_id" property="shopId"/>
+		<result column="goods_id" property="goodsId"/>
+		<result column="goods_status" property="goodsStatus"/>
+		<result column="goods_category_id" property="goodsCategoryId"/>
+		<result column="operator_id" property="operatorId"/>
+		<result column="operator_name" property="operatorName"/>
+		<result column="create_time" property="createTime"/>
+	</resultMap>
+	<select id="getItemsByCondition" resultMap="baseResultMap" parameterType="com.idcq.appserver.dto.goods.GoodsSoldOutDto">
+        SELECT
+        *
+        FROM
+        1dcq_shop_pause_sell_goods
+        <trim prefix="WHERE" suffixOverrides="AND">
+            <if test="shopId != null"> shop_id = #{shopId} AND </if>
+            <if test="goodsId != null"> goods_id = #{goodsId} AND </if>
+        </trim>
+    </select>
+    <!--<if test="goodsStatus != null"> goods_status = #{goodsStatus} AND </if>-->
+    <!--<if test="goodsCategoryId != null"> goods_category_id = #{goodsCategoryId} AND </if>-->
+    <!--<if test="operatorId != null"> operator_id = #{operatorId} AND </if>-->
+    <!--<if test="operatorName != null"> operator_name = #{operatorName} AND </if>-->
+    <!--<if test="createTime != null"> create_time = #{createTime} AND </if>-->
+    <insert id="batchInsert" parameterType="java.util.List">
+      INSERT IGNORE INTO
+      1dcq_shop_pause_sell_goods
+      VALUES 
+      <foreach collection="list"  separator="," item="item">
+          (
+          #{item.shopId},
+          #{item.goodsId},
+          #{item.goodsStatus},
+          #{item.goodsCategoryId},
+          #{item.operatorId},
+          #{item.operatorName},
+          #{item.createTime}
+          )
+      </foreach>
+    </insert>
+    <delete id="batchDelete" parameterType="java.util.List">
+        DELETE FROM 1dcq_shop_pause_sell_goods
+        WHERE
+        <foreach collection="list" item="item" separator="OR">
+            (
+            <trim prefixOverrides="AND">
+            <if test="item.shopId != null">shop_id = #{item.shopId}</if>
+            <if test="item.goodsId != null">AND goods_id = #{item.goodsId}</if>
+            </trim>
+            )
+        </foreach>
+    </delete>
+
+</mapper>

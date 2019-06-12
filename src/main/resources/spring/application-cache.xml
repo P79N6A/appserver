@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx"	
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+	http://www.springframework.org/schema/jee
+	http://www.springframework.org/schema/jee/spring-jee-3.2.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.2.xsd"
+	default-lazy-init="true">
+	
+	<!-- memcached客户端 -->
+	<bean name="memcachedClient"
+                class="net.rubyeye.xmemcached.utils.XMemcachedClientFactoryBean">
+                <property name="servers">
+                		<!-- 指定memcached集群 -->	
+						<!--                 	
+                        <value>host1:port1 host2:port2 host3:port3</value>
+                         -->
+                        <value>localhost:11211</value>
+                </property>
+                <!-- 负载权重配置 -->
+                <property name="weights">
+                        <list>
+                                <value>1</value>
+                        </list>
+                </property>
+                <!-- 安全认证配置 -->
+                <!-- 
+				<property name="authInfoMap">
+                        <map>
+                                <entry key-ref="server1">
+                                        <bean class="net.rubyeye.xmemcached.auth.AuthInfo"
+                                                factory-method="typical">
+                                                <constructor-arg index="0">
+                                                        <value>cacheuser</value>
+                                                </constructor-arg>
+                                                <constructor-arg index="1">
+                                                        <value>123456</value>
+                                                </constructor-arg>
+                                        </bean>
+                                </entry>
+                        </map>
+                </property>
+                 -->
+                <!-- nio连接池大小,默认1 -->
+                <!-- 
+                <property name="connectionPoolSize" value="2"></property>
+                 -->
+                <!-- Use binary protocol,default is TextCommandFactory -->
+                <!--  
+                <property name="commandFactory">
+                   <bean class="net.rubyeye.xmemcached.command.BinaryCommandFactory"></bean>
+                </property>
+                 -->
+                <!-- 分布式策略 -->
+                <property name="sessionLocator">
+                		<!-- 一致性hash -->
+                        <bean class="net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator"></bean>
+                </property>
+                <!-- 序列化 -->
+                <property name="transcoder">
+                        <bean class="net.rubyeye.xmemcached.transcoders.SerializingTranscoder" />
+                </property>
+                <property name="bufferAllocator">
+                        <bean class="net.rubyeye.xmemcached.buffer.SimpleBufferAllocator"></bean>
+                </property>
+                <!-- 当memcached集群中部分节点失效时不报错 -->
+                <property name="failureMode" value="false"></property>
+        </bean>
+        
+        
+        <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+			<property name="maxActive" value="${redis.maxActive}" />
+			<property name="maxIdle" value="${redis.maxIdle}" />
+			<property name="maxWait" value="${redis.maxWait}" />
+			<property name="testOnBorrow" value="${redis.testOnBorrow}" />
+		</bean>
+		
+		<bean id="jedisConnectionFactory"
+			class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+			<property name="hostName" value="${redis.ip}" />
+			<property name="port" value="${redis.port}" />
+			<property name="poolConfig" ref="jedisPoolConfig" />
+		</bean>
+		<!-- <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate" >
+			<property name="connectionFactory" ref="jedisConnectionFactory" />
+		</bean> -->
+		<bean class="org.springframework.data.redis.core.RedisTemplate" >
+	      <property name="connectionFactory" ref="jedisConnectionFactory"/>
+	   </bean>
+        
+</beans>

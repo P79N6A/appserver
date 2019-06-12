@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.bank.BankCardDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.bank.BankCardDto" >
+    <id column="bank_card_id" property="bankCardId"  />
+    <result column="user_id" property="userId"  />
+    <result column="name" property="name" />
+    <result column="id_num" property="idNum" />
+    <result column="bank_name" property="bankName" />
+    <result column="card_number" property="cardNumber" />
+    <result column="phone" property="phone" />
+    <result column="create_time" property="time" />
+    <result column="last_use_time" property="lastUseTime" />
+    <result column="file_url" property="bankLogoUrl" />
+    <result column="identity_type" property="identityType" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    bank_card_id, 
+    user_id, 
+    name, 
+    id_num,
+    card_number, 
+    phone,
+    bc.create_time,
+    bc.bank_name,
+    last_use_time,
+    identity_type,
+    a.file_url
+  </sql>
+<!--   查询用户银行卡列表 -->
+  <select id="getBankCardListByUser" resultMap="BaseResultMap" parameterType="java.util.Map" >
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+			1dcq_bank_card as bc
+		LEFT JOIN 
+			1dcq_bank as b 
+		ON 
+			bc.bank_name = b.bank_name
+		LEFT JOIN
+		 1dcq_attachment a
+		ON 
+		b.bank_logo = a.attachement_id
+    WHERE 
+    	user_id = #{userId}
+    ORDER BY 
+    	last_use_time desc
+    LIMIT #{n},#{m}
+    
+  </select>
+  
+  <!-- 根据银行卡号查询绑定记录 -->
+  <select id="getBankCardByCard" resultMap="BaseResultMap" parameterType="java.util.Map" >
+      select * from 1dcq_bank_card 
+      where
+      1=1
+      <if test="cardNumber != null">
+     	 and card_number = #{cardNumber}
+      </if>
+      <if test="userId != null">
+   	     and user_id = #{userId}
+      </if>
+      <if test="accountType != null">
+   	     and account_type = #{accountType}
+      </if>
+        order by last_use_time desc limit 1
+  </select>
+  
+  <!-- 查询用户银行卡总数 -->
+  <select id="getBankCardCountByUser" resultType="java.lang.Integer" parameterType="java.lang.Long" >
+		SELECT
+			count(*)
+		FROM
+			1dcq_bank_card as bc
+		LEFT JOIN 
+			1dcq_bank as b 
+		ON 
+			bc.bank_name = b.bank_name
+		LEFT JOIN
+		 1dcq_attachment a
+		ON 
+		b.bank_logo = a.attachement_id
+    where bc.user_id = #{userId} 
+  </select> 
+  
+	<!--   更新银行卡使用时间 -->
+  <update id="updateBankCardUseTime"  parameterType="java.util.Map">
+  	UPDATE 
+  		1dcq_bank_card
+  	SET 
+  		last_use_time = now()
+  	WHERE
+  		card_number = #{cardNumber} and user_id = #{userId}
+  </update>
+  <insert id="saveBankCard" parameterType="com.idcq.appserver.dto.bank.BankCardDto" >
+    insert into 1dcq_bank_card
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="bankCardId != null" >
+        bank_card_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="identityType != null" >
+        identity_type,
+      </if>
+       <if test="accountType != null" >
+        account_type,
+      </if>
+      <if test="idNum != null" >
+        id_num,
+      </if>
+      <if test="bankName != null" >
+        bank_name,
+      </if>
+       <if test="bankSubbranchName != null" >
+        bank_subbranch_name,
+      </if>
+      <if test="cardNumber != null" >
+        card_number,
+      </if>
+     
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="time != null" >
+        create_time,
+      </if>
+      <if test="lastUseTime != null" >
+        last_use_time,
+      </if>      
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="bankCardId != null" >
+        #{bankCardId},
+      </if>
+      <if test="userId != null" >
+        #{userId},
+      </if>
+      <if test="name != null" >
+        #{name},
+      </if>
+      <if test="identityType != null" >
+         #{identityType},
+      </if>
+       <if test="accountType != null" >
+         #{accountType},
+      </if>
+      <if test="idNum != null" >
+        #{idNum},
+      </if>
+      <if test="bankName != null" >
+        #{bankName},
+      </if>
+       <if test="bankSubbranchName != null" >
+        #{bankSubbranchName},
+      </if>
+      <if test="cardNumber != null" >
+        #{cardNumber},
+      </if>
+      <if test="phone != null" >
+        #{phone},
+      </if>
+      <if test="time != null" >
+        #{time},
+      </if>
+      <if test="lastUseTime != null" >
+        #{lastUseTime},
+      </if>      
+    </trim>
+  </insert>
+  
+  <!-- 判断用户和银行卡是否已经绑定 -->
+  <select id="getBankCardByMap" resultType="java.lang.Integer" parameterType="java.util.Map" >
+    select 
+    	count(*)
+    from
+    	1dcq_bank_card
+    where
+    	user_id = #{userId}
+    and
+    	card_number = #{cardNumber}
+  </select>
+  <select id="getSubbranchNameByNum" resultType="java.lang.String" parameterType="java.lang.String" >
+    select 
+    	bank_subbranch_name
+    from
+    	1dcq_bank_card
+    where
+    	card_number = #{cardNumber}
+    limit 1
+  </select>
+  <!-- 解绑银行卡 -->
+  <delete id="unBindBankCard" parameterType="com.idcq.appserver.dto.bank.BankCardDto" >
+    DELETE FROM 
+    	1dcq_bank_card
+    WHERE
+    	 card_number = #{cardNumber}
+    AND 
+    	user_id = #{userId}
+  </delete>
+</mapper>

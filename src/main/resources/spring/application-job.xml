@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	 xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx"	
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+	http://www.springframework.org/schema/jee
+	http://www.springframework.org/schema/jee/spring-jee-3.2.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.2.xsd"
+	>
+     <!-- JobFactory -->
+	<bean id="quarzJobFactory" class="com.idcq.appserver.index.quartz.job.factory.QuarzJobFactory"></bean>
+	
+    <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"> 
+        <property name="triggers">  
+            <list>  
+                <ref bean="createGoodsIndexTrigger" />
+                <ref bean="solrCatchDataTrigger" />
+                  <!--<ref bean="shopResourceTrigger" /> -->
+                <ref bean="computeAvgGradeTrigger" />
+               <!-- <ref bean="orderShopSourceCallTrigger"/> --> <!-- 预订单过期提前提醒消息推送任务 -->
+                <ref bean="checkShopStatusTrigger"/>
+                <ref bean="orderGoodsSettleShopTrigger"/> 
+                <ref bean="busAreaActivityStatusChangeTrigger"/>
+                <ref bean="sorlFreshJobTrigger"/>
+                <ref bean="shopCouponStatusChangeTrigger"/>
+                <ref bean="memberBirthDaySendSmsStatusChangeTrigger"/>
+                <ref bean="buyvMoneyRebateTrigger"/>
+                <ref bean="push3721JobTrigger"/>
+                <ref bean="AgentRebatesJobTrigger"/>
+                <ref bean="UserRebatesJobTrigger"/>
+                <ref bean="marketRebatesJobTrigger"/>
+            </list>  
+        </property>  
+        <property name="schedulerContextAsMap">  
+            <map>  
+                <entry key="timeout" value="30" />  
+            </map>  
+        </property>  
+        <property name="configLocation" value="classpath:/quartz.properties" /> 
+        <property name="jobFactory" ref="quarzJobFactory"></property>
+    </bean> 
+    
+	<bean id="solrCatchDataJob" class="org.springframework.scheduling.quartz.JobDetailBean">  
+	    <property name="jobClass" value="com.idcq.appserver.index.quartz.job.SolrCatchDataJob"/>  
+	</bean>
+	<bean id="solrCatchDataTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="solrCatchDataJob"  
+        p:cronExpression="0/30 * * * * ?">  
+    </bean>
+    <!-- 商铺购买V产品定时任务 -->
+    <bean id="buyvMoneyRebate" class="org.springframework.scheduling.quartz.JobDetailBean">
+	    <property name="jobClass" value="com.idcq.appserver.index.quartz.job.rebates.BuyvMoneyRebateJob"/>
+	</bean>
+	<bean id="buyvMoneyRebateTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean"
+        p:jobDetail-ref="buyvMoneyRebate"
+        p:cronExpression="0 0 2 * * ?"> <!-- 每天晚上两点执行一次 -->
+    </bean>
+    <!-- app定时推送任务 -->
+    <bean id="push3721Job" class="org.springframework.scheduling.quartz.JobDetailBean">
+	    <property name="jobClass" value="com.idcq.appserver.index.quartz.job.PushMsgJob"/>
+	</bean>
+	<bean id="push3721JobTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean"
+        p:jobDetail-ref="push3721Job"
+        p:cronExpression="0 0 10 * * ?"> <!-- 每天早上10执行一次 -->
+    </bean>
+    
+    
+    <!-- 3721代理 -->
+    <bean id="AgentRebatesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	    <property name="jobClass" value="com.idcq.appserver.index.quartz.job.rebates.AgentRebatesJob"/>
+	</bean>
+	<bean id="AgentRebatesJobTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean"
+        p:jobDetail-ref="AgentRebatesJob"
+        p:cronExpression="0 0 2 * * ?"> <!-- 每天早上2点执行一次 -->
+    </bean>
+    
+    <!-- 3721用户 -->
+    <bean id="UserRebatesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	    <property name="jobClass" value="com.idcq.appserver.index.quartz.job.rebates.UserRebatesJob"/>
+	</bean>
+	<bean id="UserRebatesJobTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean"
+        p:jobDetail-ref="UserRebatesJob"
+        p:cronExpression="0 0 2 * * ?"> <!-- 每天早上2点执行一次 -->
+    </bean>
+    
+    <!-- 3721店铺营销币 -->
+    <bean id="marketRebatesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	    <property name="jobClass" value="com.idcq.appserver.index.quartz.job.rebates.MarketRebatesJob"/>
+	</bean>
+	<bean id="marketRebatesJobTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean"
+        p:jobDetail-ref="marketRebatesJob"
+        p:cronExpression="0 0 1 * * ?"> <!-- 每天早上1点执行一次 -->
+    </bean>
+    
+     <!-- solr -->
+     
+     <bean name="orderStatusMonitorJob" class="org.springframework.scheduling.quartz.JobDetailBean"  
+        p:jobClass="com.idcq.appserver.index.quartz.job.OrderStatusMonitorJob"  >  
+    </bean>  
+	
+	  <bean id="orderStatusMonitorTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="orderStatusMonitorJob"  
+        p:cronExpression="0 0 0/6 * * ?">  <!-- 一天跑一次 -->
+    </bean>  
+    
+    <!--已开单的订单到期自动完成任务(场地类) 2015-8-17  -->
+     <bean name="orderAutoFinishJob" class="org.springframework.scheduling.quartz.JobDetailBean"  
+        p:jobClass="com.idcq.appserver.index.quartz.job.OrderAutoFinishJob"  >  
+    </bean>  
+	
+	  <bean id="orderAutoFinishJobTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="orderAutoFinishJob"  
+        p:cronExpression="0 0/10 * * * ?">  <!-- 每10分钟执行一次 -->
+    </bean>  
+	  
+<!-- 订单结算定时器User -->	 
+	<bean name="orderGoodsSettleJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean"  
+        p:jobClass="com.idcq.appserver.index.quartz.job.OrderGoodsSettleJob"  >  
+    </bean>  
+  
+    <bean id="createGoodsIndexTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="orderGoodsSettleJobDetail"  
+        p:cronExpression="0 30 00 * * ?">  
+        <property name="jobDataAsMap">  
+            <map>  
+                <entry key="name" value="createGoodsIndexTrigger" />  
+            </map>  
+        </property>  
+    </bean>  
+<!-- 订单结算定时器Shop -->	 
+	<bean name="orderGoodsSettleShopJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean"  
+        p:jobClass="com.idcq.appserver.index.quartz.job.OrderGoodsSettleShopJob"  >  
+    </bean>  
+  
+    <bean id="orderGoodsSettleShopTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="orderGoodsSettleShopJobDetail"  
+        p:cronExpression="0 0 1 * * ?">  
+        <property name="jobDataAsMap">  
+            <map>  
+                <entry key="name" value="orderGoodsSettleShopTrigger" />  
+            </map>  
+        </property>  
+    </bean>  
+    
+    <!-- 商圈相关定时器 -->
+    <!-- 红包状态切换 -->
+    <bean id="redPacketStatusChangeJob" class="org.springframework.scheduling.quartz.JobDetailBean">  
+	    <property name="jobClass" value="com.idcq.appserver.index.quartz.job.RedPacketStatusChangeJob"/>  
+	</bean>
+	<bean id="redPacketStatusChangeTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="redPacketStatusChangeJob"  
+        p:cronExpression="0 0 0 * * ?">  
+    </bean> 
+    <bean id="busAreaActivityStatusChangeJob" class="org.springframework.scheduling.quartz.JobDetailBean">  
+	    <property name="jobClass" value="com.idcq.appserver.index.quartz.job.BusAreaActivityStatusChangeJob"/>  
+	</bean>
+	<bean id="busAreaActivityStatusChangeTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="busAreaActivityStatusChangeJob"  
+        p:cronExpression="0 0 0 * * ?">  
+    </bean> 
+    
+    <!-- 更新优惠券状态  start-->
+    <bean id="shopCouponStatusChangeJob" class="org.springframework.scheduling.quartz.JobDetailBean">  
+	    <property name="jobClass" value="com.idcq.appserver.index.quartz.job.ShopCouponStatusChangeJob"/>  
+	</bean>
+	<bean id="shopCouponStatusChangeTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="shopCouponStatusChangeJob"  
+        p:cronExpression="0 0 0 * * ?">  
+    </bean> 
+    <!-- 更新优惠券状态  end-->
+    
+    <!-- 更新店内会员生日是否发送短信状态修改  start-->
+    <bean id="memberBirthDaySendSmsStatusChangeJob" class="org.springframework.scheduling.quartz.JobDetailBean">  
+	    <property name="jobClass" value="com.idcq.appserver.index.quartz.job.MemberBirthDaySendSmsStatusChangeJob"/>  
+	</bean>
+	<bean id="memberBirthDaySendSmsStatusChangeTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="memberBirthDaySendSmsStatusChangeJob"
+        p:cronExpression="0 0 0 1 6,12 ?">
+    </bean>  
+    
+    <!-- 更新店内会员生日是否发送短信状态修改  end-->
+    
+    <!-- 定时处理商铺资源使用情况 -->
+    <bean name="shopResourceJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean"  
+        p:jobClass="com.idcq.appserver.index.quartz.job.ShopResourceJob">  
+    </bean>  
+    <bean id="shopResourceTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="shopResourceJobDetail"  
+        p:cronExpression="0 0 0/1 * * ?">  
+        <property name="jobDataAsMap">  
+            <map>  
+                <entry key="name" value="shopResourceTrigger" />  
+            </map>  
+        </property>  
+    </bean>  
+    
+    <!-- 定时计算商铺平均分 -->
+	<bean name="computeAvgGradeJob" class="org.springframework.scheduling.quartz.JobDetailBean"  
+        p:jobClass="com.idcq.appserver.index.quartz.job.ComputeAvgGradeShopJob"  >  
+    </bean>  
+  
+    <bean id="computeAvgGradeTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="computeAvgGradeJob"  
+        p:cronExpression="0 30 02 * * ?">  
+        <property name="jobDataAsMap">  
+            <map>  
+                <entry key="name" value="computeAvgGradeTrigger" />  
+            </map>  
+        </property>  
+    </bean>
+    <!-- 定时检测商家合同截止日期 -->
+	<bean name="checkShopStatusJob" class="org.springframework.scheduling.quartz.JobDetailBean"  
+        p:jobClass="com.idcq.appserver.index.quartz.job.CheckShopStatusJob"  >  
+    </bean>  
+  
+    <bean id="checkShopStatusTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="checkShopStatusJob"  
+        p:cronExpression="0 01 00 * * ?">  
+        <property name="jobDataAsMap">  
+            <map>  
+                <entry key="name" value="checkShopStatusTrigger" />  
+            </map>  
+        </property>  
+    </bean>      
+    <!-- 定时统计商铺和商品销售情况  -->
+    <bean id="statisShopAndGoodsSoldJob" class="org.springframework.scheduling.quartz.JobDetailBean">  
+	    <property name="jobClass" value="com.idcq.appserver.index.quartz.job.TimeStatisShopAndGoodsSoldJob"/>  
+	    <property name="jobDataAsMap">  
+	         <map>  
+	            <entry key="triggerMessage" value="Job Message In JobDetail"/> <!-- 设置JobDetail中的值    -->
+	         </map>  
+	    </property>  
+	</bean>
+    <bean id="statisShopAndGoodsSoldTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="statisShopAndGoodsSoldJob"  
+        p:cronExpression="0 0 0 * * ?">  
+        <property name="jobDataAsMap">  
+            <map>  
+                <entry key="name" value="statisShopAndGoodsSoldTrigger" />  
+            </map>  
+        </property>  
+    </bean>  
+    
+     <!-- 定时全量刷新sorl  -->
+    <bean id="sorlFreshJob" class="org.springframework.scheduling.quartz.JobDetailBean">  
+	    <property name="jobClass" value="com.idcq.appserver.index.quartz.job.SorlFreshJob"/>  
+	    <property name="jobDataAsMap">  
+	         <map>  
+	            <entry key="triggerMessage" value="Job Message In JobDetail"/> <!-- 设置JobDetail中的值    -->
+	         </map>  
+	    </property>  
+	</bean>
+    <bean id="sorlFreshJobTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="sorlFreshJob"  
+        p:cronExpression="0 0 3 * * ?">  
+        <property name="jobDataAsMap">  
+            <map>  
+                <entry key="name" value="sorlFreshJobTrigger" />  
+            </map>  
+        </property>  
+    </bean>  
+    
+   <!-- 订单预定资源过期提醒 -->
+   <bean id="orderShopSourceCalljob" class="org.springframework.scheduling.quartz.JobDetailBean">  
+	    <property name="jobClass" value="com.idcq.appserver.index.quartz.job.OrderShopSourceCallJob"/>  
+	    <property name="jobDataAsMap">  
+	         <map>  
+	            <entry key="triggerMessage" value="Job Message In JobDetail"/> 
+	         </map>  
+	    </property>  
+	</bean>
+    <bean id="orderShopSourceCallTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="orderShopSourceCalljob"  
+        p:cronExpression="0 0/10 * * * ?">  
+        <property name="jobDataAsMap">  
+            <map>  
+                <entry key="name" value="orderShopSourceCalljob" />  
+            </map>  
+        </property>  
+    </bean>  
+   <!-- 定时发送短信，测试短信通道是否正常任务-->
+   <bean id="sendSmsCodeTimerJob" class="org.springframework.scheduling.quartz.JobDetailBean">  
+	    <property name="jobClass" value="com.idcq.appserver.index.quartz.job.SendSmsCodeTimerJob"/>  
+	    <property name="jobDataAsMap">  
+	         <map>  
+	            <entry key="triggerMessage" value="Job Message In JobDetail"/> 
+	         </map>  
+	    </property>  
+	</bean>
+    <bean id="sendSmsCodeTimerTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="sendSmsCodeTimerJob"  
+        p:cronExpression="0 0 08,16,20 * * ?"><!-- 早上8点，下午4点，晚上8点各发送一次 -->
+        <property name="jobDataAsMap">  
+            <map>  
+                <entry key="name" value="sendSmsCodeTimerJob" />  
+            </map>  
+        </property>  
+    </bean>
+    
+       <!--订单状态为待确认，商家超过10分钟未处理，订单状态变为已退订 10分钟执行一次 -->
+   <bean id="handleOrderStatusJob" class="org.springframework.scheduling.quartz.JobDetailBean">  
+	    <property name="jobClass" value="com.idcq.idianmgr.quartz.HandleOrderStatusJob"/>  
+	    <property name="jobDataAsMap">  
+	         <map>  
+	            <entry key="triggerMessage" value="Job Message In JobDetail"/> 
+	         </map>  
+	    </property>  
+	</bean>
+    <bean id="handleOrderStatusTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="handleOrderStatusJob"  
+        p:cronExpression="0 0/10 * * * ?">  
+        <property name="jobDataAsMap">  
+            <map>  
+                <entry key="name" value="handleOrderStatusJob" />  
+            </map>  
+        </property>  
+    </bean>  
+    <!-- 商品族状态检测 ,默认删除10天前的草稿状态的记录-->
+   <bean id="checkGoodsGroupStatusJob" class="org.springframework.scheduling.quartz.JobDetailBean">  
+	    <property name="jobClass" value="com.idcq.idianmgr.quartz.CheckGoodsGroupStatusJob"/>  
+	    <property name="jobDataAsMap">  
+	         <map>  
+	            <entry key="triggerMessage" value="Job Message In JobDetail"/> 
+	         </map>  
+	    </property>  
+	</bean>
+    <bean id="checkGoodsGroupStatusTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="checkGoodsGroupStatusJob"  
+        p:cronExpression="0 0 2 * * ?">  
+        <property name="jobDataAsMap">  
+            <map>  
+                <entry key="name" value="checkGoodsGroupStatusJob" />  
+            </map>  
+        </property>  
+    </bean>    
+    <!-- 定时更新技师工作状态-->
+   <bean id="updateTechnicianWorkStatusJob" class="org.springframework.scheduling.quartz.JobDetailBean">  
+	    <property name="jobClass" value="com.idcq.appserver.index.quartz.job.UpdateTechnicianWorkStatusJob"/>  
+	    <property name="jobDataAsMap">  
+	         <map>  
+	            <entry key="triggerMessage" value="Job Message In JobDetail"/> 
+	         </map>  
+	    </property>  
+	</bean>
+	
+    <bean id="updateTechnicianWorkStatusTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerBean"  
+        p:jobDetail-ref="updateTechnicianWorkStatusJob"  
+        p:cronExpression="0 0 0 * * ?">  
+        <property name="jobDataAsMap">  
+            <map>  
+                <entry key="name" value="updateTechnicianWorkStatusJob" />  
+            </map>  
+        </property>  
+    </bean>  
+    
+</beans>

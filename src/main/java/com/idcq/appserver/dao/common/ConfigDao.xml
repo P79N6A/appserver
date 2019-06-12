@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dao.common.ConfigDaoImpl">
+	<resultMap id="baseMap" type="com.idcq.appserver.dto.common.ConfigDto">
+		<result column="config_id" property="configId"/>
+		<result column="config_key" property="configKey"/>
+		<result column="config_value" property="configValue"/>
+		<result column="config_group" property="configGroup"/>
+		<result column="config_desc" property="configDesc"/>
+		<result column="biz_id" property="bizId"/>
+		<result column="biz_type" property="bizType"/>
+		<result column="extends_type" property="extendsType"/>
+		<result column="is_offline_modify" property="isOfflineModify"/>
+		<result column="create_time" property="createTime"/>
+		<result column="last_update_time" property="lastUpdateTime"/>
+		<result column="last_update_user_id" property="lastUpdateUserId"/>
+	</resultMap>
+	<sql id="baseSelect">
+		config_id AS configId,
+		config_key AS configKey,
+		config_value AS configValue,
+		config_group AS configGroup,
+		config_desc AS configDesc,
+		biz_id AS bizId,
+		biz_type AS bizType,
+		extends_type AS extendsType,
+		is_offline_modify AS isOfflineModify,
+		create_time AS createTime,
+		last_update_time AS lastUpdateTime,
+		last_update_user_id AS lastUpdateUserId
+	</sql>
+	<select id="queryForConfig" parameterType="com.idcq.appserver.dto.common.ConfigQueryCondition" resultMap="baseMap">
+		SELECT
+		<include refid="baseSelect"/>
+		FROM 1dcq_config
+		<where>
+			<if test="configId != null"> AND config_id=#{configId} </if>
+			<if test="configKeys != null">
+				AND config_key in
+				<foreach collection="configKeys" item="key" open="(" close=")" separator=",">
+					#{key}
+				</foreach>
+			</if>
+			<if test="configGroups != null">
+				AND config_group in
+				<foreach collection="configGroups" item="group" open="(" close=")" separator=",">
+					#{group}
+				</foreach>
+			</if>
+			<if test="bizId != null"> AND biz_id=#{bizId} </if>
+			<if test="bizType != null"> AND biz_type=#{bizType} </if>
+			<if test="extendsType != null">
+				AND extends_type in
+				<foreach collection="extendsType" item="type" open="(" close=")" separator=",">
+					#{type}
+				</foreach>
+			</if>
+			<if test="isOfflineModify != null"> AND is_offline_modify=#{isOfflineModify} </if>
+		</where>
+		<if test="orderBy == 1">
+			order by config_key
+			<if test="orderByMode == 0">
+				desc
+			</if>
+			<if test="orderByMode != 0">
+				asc
+			</if>
+		</if>
+	</select>
+	<select id="countForConfig" parameterType="com.idcq.appserver.dto.common.ConfigQueryCondition" resultType="java.lang.Integer">
+		SELECT COUNT(config_id)
+		FROM 1dcq_config
+		<where>
+			<if test="configId != null"> AND config_id=#{configId} </if>
+			<if test="configKeys != null">
+				AND config_key in
+				<foreach collection="configKeys" item="key" open="(" close=")" separator=",">
+					#{key}
+				</foreach>
+			</if>
+			<if test="configGroups != null">
+				AND config_group in
+				<foreach collection="configGroups" item="group" open="(" close=")" separator=",">
+					#{group}
+				</foreach>
+			</if>
+			<if test="bizId != null"> AND biz_id=#{bizId} </if>
+			<if test="bizType != null"> AND biz_type=#{bizType} </if>
+			<if test="extendsType != null">
+				AND extends_type in
+				<foreach collection="extendsType" item="type" open="(" close=")" separator=",">
+					#{type}
+				</foreach>
+			</if>
+			<if test="isOfflineModify != null"> AND is_offline_modify=#{isOfflineModify} </if>
+		</where>
+	</select>
+	
+	<select id="queryForAllConfig" parameterType="com.idcq.appserver.dto.common.ConfigDto" resultMap="baseMap">
+		SELECT
+		<include refid="baseSelect"/>
+		FROM 1dcq_config
+		<trim prefix="WHERE" suffixOverrides="AND">
+			<if test="configId != null">
+				config_id=#{configId} AND 
+			</if>
+			<if test="configKey != null">
+				config_key=#{configKey} AND 
+			</if>
+			<if test="configValue != null">
+				config_value=#{configValue} AND 
+			</if>
+			<if test="configGroup != null">
+				config_group=#{configGroup} AND 
+			</if>
+			
+			<if test="configDesc != null">
+				config_desc=#{configDesc} AND 
+			</if>
+			<if test="bizId != null">
+				biz_id=#{bizId} AND 
+			</if>
+			<if test="bizType != null">
+				biz_type=#{bizType} AND 
+			</if>
+			<if test="extendsType != null">
+				extends_type=#{extendsType} AND 
+			</if>
+			
+			<if test="isOfflineModify != null">
+				is_offline_modify=#{isOfflineModify} AND 
+			</if>
+			<if test="createTime != null">
+				create_time >= #{createTime} AND 
+			</if>
+			<if test="lastUpdateTime != null">
+				last_update_time >= #{lastUpdateTime} AND 
+			</if>
+			<if test="lastUpdateUserId != null">
+				last_update_user_id=#{lastUpdateUserId} AND 
+			</if>
+		</trim>
+	</select>
+	
+	<update id="updateShopConfig" parameterType="com.idcq.appserver.dto.common.ConfigDto">
+		UPDATE 1dcq_config SET
+		config_value=#{configValue},
+		<if test="configDesc != null">config_desc=#{configDesc},</if>
+		<if test="isOfflineModify != null">is_offline_modify=#{isOfflineModify},</if>
+		last_update_time=now(),
+		last_update_user_id=#{lastUpdateUserId}
+		<trim suffixOverrides="AND">
+		<where>
+			<if test="configId">config_id=#{configId} AND </if>
+			<if test="configKey">config_key=#{configKey} AND </if>
+			<if test="bizId">biz_id=#{bizId} AND </if>
+			<if test="bizType">biz_type=#{bizType} AND </if>
+		</where>
+		</trim>
+	</update>
+	<delete id="deleteConfig" parameterType="com.idcq.appserver.dto.common.ConfigDto">
+		DELETE FROM 1dcq_config
+		WHERE
+		<trim prefixOverrides="AND">
+		<if test="configId != null"> AND config_id=#{configId}  </if>
+		<if test="configKey != null"> AND config_key=#{configKey}  </if>
+		<if test="configGroup != null"> AND config_group=#{configGroup}  </if>
+		<if test="bizId != null"> AND biz_id=#{bizId}  </if>
+		<if test="bizType != null"> AND biz_type=#{bizType}  </if>
+		</trim>
+	</delete>
+<!-- 	com.idcq.appserver.dto.common.ConfigDto -->
+	<insert id="batchInsert" parameterType="java.util.List">
+		INSERT INTO 1dcq_config(
+<!-- 		config_id AS configId, -->
+		config_key,
+		config_value,
+		config_group,
+		config_desc,
+		biz_id,
+		biz_type,
+		extends_type,
+		is_offline_modify,
+		create_time,
+		last_update_time,
+		last_update_user_id
+		) VALUES
+		<trim suffixOverrides=",">
+			<foreach collection="list" item="lst">
+				(
+				#{lst.configKey},
+				#{lst.configValue},
+				#{lst.configGroup},
+				#{lst.configDesc},
+				#{lst.bizId},
+				#{lst.bizType},
+				#{lst.extendsType},
+				#{lst.isOfflineModify},
+				<choose>
+					<when test="lst.createTime != null">
+						#{lst.createTime},
+					</when>
+					<otherwise>
+						now(),
+					</otherwise>
+				</choose>
+				<choose>
+					<when test="lst.lastUpdateTime != null">
+						#{lst.lastUpdateTime},
+					</when>
+					<otherwise>
+						now(),
+					</otherwise>
+				</choose>
+				#{lst.lastUpdateUserId}
+				),
+			</foreach>
+		</trim>
+		
+	</insert>
+	
+	<delete id="deleteConfigs" parameterType="com.idcq.appserver.dto.common.ConfigQueryCondition" >
+	    delete from 1dcq_config 
+        where biz_id=#{bizId}
+          and biz_type=#{bizType}      
+		<if test="configKeys != null">
+			AND config_key in
+			<foreach collection="configKeys" item="key" open="(" close=")" separator=",">
+				#{key}
+			</foreach>
+		</if>
+		<if test="configGroups != null">
+			AND config_group in
+			<foreach collection="configGroups" item="group" open="(" close=")" separator=",">
+				#{group}
+			</foreach>
+		</if>
+	</delete>
+</mapper>

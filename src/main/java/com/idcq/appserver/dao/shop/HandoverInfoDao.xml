@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shop.HandoverInfoDto">
+	        
+	<resultMap id="BaseResultMap" type="com.idcq.appserver.dto.shop.HandoverInfoDto">
+		<id column="handover_info_id" property="handoverInfoId" />
+		<result column="local_id" property="localId"  />
+		<result column="cashier_name" property="cashierName"  />
+		<result column="cashier_id" property="cashierId" />
+		<result column="logout_time" property="logoutTime"  />
+		<result column="handover_time" property="handoverTime"  />
+		<result column="login_time" property="loginTime"  />
+		<result column="delete_order_num" property="deleteOrderNum"  />
+		<result column="book_order_num" property="bookOrderNum"  />
+		<result column="member_pos_turnover" property="memberPosTurnover"  />
+		<result column="nonmember_pos_turnover" property="nonmemberPosTurnover"  />
+		<result column="member_online_pay_turnover" property="memberOnlinePayTurnover"  />
+		<result column="nonmember_online_pay_turnover" property="nonmemberOnlinePayTurnover"  />
+		<result column="member_cash_turnover" property="memberCashTurnover"  />
+		<result column="nomember_cash_turnover" property="nonmemberCashTurnover"  />
+		<result column="member_maling_amount" property="memberMalingAmount"  />
+		<result column="nonmember_maling_amount" property="nonmemberMalingAmount"  />
+		<result column="shop_id" property="shopId"  />
+		<result column="is_handover" property="isHandover"  />
+		<result column="create_orders_num" property="createOrdersNum"  />
+		<result column="advance" property="advance"  />
+		<result column="update_time" property="updateTime"  />
+		<result column="device_id" property="deviceId"  />
+		<result column="member_order_turnover" property="memberOrderTurnover"  />
+		<result column="member_orders_num" property="memberOrdersNum"  />
+		<result column="not_pay_orders_num" property="notPayOrdersNum"  />
+		<result column="nonmember_malling_num" property="nonmembermallingNum"  />
+		<result column="member_malling_num" property="nonmembermallingNum"  />
+		<result column="people_num" property="peopleNum"  />
+		<result column="tuicai_num" property="tuicaiNum"  />
+		<result column="nonmember_turnover" property="nonmemberTurnover"  />
+		<result column="client_sign" property="clientSign"  />
+		<result column="pay_orders_num" property="payOrdersNum"  />
+		<result column="turnover_all" property="turnoverAll"  />
+		<result column="revolve_turnover" property="revolveTurnover"  />
+		<result column="cash_recharge_turnover" property="cashRechargeTurnover"  />
+		<result column="pos_recharge_turnover" property="posRechargeTurnover"  />
+		<result column="sale_turnover" property="saleTurnover"  />
+		<result column="all_cash_turnover" property="allCashTurnover"  />
+		<result column="all_pos_turnover" property="allPosTurnover"  />
+		<result column="all_online_turnover" property="allOnlineTurnover"  />
+	    <result column="handover_code" property="handoverCode"  />
+		
+		
+
+	</resultMap>
+	
+	
+	<insert id="insertShopHandoverInfo" parameterType="com.idcq.appserver.dto.shop.HandoverInfoDto"  useGeneratedKeys="true" keyProperty="handoverInfoId">
+	    insert into 1dcq_shop_handover_info
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="localId != null" >
+	        local_id,
+	      </if>
+	      <if test="cashierName != null" >
+	        cashier_name,
+	      </if>
+	      <if test="cashierId != null" >
+	        cashier_id,
+	      </if>
+	      <if test="logoutTime != null" >
+	        logout_time,
+	      </if>
+	      <if test="handoverTime != null" >
+	        handover_time,
+	      </if>
+	      <if test="loginTime != null" >
+	        login_time,
+	      </if>
+	       <if test="deleteOrderNum != null" >
+	        delete_order_num,
+	      </if>
+	       <if test="bookOrderNum != null" >
+	        book_order_num,
+	      </if>
+	       <if test="memberPosTurnover != null" >
+	        member_pos_turnover,
+	      </if>
+	       <if test="nonmemberPosTurnover != null" >
+	        nonmember_pos_turnover,
+	      </if>
+	       <if test="memberOnlinePayTurnover != null" >
+	        member_online_pay_turnover,
+	      </if>
+	       <if test="nonmemberOnlinePayTurnover != null" >
+	        nonmember_online_pay_turnover,
+	      </if>
+	       <if test="memberCashTurnover != null" >
+	        member_cash_turnover,
+	      </if>
+	       <if test="nonmemberCashTurnover  != null" >
+	        nonmember_cash_turnover,
+	      </if>
+	       <if test="nonmemberMalingAmount  != null" >
+	        nonmember_maling_amount,
+	      </if>
+	       <if test="shopId  != null" >
+	        shop_id,
+	      </if>
+	       <if test="isHandover  != null" >
+	        is_handover,
+	      </if>
+	      <if test="createOrdersNum  != null" >
+	        create_orders_num,
+	      </if>
+	      <if test="advance != null" >
+	        advance,
+	      </if>
+	      <if test="updateTime != null" >
+	        update_time,
+	      </if>
+	      <if test="deviceId != null" >
+	        device_id,
+	      </if>
+	       <if test="memberOrderTurnover != null" >
+	        member_order_turnover,
+	      </if>
+	       <if test="memberOrdersNum != null" >
+	        member_orders_num,
+	      </if>
+	       <if test="notPayOrdersNum != null" >
+	        not_pay_orders_num,
+	      </if>
+	       <if test="nonmembermallingNum != null" >
+	        nonmember_malling_num,
+	      </if>
+	       <if test="membermallingNum != null" >
+	        member_malling_num,
+	      </if>
+	       <if test="peopleNum != null" >
+	        people_num,
+	      </if>
+	       <if test="tuicaiNum != null" >
+	        tuicai_num,
+	      </if>
+	       <if test="nonmemberTurnover != null" >
+	        nonmember_turnover,
+	      </if>
+	       <if test="clientSign  != null" >
+	        client_sign,
+	      </if>
+	       <if test="payOrdersNum  != null" >
+	        pay_orders_num,
+	      </if>
+	       <if test="turnoverAll  != null" >
+	        turnover_all,
+	      </if>
+	       <if test="revolveTurnover  != null" >
+	        revolve_turnover,
+	      </if>
+	       <if test="cashRechargeTurnover  != null" >
+	        cash_recharge_turnover,
+	      </if>
+	      <if test="posRechargeTurnover  != null" >
+	        pos_recharge_turnover,
+	      </if>
+	      <if test="saleTurnover  != null" >
+	        sale_turnover,
+	      </if>
+	      <if test="allCashTurnover  != null" >
+	        all_cash_turnover,
+	      </if>
+	      <if test="allPosTurnover  != null" >
+	        all_pos_turnover,
+	      </if>	      
+	      <if test="allOnlineTurnover  != null" >
+	        all_online_turnover,
+	      </if>	  
+	      <if test="handoverCode != null" >
+	        handover_code,
+	     </if>     
+	    </trim>
+	    
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="localId != null" >
+	        #{localId},
+	      </if>
+	      <if test="cashierName != null" >
+	        #{cashierName},
+	      </if>
+	      <if test="cashierId != null" >
+	        #{cashierId},
+	      </if>
+	      <if test="logoutTime != null" >
+	        #{logoutTime},
+	      </if>
+	      <if test="handoverTime != null" >
+	        #{handoverTime},
+	      </if>
+	      <if test="loginTime != null" >
+	        #{loginTime},
+	      </if>
+	       <if test="deleteOrderNum != null" >
+	        #{deleteOrderNum},
+	      </if>
+	       <if test="bookOrderNum != null" >
+	        #{bookOrderNum},
+	      </if>
+	       <if test="memberPosTurnover != null" >
+	        #{memberPosTurnover},
+	      </if>
+	       <if test="nonmemberPosTurnover != null" >
+	        #{nonmemberPosTurnover},
+	      </if>
+	       <if test="nonmemberOnlinePayTurnover != null" >
+	        #{nonmemberOnlinePayTurnover},
+	      </if>
+	       <if test="memberOnlinePayTurnover != null" >
+	        #{memberOnlinePayTurnover},
+	      </if>
+	       <if test="memberCashTurnover != null" >
+	        #{memberCashTurnover},
+	      </if>
+	       <if test="nonmemberCashTurnover  != null" >
+	       #{nonmemberCashTurnover},
+	      </if>
+	       <if test="nonmemberMalingAmount  != null" >
+	        #{nonmemberMalingAmount},
+	      </if>
+	       <if test="shopId  != null" >
+	        #{shopId},
+	      </if>
+	       <if test="isHandover  != null" >
+	        #{isHandover},
+	      </if>
+	      <if test="createOrdersNum  != null" >
+	        #{createOrdersNum},
+	      </if>
+	      <if test="advance != null" >
+	        #{advance},
+	      </if>
+	      <if test="updateTime != null" >
+	        #{updateTime},
+	      </if>
+	      <if test="deviceId != null" >
+	        #{deviceId},
+	      </if>
+	       <if test="memberOrderTurnover != null" >
+	        #{memberOrderTurnover},
+	      </if>
+	       <if test="memberOrdersNum != null" >
+	        #{memberOrdersNum},
+	      </if>
+	       <if test="notPayOrdersNum != null" >
+	        #{notPayOrdersNum},
+	      </if>
+	       <if test="nonmembermallingNum != null" >
+	        #{nonmembermallingNum},
+	      </if>
+	       <if test="membermallingNum != null" >
+	        #{membermallingNum},
+	      </if>
+	       <if test="peopleNum != null" >
+	        #{peopleNum},
+	      </if>
+	       <if test="tuicaiNum != null" >
+	        #{tuicaiNum},
+	      </if>
+	       <if test="nonmemberTurnover != null" >
+	        #{nonmemberTurnover},
+	      </if>
+	       <if test="clientSign  != null" >
+	        #{clientSign},
+	      </if>
+	       <if test="payOrdersNum  != null" >
+	        #{payOrdersNum},
+	      </if>
+	       <if test="turnoverAll  != null" >
+	        #{turnoverAll},
+	      </if>
+	       <if test="revolveTurnover  != null" >
+	        #{revolveTurnover},
+	      </if>
+	       <if test="cashRechargeTurnover  != null" >
+	        #{cashRechargeTurnover},
+	      </if>
+	      <if test="posRechargeTurnover  != null" >
+	        #{posRechargeTurnover},
+	      </if>
+	      <if test="saleTurnover  != null" >
+	        #{saleTurnover},
+	      </if>
+	      <if test="allCashTurnover  != null" >
+	        #{allCashTurnover},
+	      </if>
+	      <if test="allPosTurnover  != null" >
+	        #{allPosTurnover},
+	      </if>	      
+	      <if test="allOnlineTurnover  != null" >
+	        #{allOnlineTurnover},
+	      </if>	
+	     <if test="handoverCode != null" >
+	        #{handoverCode},
+	     </if> 
+	    </trim>
+	  </insert> 
+	  
+<!-- 获取同步交接班信息 -->
+	<select id="getShopHandoverInfoList" resultMap="BaseResultMap"
+			parameterType="com.idcq.appserver.dto.shop.HandoverInfoDto">
+		select
+			  handover_info_id,
+			  handover_code,
+			  shop_id,
+			  local_id,
+			  cashier_name,
+			  cashier_id,
+			  logout_time,
+			  handover_time,
+			  login_time,
+			  delete_order_num,
+			  book_order_num,
+			  member_pos_turnover,
+			  nonmember_pos_turnover,
+			  member_online_pay_turnover,
+			  nonmember_online_pay_turnover,
+			  member_cash_turnover,
+			  nonmember_cash_turnover,
+			  member_maling_amount,
+			  nonmember_maling_amount,
+			  is_handover,
+			  create_orders_num,
+			  advance,
+			  update_time,
+			  device_id,
+			  member_order_turnover,
+			  member_orders_num,
+			  not_pay_orders_num,
+			  nonmember_malling_num,
+			  member_malling_num,
+			  people_num,
+			  tuicai_num,
+			  nonmember_turnover,
+			  client_sign,
+			  pay_orders_num,
+			  turnover_all,
+			  revolve_turnover,
+			  cash_recharge_turnover,
+			  pos_recharge_turnover,
+			  sale_turnover,
+			  all_cash_turnover,
+			  all_pos_turnover,
+			  all_online_turnover
+		from 
+			1dcq_shop_handover_info
+		where 
+			1=1
+		 <if test="shopId != null" >
+	        and shop_id = #{shopId}
+	     </if>
+	 	 <if test="handoverInfoId != null" >
+	        and handover_info_id = #{handoverInfoId}
+	     </if> 
+	     <if test="startTime != null" >
+	        and handover_time >= #{startTime}
+	     </if>
+	     <if test="handoverCode != null" >
+	        and handover_code = #{handoverCode}
+	     </if> 
+	     <if test="endTime != null" >
+	        and handover_time &lt;= #{endTime}
+	     </if>     
+	     limit #{pageNo},#{pageSize}  
+	</select>
+	<select id="getShopHandoverInfoListCount" resultType="java.lang.Integer" 
+			parameterType="com.idcq.appserver.dto.shop.HandoverInfoDto">
+		select
+			count(*)
+		from 
+			1dcq_shop_handover_info
+		where 
+			1=1
+		 <if test="shopId != null" >
+	        and shop_id = #{shopId}
+	     </if>
+	     <if test="handoverCode != null" >
+	        and handover_code = #{handoverCode}
+	     </if> 
+	     <if test="startTime != null" >
+	        and handover_time >= #{startTime}
+	     </if>
+	     <if test="endTime != null" >
+	        and handover_time &lt;= #{endTime}
+	     </if>       
+	</select>		
+</mapper>

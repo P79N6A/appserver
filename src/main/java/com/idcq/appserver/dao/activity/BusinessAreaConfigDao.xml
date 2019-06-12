@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.activity.BusinessAreaConfigDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.activity.BusinessAreaConfigDto" >
+    <id column="business_area_config_id" property="businessAreaConfigId" jdbcType="INTEGER" />
+    <result column="business_area_activity_id" property="businessAreaActivityId" jdbcType="INTEGER" />
+    <result column="config_type" property="configType" jdbcType="TINYINT" />
+    <result column="config_value" property="configValue" jdbcType="VARCHAR" />
+    <result column="config_code" property="configCode" jdbcType="VARCHAR" />
+    <result column="config_name" property="configName" jdbcType="VARCHAR" />
+    <result column="config_desc" property="configDesc" jdbcType="VARCHAR" />
+    <result column="group_id" property="groupId" jdbcType="SMALLINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    business_area_config_id, business_area_activity_id, config_type, config_value, config_code, 
+    config_name, config_desc, group_id, create_time
+  </sql>
+  <select id="getBusinessAreaConfigList" resultMap="BaseResultMap" parameterType="com.idcq.appserver.dto.activity.BusinessAreaConfigDto" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from 1dcq_business_area_config
+     limit #{n},#{m}
+  </select>
+  
+   <select id="getBusinessAreaConfigByActivityId" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    group_id as groupId,
+  	config_type as configType,
+    config_code as configCode,
+    config_name as configName,
+    config_value as configValue
+    from 1dcq_business_area_config
+    where 1=1 and config_type=1
+	<if test="businessAreaActivityId!=null and businessAreaActivityId!=''">
+		and business_area_activity_id=#{businessAreaActivityId}
+	</if>
+  </select>
+  
+   <select id="getBusinessAreaConfigByActId" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    group_id,
+  	config_type,
+    config_code,
+    config_name,
+    config_value
+    from 1dcq_business_area_config
+    where business_area_activity_id=#{businessAreaActivityId}
+   	<if test="configType != null">
+   		 AND config_type = #{configType}
+	</if>
+    
+  </select>
+  
+   <!--   通过订单金额和code查询最大满值 -->
+  <select id="getOverConfigValueByCodeAndAreaId" resultType="java.util.Map" parameterType="java.util.Map" >
+		SELECT
+			max(config_value) as configValue
+		FROM
+			1dcq_business_area_config
+		WHERE
+		1=1
+		<if test="businessAreaActivityId != null">
+			AND business_area_activity_id = #{businessAreaActivityId}
+		</if>
+		<if test="configCode != null">
+			AND config_code = #{configCode}
+		</if>
+		<if test="configValue != null ">
+			AND config_value &lt;= #{configValue}
+		</if>
+		limit 1
+  </select>
+   <!--   通过订单金额和code查询最大送值 -->
+  <select id="getGiveConfigValueByCodeAndAreaId" resultType="java.util.Map" parameterType="java.util.Map" >
+		SELECT
+			config_value as configValue
+		FROM
+			1dcq_business_area_config
+		WHERE
+			business_area_activity_id = #{businessAreaActivityId}
+		AND 
+			config_code = #{give}
+		AND 
+			group_id = 
+			(
+				SELECT
+					group_id
+				FROM
+					1dcq_business_area_config
+				WHERE
+					business_area_activity_id = #{businessAreaActivityId}
+				AND config_code = #{over}
+				AND config_value &lt;= #{configValue}
+				ORDER BY
+					config_value DESC
+				LIMIT 1
+		  )
+  </select>
+  
+  <select id="getBusinessAreaConfigById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from 1dcq_business_area_config
+    where business_area_config_id = #{businessAreaConfigId,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="delBusinessAreaConfigById" parameterType="java.lang.Integer" >
+    delete from 1dcq_business_area_config
+    where business_area_config_id = #{businessAreaConfigId,jdbcType=INTEGER}
+  </delete>
+   <delete id="delBusinessAreaConfigByActivityId" parameterType="java.lang.Long" >
+    delete from 1dcq_business_area_config
+    where business_area_activity_id = #{businessAreaActivityId}
+  </delete>
+  <insert id="addBusinessAreaConfig" parameterType="com.idcq.appserver.dto.activity.BusinessAreaConfigDto" >
+    insert into 1dcq_business_area_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="businessAreaConfigId != null" >
+        business_area_config_id,
+      </if>
+      <if test="businessAreaActivityId != null" >
+        business_area_activity_id,
+      </if>
+      <if test="configType != null" >
+        config_type,
+      </if>
+      <if test="configValue != null" >
+        config_value,
+      </if>
+      <if test="configCode != null" >
+        config_code,
+      </if>
+      <if test="configName != null" >
+        config_name,
+      </if>
+      <if test="configDesc != null" >
+        config_desc,
+      </if>
+      <if test="groupId != null" >
+        group_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="businessAreaConfigId != null" >
+        #{businessAreaConfigId,jdbcType=INTEGER},
+      </if>
+      <if test="businessAreaActivityId != null" >
+        #{businessAreaActivityId,jdbcType=INTEGER},
+      </if>
+      <if test="configType != null" >
+        #{configType,jdbcType=TINYINT},
+      </if>
+      <if test="configValue != null" >
+        #{configValue,jdbcType=VARCHAR},
+      </if>
+      <if test="configCode != null" >
+        #{configCode,jdbcType=VARCHAR},
+      </if>
+      <if test="configName != null" >
+        #{configName,jdbcType=VARCHAR},
+      </if>
+      <if test="configDesc != null" >
+        #{configDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="groupId != null" >
+        #{groupId,jdbcType=SMALLINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateBusinessAreaConfigById" parameterType="com.idcq.appserver.dto.activity.BusinessAreaConfigDto" >
+    update 1dcq_business_area_config
+    <set >
+      <if test="businessAreaActivityId != null" >
+        business_area_activity_id = #{businessAreaActivityId,jdbcType=INTEGER},
+      </if>
+      <if test="configType != null" >
+        config_type = #{configType,jdbcType=TINYINT},
+      </if>
+      <if test="configValue != null" >
+        config_value = #{configValue,jdbcType=VARCHAR},
+      </if>
+      <if test="configCode != null" >
+        config_code = #{configCode,jdbcType=VARCHAR},
+      </if>
+      <if test="configName != null" >
+        config_name = #{configName,jdbcType=VARCHAR},
+      </if>
+      <if test="configDesc != null" >
+        config_desc = #{configDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="groupId != null" >
+        group_id = #{groupId,jdbcType=SMALLINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where business_area_config_id = #{businessAreaConfigId,jdbcType=INTEGER}
+  </update>
+</mapper>

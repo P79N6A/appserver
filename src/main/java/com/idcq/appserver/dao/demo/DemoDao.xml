@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.demo.UserDto2">
+	<resultMap type="com.idcq.appserver.dto.demo.UserDto2" id="userMap">
+		<result column="id" property="id"/>
+		<result column="UID" property="uId"/>
+		<result column="Name" property="name"/>
+		<result column="Password" property="password"/>
+	</resultMap>
+
+    <insert id="insert" parameterType="com.idcq.appserver.dto.demo.UserDto2" keyProperty="uId" useGeneratedKeys="true">
+      insert into t_user(name) values(#{name})
+    </insert>
+   
+</mapper>    

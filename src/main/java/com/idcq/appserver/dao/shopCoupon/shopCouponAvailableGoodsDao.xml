@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shopCoupon.ShopCouponAvailableGoodsDto" >
+	<resultMap id="shopCouponAvailableGoodsResultMap" type="com.idcq.appserver.dto.shopCoupon.ShopCouponAvailableGoodsDto" >
+		 <id column="available_goods_id" property="availableGoodsId" jdbcType="INTEGER" />
+    	 <result column="shop_coupon_id" property="shopCouponId" jdbcType="INTEGER" />
+    	 <result column="coupon_apply_type" property="couponApplyType" jdbcType="INTEGER" />
+    	 <result column="coupon_apply_id" property="couponApplyId" jdbcType="INTEGER" />
+    	 <result column="category_name" property="categoryName" />
+  	</resultMap>
+  	
+  	
+  	<insert id="insertShopCouponAvailableGoods" parameterType="com.idcq.appserver.dto.shopCoupon.ShopCouponAvailableGoodsDto">
+		    insert into 1dcq_shop_coupon_available_goods 
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="shopCouponId != null" >
+	        shop_coupon_id,
+	      </if>
+	      <if test="couponApplyType != null" >
+	        coupon_apply_type,
+	      </if>
+	      <if test="couponApplyId != null" >
+	        coupon_apply_id,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="shopCouponId != null" >
+	        #{shopCouponId},
+	      </if>
+	      <if test="couponApplyType != null" >
+	        #{couponApplyType},
+	      </if>
+	      <if test="couponApplyId != null" >
+	        #{couponApplyId},
+	      </if>
+	    </trim>
+	</insert>
+	
+	<delete id="delShopCouponAvailableGoods" parameterType="com.idcq.appserver.dto.shopCoupon.ShopCouponDto">
+		DELETE FROM 1dcq_shop_coupon_available_goods
+		<where>
+			<if test="shopCouponId != null">
+				and shop_coupon_id = #{shopCouponId} 
+			</if>
+		</where>
+	</delete>
+	
+	<select id="getShopCouponAvailableGoodsByMap" parameterType="java.util.Map" resultMap="shopCouponAvailableGoodsResultMap">
+		select s.*,g.category_name from 1dcq_shop_coupon_available_goods s
+		left join 1dcq_goods_category g on g.goods_category_id = s.coupon_apply_id 
+		<where>
+			<if test="couponApplyType != null">
+				and s.coupon_apply_type=#{couponApplyType}
+			</if>
+			<if test="shopCouponId != null">
+				and s.shop_coupon_id=#{shopCouponId}
+			</if>
+		</where>
+	</select>
+  
+</mapper>

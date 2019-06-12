@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.idianmgr.dao.shop.ShopCashierDaoImpl">
+    <!-- 查询收银员是否存在 -->
+    <select id="findShopCashierExists" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(*) from 1dcq_shop_employee where 1=1
+            <if test="cashierId != null">
+                and employee_id = #{cashierId}
+            </if>
+            <if test="loginName != null">
+                and username = #{loginName}
+            </if>
+            <if test="shopId != null">
+                and shop_id = #{shopId}
+            </if>
+    </select>
+    <!-- 新增商铺收银员 -->
+    <insert id="insertShopCashier" parameterType="com.idcq.idianmgr.dto.shop.ShopCashierParams" useGeneratedKeys="true" keyProperty="categoryId">
+   		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="cashierId">
+	            SELECT LAST_INSERT_ID() AS cashierId
+	   </selectKey>
+	    INSERT INTO 1dcq_shop_employee
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="shopId != null" >
+	        shop_id,
+	      </if>
+	      <if test="name != null" >
+	        fullname,
+	      </if>
+	      <if test="password != null" >
+	        password,
+	      </if>
+	      <if test="clearPwd != null" >
+	        status_desc,
+	      </if>
+	      <if test="loginName != null" >
+	        username,
+	      </if>
+	      skill,
+	      status,
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="shopId != null" >
+	        #{shopId},
+	      </if>
+	      <if test="name != null" >
+	        #{name},
+	      </if>
+	      <if test="password != null" >
+	        #{password},
+	      </if>
+	      <if test="clearPwd != null" >
+	        #{clearPwd},
+	      </if>
+	      <if test="loginName != null" >
+	        #{loginName},
+	      </if>
+	      '技能说明',
+	      '1',
+	    </trim>	
+    </insert>
+    <!-- 修改商铺收银员 -->
+    <update id="updateShopCashier" parameterType="com.idcq.idianmgr.dto.shop.ShopCashierParams" >
+	    update 1dcq_shop_employee
+	    <set >
+	      <if test="name != null" >
+	        fullname = #{name},
+	      </if>
+	      <if test="password != null" >
+	        password = #{password},
+	      </if>
+	       <if test="clearPwd != null" >
+	        status_desc = #{clearPwd},
+	      </if>
+	      <if test="loginName != null" >
+	        username = #{loginName},
+	      </if>
+	      <if test="userId != null" >
+	        user_id = #{userId},
+	      </if>
+	      <if test="mobile != null" >
+	        mobile = #{mobile},
+	      </if>
+	      <if test="checkTime != null" >
+	        check_time = #{checkTime},
+	      </if>
+	      <if test="isCheck != null" >
+	        is_check = #{isCheck},
+	      </if>	      
+	    </set>
+	    where employee_id = #{cashierId} and shop_id = #{shopId}
+	  </update>
+	  
+    <!-- 删除商铺收银员 -->
+    <delete id="deleteShopCashier" parameterType="java.util.Map">
+        delete from 1dcq_shop_employee where employee_id = #{cashierId}
+    </delete>
+    
+    <!-- 查询收银员列表 -->
+    <select id="getShopCashiers" parameterType="java.lang.Long" resultType="java.util.Map">
+        select 
+        	employee_id as cashierId, 
+        	username as loginName, 
+        	password as password,
+        	status_desc as clearPwd,
+        	mobile as mobile,
+        	fullname as name 
+        from 1dcq_shop_employee where shop_id=#{shopId}
+        order by create_time desc
+    </select>
+     <!-- 查询收银员列表 -->
+    <select id="getShopCashierById" parameterType="java.lang.Long" resultType="java.util.Map">
+        select 
+        	employee_id as cashierId, 
+        	username as loginName, 
+        	password as password,
+        	status_desc as clearPwd, 
+        	fullname as name 
+        from 1dcq_shop_employee where employee_id=#{cashierId}
+    </select>
+</mapper>

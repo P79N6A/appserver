@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.commonconf.UserFeedbackDto">
+	<resultMap type="com.idcq.appserver.dto.commonconf.UserFeedbackDto" id="userFeedbackMap">
+	
+    	<result column="user_id" property="userId" />
+    	<result column="feedback" property="feedback" />
+    	<result column="create_time" property="createTime" />	
+
+	</resultMap>
+	
+    <insert id="insertUserFeedback" parameterType="com.idcq.appserver.dto.commonconf.UserFeedbackDto" >
+    	insert into 1dcq_user_feedback (user_id, feedback, create_time)
+    	values (#{userId}, #{feedback}, #{createTime})
+  	</insert>
+    
+</mapper> 
+   

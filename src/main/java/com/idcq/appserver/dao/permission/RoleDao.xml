@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.permission.RoleDto">
+
+
+	<!--     
+	 `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '管理员角色主键',
+	  `rolename` varchar(50) NOT NULL COMMENT '管理员角色名称',
+	  `role_type` tinyint(3) unsigned DEFAULT NULL COMMENT 'O2O后台管理=1，店铺后台管理=2，收银=3，收单=4',
+	  `shop_id` int(10) unsigned DEFAULT NULL COMMENT '商铺ID',
+	  `role_desc` varchar(200) DEFAULT NULL COMMENT '角色说明',
+	  `industry_type` tinyint(2) DEFAULT '0' COMMENT '行业类型:通用=0，便利店=1，餐饮=2',
+	  `sequence` int(10) DEFAULT NULL COMMENT '排序',
+	  `userstate` int(2) NOT NULL DEFAULT '1' COMMENT '管理员角色是否禁用，''1''代表正常，''2''代表禁用', 
+	  -->
+  <resultMap id="roleMap" type="com.idcq.appserver.dto.permission.RoleDto" >
+    <result column="id" property="id"  />
+    <result column="rolename" property="roleName" />
+    <result column="role_type" property="roleType" />
+    <result column="shop_id" property="shopId" />
+    <result column="role_desc" property="roleDesc" />
+    <result column="industry_type" property="industryType" /> 
+    <result column="sequence" property="sequence" />
+    <result column="userstate" property="userstate" />
+  </resultMap>
+
+
+	<select id="getRole" resultMap="roleMap" parameterType="com.idcq.appserver.dto.permission.RoleDto">
+	SELECT
+		 id,
+		 rolename,
+		 role_type,
+		 shop_id,
+		 role_desc,
+		 industry_type,
+		 sequence,
+		 userstate
+	FROM
+		1dcq_role
+	WHERE
+		1=1
+	<if test="role.id != null">
+		AND id = #{role.id}
+	</if>
+	<if test="role.roleName != null">
+		AND rolename = #{role.roleName}
+	</if>
+	<if test="role.roleType != null">
+		AND role_type = #{role.roleType}
+	</if>
+	<if test="role.shopId != null">
+		AND shop_id = #{role.shopId}
+	</if>
+	<if test="role.roleDesc != null">
+		AND role_desc = #{role.roleDesc}
+	</if>
+	<if test="role.industryType != null">
+		AND industry_type = #{role.industryType}
+	</if>
+	<if test="role.sequence != null">
+		AND sequence = #{role.sequence}
+	</if>
+	<if test="role.userstate != null">
+		AND userstate = #{role.userstate}
+	</if>
+	LIMIT #{limit},#{pSize}
+	</select>
+	
+	
+</mapper>

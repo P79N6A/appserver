@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardDto" >
+  <resultMap id="shopMemberCardMap" type="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardDto" >
+    <id column="card_id" property="cardId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="old_card_no" property="oldCardNo" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="TINYINT" />
+    <result column="birthday" property="birthday" jdbcType="VARCHAR" />
+    <result column="card_money" property="cardMoney" jdbcType="DOUBLE" />
+    <result column="used_money" property="usedMoney" jdbcType="DOUBLE" />
+    <result column="amount" property="amount" jdbcType="DOUBLE" />
+    <result column="shop_id" property="shopId" jdbcType="VARCHAR" />
+    <result column="opertater_id" property="opertaterId" jdbcType="INTEGER" />
+    <result column="opertater_time" property="opertaterTime" jdbcType="TIMESTAMP" />
+    <result column="card_status" property="cardStatus" jdbcType="TINYINT"/>
+    <result column="card_type" property="cardType" jdbcType="VARCHAR"/>
+    <result column="card_desc" property="cardDesc" jdbcType="VARCHAR"/>
+    <result column="used_num" property="usedNum" jdbcType="INTEGER"/>
+    <result column="goods_set_id" property="goodsSetId" jdbcType="INTEGER"/>
+    <result column="valid_start_time" property="validStartTime" jdbcType="DATE"/>
+    <result column="valid_end_time" property="validEndTime" jdbcType="DATE"/>
+    <result column="is_use_finished" property="isUseFinished" jdbcType="TINYINT"/>
+    <result column="member_id" property="memberId" />
+    <result column="shop_name" property="shopName" />
+  </resultMap>
+
+	<select id="getShopTimeCardListCount" parameterType="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardDto" resultType="int">
+	 SELECT 
+	  COUNT(1) 
+	FROM
+	  (SELECT 
+	  smc.card_id cardId,
+	  smc.user_id userId,
+	  smc.old_card_no oldCardNo,
+	  smc.mobile mobile,
+	  smc.name NAME,
+	  smc.sex sex,
+	  smc.birthday birthday,
+	  smc.card_money cardMoney,
+	  smc.used_money usedMoney,
+	  smc.used_num usedNum,
+	  smc.amount amount,
+	  smc.shop_id shopId,
+	  smc.opertater_id opertaterId,
+	  smc.opertater_time opertaterTime,
+	  smc.card_status cardStatus,
+	  smc.card_type cardType,
+	  smc.card_desc cardDesc,
+	  smc.goods_set_id goodsSetId,
+	  smc.valid_start_time validStartTime,
+	  smc.valid_end_time validEndTime,
+	  smc.is_use_finished isUseFinished,
+	  g.standard_price price,
+	  smcg.used_times usedTimes,
+	  g.goods_name goodsSetName
+	FROM
+	   1dcq_shop_member_card smc,
+	   1dcq_shop_member_card_goods smcg,
+	   1dcq_goods g 
+	  where smc.card_id=smcg.card_id
+	   and smc.card_status = 1
+	  AND g.goods_id=smc.goods_set_id
+	   AND smc.card_type=2 
+	     <if test="shopId">
+	     AND smc.shop_id=#{shopId}
+	  </if> 
+	   <if test="mobile!= null" >
+        AND mobile=#{mobile} 
+      </if>
+       <if test="memberId !=null">
+      	and member_id=#{memberId}
+      </if>
+       ) tmp_count 
+	</select>  
+  
+  <select id="getShopTimeCardList" parameterType="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardDto" resultType="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardDto">
+  	SELECT 
+	  smc.card_id cardId,
+	  smc.user_id userId,
+	  smc.old_card_no oldCardNo,
+	  smc.mobile mobile,
+	  smc.name NAME,
+	  smc.sex sex,
+	  smc.birthday birthday,
+	  smc.card_money cardMoney,
+	  smc.used_money usedMoney,
+	  smc.used_num usedNum,
+	  smc.amount amount,
+	  smc.shop_id shopId,
+	  smc.opertater_id opertaterId,
+	  smc.opertater_time opertaterTime,
+	  smc.card_status cardStatus,
+	  smc.card_type cardType,
+	  smc.card_desc cardDesc,
+	  smc.goods_set_id goodsSetId,
+	  smc.valid_start_time validStartTime,
+	  smc.valid_end_time validEndTime,
+	  smc.is_use_finished isUseFinished,
+	  g.standard_price price,
+	  smcg.used_times usedTimes,
+	  g.goods_name goodsSetName
+	FROM
+	   1dcq_shop_member_card smc,
+	   1dcq_shop_member_card_goods smcg,
+	   1dcq_goods g 
+	  where smc.card_id=smcg.card_id
+	  and smc.card_status = 1
+	  AND g.goods_id=smc.goods_set_id
+	   AND smc.card_type=2
+	    <if test="shopId">
+	     AND smc.shop_id=#{shopId}
+	  </if> 
+	   <if test="mobile!= null" >
+        AND mobile=#{mobile} 
+      </if>
+       <if test="memberId !=null">
+      	and member_id=#{memberId}
+      </if>
+	   ORDER  BY (smcg.goods_number-smcg.used_times) DESC ,smc.valid_end_time DESC
+       <if test="start!=null">
+      	<if test="limit!=null">
+      		limit #{start},#{limit}
+      	</if>
+      </if>
+  </select>
+  
+  <select id="getShopMemberCardList" parameterType="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardDto" resultMap="shopMemberCardMap">
+  	select 
+  		b.*,s.shop_name as shopName
+	  from 	1dcq_shop_member_card b 
+	  INNER join
+	  1dcq_shop s
+	  on s.shop_id = b.shop_id
+	  and b.card_status = 1
+	  where 1=1
+	  <if test="shopId">
+	    and b.shop_id=#{shopId}
+	  </if>
+	  <if test="userId">
+	    and b.user_id=#{userId}
+	  </if>
+	   <if test="mobile!= null" >
+        and b.mobile <![CDATA[=#{mobile}]]> 
+      </if>
+       <if test="cardType != null" >
+        and b.card_type = #{cardType}
+      </if>
+      <if test="birthday !=null">
+      	and b.birthday=#{birthday}
+      </if>
+       <if test="memberId !=null">
+      	and b.member_id=#{memberId}
+      </if>
+       <if test="cardStatus !=null">
+      	and b.card_status=#{cardStatus}
+      </if>
+      <if test="start!=null">
+      	<if test="limit!=null">
+      		limit #{start},#{limit}
+      	</if>
+      </if>
+  </select>
+  
+    <select id="getShopMemberCardById" parameterType="java.lang.Integer" resultMap="shopMemberCardMap">
+  	select 
+  		*
+	  from 	1dcq_shop_member_card b 
+	  where card_id = #{cardId}
+  </select>
+  
+  
+  <select id="getShopMemberCardCount" parameterType="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardDto" resultType="java.lang.Integer">
+  	 select 
+  		count(*)
+	  from 	1dcq_shop_member_card b 
+	  INNER join
+	  1dcq_shop s
+	  on s.shop_id = b.shop_id
+	  and b.card_status = 1
+	  where 1=1
+	  <if test="shopId">
+	     AND b.shop_id=#{shopId}
+	  </if> 
+	  <if test="userId">
+	    and b.user_id=#{userId}
+	  </if>
+	  <if test="mobile!= null" >
+        and b.mobile <![CDATA[=#{mobile}]]> 
+      </if>
+      <if test="memberId !=null">
+      	and b.member_id=#{memberId}
+      </if>
+  </select>
+  
+  
+  <insert id="insertShopMemberCard" parameterType="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardDto" keyProperty="cardId" useGeneratedKeys="true" keyColumn="card_id">
+	 <selectKey resultType="int" keyProperty="cardId">
+            SELECT LAST_INSERT_ID() AS cardId
+      </selectKey> 
+  	insert into 1dcq_shop_member_card
+	(
+	  	user_id,
+	  	shop_id,
+	  	mobile,
+	  	old_card_no,
+	  	name,
+	  	sex,
+	  	birthday,
+	  	card_money,
+	  	used_money,
+	  	amount,
+	  	opertater_id,
+      	opertater_time,
+      	card_type,
+      	goods_set_id,
+      	valid_start_time,
+      	valid_end_time,
+      	member_id
+	 )
+  	values(
+	  	#{userId},
+	  	#{shopId},
+	  	#{mobile},
+	  	#{oldCardNo},
+  		#{name},
+  		<if test="sex != null">#{sex}</if>
+  		<if test="sex == null">2</if>
+  		,
+  		#{birthday},
+  		#{cardMoney},
+  		#{usedMoney},
+  		#{amount},
+   		#{billerId},
+    	#{opertaterTime},
+    	#{cardType},
+    	#{goodsSetId},
+    	#{validStartTime},
+    	#{validEndTime},
+    	#{memberId}
+  	)
+  </insert>
+  
+  <update id="chargeShopMemberCard" parameterType="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardDto">
+  	 update 1dcq_shop_member_card 
+  	 set card_money=card_money+#{amount},
+  	 amount=amount+#{amount}
+  	 where card_id=#{cardId}
+  </update>
+  <!-- 会员卡消费 -->
+  <update id="consumeShopMemberCard" parameterType="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardDto">
+  	 update 1dcq_shop_member_card 
+  	 set amount=amount-#{consumeMoney},
+  	 used_num=used_num+1,
+  	 used_money=used_money+#{consumeMoney}
+  	 where shop_id=#{shopId} and card_id=#{cardId}	
+  </update>
+  <update id="updateShopMemberCard" parameterType="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardDto">
+  	update 1dcq_shop_member_card
+  	<set > 
+  	    <if test="birthday != null" >
+        birthday=#{birthday},
+      </if>
+      <if test="sex != null" >
+        sex=#{sex},
+      </if>
+       <if test="name != null" >
+         name=#{name}
+      </if>
+  	 </set>
+  	 where 1=1 
+  	 <if test="shopId != null" >
+  	    and shop_id=#{shopId}
+  	 </if>
+  	  <if test="memberId != null" >
+  	    and member_id=#{memberId}
+  	 </if>
+  	  <if test="mobile != null" >
+  	    and mobile=#{mobile}	
+  	 </if>
+  </update>
+  <update id="delShopMemberCardByIds" parameterType="java.util.Map" >
+    update 1dcq_shop_member_card 
+    <set >
+      <if test="cardStatus != null" >
+        card_status = #{cardStatus},
+      </if>
+   </set>
+     where 1=1
+     <if test="memberId != null" >
+        and member_id IN 
+        <foreach collection="memberId" open="(" close=")" separator="," item="item">
+	        #{item}
+	    </foreach>
+	</if>
+	   <if test="cardId != null" >  
+       and card_id in 
+        <foreach collection="cardId" open="(" close=")" separator="," item="item">
+	        #{item}
+	    </foreach>
+	    </if>
+  </update>
+  
+</mapper>

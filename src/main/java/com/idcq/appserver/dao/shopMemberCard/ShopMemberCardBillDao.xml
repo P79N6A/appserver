@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardBillDto" >
+  <resultMap id="shopMemberCardBillMap" type="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardBillDto" >
+    <id column="card_bill_id" property="cardBillId" jdbcType="INTEGER" />
+    <result column="card_id" property="cardId" jdbcType="INTEGER" />
+    <result column="card_bill_type" property="cardBillType" jdbcType="TINYINT" />
+<!--     <result column="charge_type" property="chargeType" jdbcType="TINYINT" /> -->
+    <result column="pay_type" property="chargeType" jdbcType="TINYINT" />
+    <result column="charge_money" property="chargeMoney" jdbcType="DOUBLE" />
+    <result column="present_money" property="presentMoney" jdbcType="DOUBLE" />
+    <result column="after_amount" property="afterAmount" jdbcType="DOUBLE" />
+    <result column="bill_amount" property="billAmount" jdbcType="DOUBLE" />
+    <result column="opertater_id" property="opertateId" jdbcType="INTEGER" />
+    <result column="bill_time" property="billTime" jdbcType="TIMESTAMP" />
+    <result column="order_id" property="orderId" jdbcType="VARCHAR" />
+    <result column="pay_id" property="payId" jdbcType="INTEGER" />
+    <result column="card_bill_desc" property="cardBillDesc" jdbcType="VARCHAR" />
+    <result column="shop_id" property="shopId" jdbcType="INTEGER"/>
+    <result column="card_type" property="cardType" jdbcType="VARCHAR"/>
+    <result column="orderTitle" property="orderTitle" jdbcType="VARCHAR"/>
+    
+    
+  </resultMap>
+  
+  <resultMap id="shopMemberCardBillNewMap" type="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardBillNewDto" >
+    <id column="card_bill_id" property="billId" jdbcType="INTEGER" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+    <result column="username" property="userName" jdbcType="VARCHAR"/>
+    <result column="card_id" property="cardId" jdbcType="INTEGER" />
+    <result column="card_type" property="cardType" jdbcType="VARCHAR"/>
+    <result column="card_bill_type" property="billType" jdbcType="TINYINT" />
+    <result column="charge_money" property="billMoney" jdbcType="TINYINT"/>
+    <result column="after_amount" property="afterAmount" jdbcType="DOUBLE" />
+    <result column="bill_time" property="billTime" jdbcType="TIMESTAMP" />
+    <result column="pay_type" property="payType" jdbcType="TINYINT" />
+    <result column="present_money" property="presentMoney" jdbcType="DOUBLE" />
+    <result column="fullname" property="favoree" jdbcType="VARCHAR" />
+    <result column="order_id" property="orderId" jdbcType="VARCHAR" />
+    <result column="card_bill_desc" property="cardBillDesc" jdbcType="VARCHAR" />
+    <result column="billAmount" property="billAmount" jdbcType="VARCHAR" />
+    <result column="biller_id" property="billerId" />
+     <result column="opertater_id" property="opertaterId" />
+      <result column="client_recharge_time" property="clientRechargeTime" />
+    
+    
+  </resultMap>
+  
+  <select id="getShopMemberCardBills" parameterType="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardBillDto" resultMap="shopMemberCardBillMap">
+  	select 
+  		b.card_id,
+  		c.mobile,
+	  	card_bill_type,
+<!-- 	  	charge_type, -->
+	  	pay_type,
+	  	charge_money,
+	  	present_money,
+	  	after_amount,
+	  	bill_amount,
+	  	b.opertater_id,
+	  	bill_time,
+	  	order_id,
+	  	pay_id,
+	  	card_bill_desc,
+	  	c.shop_id,
+	  	b.card_bill_id,
+	  	c.card_type
+	  from 	1dcq_shop_member_card_bill b inner join 1dcq_shop_member_card c
+	  on b.card_id=c.card_id 
+	  where b.shop_id=#{shopId}
+	   <if test="billStartTime != null" >
+        and bill_time <![CDATA[>=#{billStartTime}]]> 
+      </if>
+      <if test="billEndTime != null" >
+        and bill_time <![CDATA[<=#{billEndTime}]]> 
+      </if>
+      <if test="cardBillType!=null">
+      	and card_bill_type  <![CDATA[=#{cardBillType}]]> 
+      </if>
+      <if test="cardId!=null">
+      	and b.card_id  <![CDATA[=#{cardId}]]> 
+      </if>
+      <if test="mobile!=null">
+      	and c.mobile=#{mobile}
+      </if>
+  </select>
+  
+   <select id="getShopMemberCardBillsNew" parameterType="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardBillNewDto" resultMap="shopMemberCardBillNewMap">
+  	select 
+  		b.order_id,
+  		b.present_money,
+  		b.card_bill_id,
+  		b.card_bill_desc,
+  		c.mobile,
+  		u.name AS userName,
+  		b.card_id,
+  		c.card_type,
+	  	b.card_bill_type,
+	  	b.charge_money,
+	  	b.after_amount,
+	  	bill_time,
+	  	<!-- TODO -->
+	  	(CASE  
+			WHEN card_bill_type =0  THEN b.pay_type 
+			WHEN card_bill_type =1  THEN op.pay_type  
+			ELSE  b.pay_type 
+		 END) AS pay_type, 
+	  	
+<!-- 	  	pay_type, -->
+	  	
+	  	(CASE  
+			WHEN em.fullname is not null THEN fullname 
+			WHEN em.username is not null THEN username  
+			ELSE  "老板" 
+		 END) AS fullname, 
+	  	<!-- IFNULL(em.username, "老板") AS fullname, -->
+	  	<!-- 返回增加订单标题   20160803 文震宇 -->
+	  	t.order_title as orderTitle,
+	  	b.bill_amount as billAmount,
+	  	b.opertater_id,
+	  	b.client_recharge_time,
+	  	b.biller_id
+	  from 	1dcq_shop_member_card_bill b 
+	  inner join 1dcq_shop_member_card c on b.card_id=c.card_id and c.card_status = 1
+	  inner join 1dcq_shop_member u on c.member_id = u.member_id and u.member_status = 1
+	  left join 1dcq_shop_employee em on b.opertater_id=em.employee_id
+	 <!-- 返回增加订单标题   20160803 文震宇 -->
+	  left join 1dcq_order t on b.order_id = t.order_id
+	  left JOIN 1dcq_order_pay op on op.order_id = t.order_id 
+	  where b.shop_id=#{shopId}
+	  <if test="billStartTime != null" >
+        <![CDATA[and Date(b.bill_time) >=#{billStartTime}]]> 
+      </if>
+      <if test="billEndTime != null" >
+        <![CDATA[and Date(b.bill_time) <=#{billEndTime}]]>
+      </if>
+      <if test="billType!=null">
+      	and b.card_bill_type  <![CDATA[=#{billType}]]> 
+      </if>
+      <if test="opertaterId!=null">
+      	and b.opertater_id = #{opertaterId} 
+      </if>
+      <!-- 增加支付类型条件   20160803 文震宇 -->
+      <if test="payType!=null">
+      	and b.pay_type = #{payType} 
+      </if>
+      <choose>
+      	<when test="isSearch != null">
+      		<trim prefix="and ( " prefixOverrides="or" suffix=" )">
+      		<if test="cardId!=null">
+      			or b.card_id  <![CDATA[=#{cardId}]]> 
+      		</if>
+      		<if test="mobile!=null">
+      			or c.mobile=#{mobile}
+      		</if>
+      		<if test="userName !=null">
+      			or c.name=#{userName}
+      		</if>
+      		</trim>
+      	</when>
+      	<otherwise>
+      		<if test="cardId!=null">
+      			and b.card_id  <![CDATA[=#{cardId}]]> 
+      		</if>
+      		<if test="mobile!=null">
+      			and c.mobile=#{mobile}
+      		</if>
+      		<if test="userName !=null">
+      			and c.name=#{userName}
+      		</if>
+      	</otherwise>
+      </choose>
+       order by b.bill_time desc
+      limit #{pageNo},#{pageSize}
+  </select>
+  
+  
+  
+  
+  <select id="getShopMemberCardBillCountNew" parameterType="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardBillNewDto" resultType="java.lang.Integer">
+  	select 
+  		count(*)
+	  from 	1dcq_shop_member_card_bill b inner join 1dcq_shop_member_card c
+	  on b.card_id=c.card_id and c.card_status = 1
+	  
+	  <!-- 新添加 -->
+	  inner join 1dcq_shop_member u on c.member_id = u.member_id and u.member_status = 1
+	  left join 1dcq_shop_employee em on b.opertater_id=em.employee_id
+	 <!-- 返回增加订单标题   20160803 文震宇 -->
+	  left join 1dcq_order t on b.order_id = t.order_id
+	  left JOIN 1dcq_order_pay op on op.order_id = t.order_id 
+	  
+	  where b.shop_id=#{shopId}
+	   <if test="billStartTime != null" >
+        and bill_time <![CDATA[>=#{billStartTime}]]> 
+      </if>
+      <if test="billEndTime != null" >
+        and bill_time <![CDATA[<=#{billEndTime}]]> 
+      </if>
+      <if test="billType!=null">
+      	and card_bill_type  <![CDATA[=#{billType}]]> 
+      </if>
+      <if test="opertaterId!=null">
+      	and b.opertater_id = #{opertaterId} 
+      </if>
+      <!-- 增加支付类型条件   20160803 文震宇 -->
+      <if test="payType!=null">
+      	and b.pay_type = #{payType} 
+      </if>
+      
+      <choose>
+      	<when test="isSearch != null">
+      		<trim prefix="and ( " prefixOverrides="or" suffix=" )">
+      		<if test="cardId!=null">
+      			or b.card_id  <![CDATA[=#{cardId}]]> 
+      		</if>
+      		<if test="mobile!=null">
+      			or c.mobile=#{mobile}
+      		</if>
+      		<if test="userName !=null">
+      			or c.name=#{userName}
+      		</if>
+      		</trim>
+      	</when>
+      	<otherwise>
+      		<if test="cardId!=null">
+      			and b.card_id  <![CDATA[=#{cardId}]]> 
+      		</if>
+      		<if test="mobile!=null">
+      			and c.mobile=#{mobile}
+      		</if>
+      		<if test="userName !=null">
+      			and c.name=#{userName}
+      		</if>
+      	</otherwise>
+      </choose>
+  <!--     <if test="cardId!=null">
+      	and b.card_id  <![CDATA[=#{cardId}]]> 
+      </if>
+      <if test="mobile!=null">
+      	and c.mobile=#{mobile}
+      </if> -->
+  </select>
+  <select id="getShopMemberCardBillCount" parameterType="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardBillDto" resultType="java.lang.Integer">
+  	select 
+  		count(*)
+	  from 	1dcq_shop_member_card_bill b left join 1dcq_shop_member_card c
+	  on b.card_id=c.card_id 
+	  where b.shop_id=#{shopId}
+	   <if test="billStartTime != null" >
+        and bill_time <![CDATA[>=#{billStartTime}]]> 
+      </if>
+      <if test="billEndTime != null" >
+        and bill_time <![CDATA[<=#{billEndTime}]]> 
+      </if>
+      <if test="cardBillType!=null">
+      	and card_bill_type  <![CDATA[=#{cardBillType}]]> 
+      </if>
+      <if test="cardId!=null">
+      	and b.card_id  <![CDATA[=#{cardId}]]> 
+      </if>
+      <if test="mobile!=null">
+      	and c.mobile=#{mobile}
+      </if>
+  </select>
+  
+  <insert id="insertShopMemberCardBill" parameterType="com.idcq.appserver.dto.shopMemberCard.ShopMemberCardBillDto">
+  	insert into 1dcq_shop_member_card_bill
+	(
+		card_id,
+	  	card_bill_type,
+	  	pay_type,
+	  	charge_money,
+	  	present_money,
+	  	after_amount,
+	  	bill_amount,
+	  	opertater_id,
+	  	bill_time,
+	  	order_id,
+	  	pay_id,
+	  	card_bill_desc,
+	  	shop_id,
+	  	biller_id,
+	  	client_recharge_time
+	 )
+  	values(
+	  	#{cardId},
+	  	#{cardBillType},
+	  	#{chargeType},
+	  	#{chargeMoney},
+	  	#{presentMoney},
+	  	#{afterAmount},
+	  	#{billAmount},
+	  	#{opertaterId},
+	  	#{billTime},
+	  	#{orderId},
+	  	#{payId},
+	  	#{cardBillDesc},
+	  	#{shopId},
+	  	#{billerId},
+	  	#{clientRechargeTime}
+  	)
+  </insert>
+  
+   <insert id="batchInsertShopMemberCardBill" parameterType="java.util.List">
+  	insert into 1dcq_shop_member_card_bill
+	(
+		card_id,
+	  	card_bill_type,
+	  	pay_type,
+	  	charge_money,
+	  	present_money,
+	  	after_amount,
+	  	bill_amount,
+	  	opertater_id,
+	  	bill_time,
+	  	order_id,
+	  	pay_id,
+	  	card_bill_desc,
+	  	shop_id
+	 )
+	 values
+	 <foreach collection="shopMemberCardBillDtos" item="item" separator=",">
+	 	(
+	  	#{item.cardId},
+	  	#{item.cardBillType},
+	  	#{item.chargeType},
+	  	#{item.chargeMoney},
+	  	#{item.presentMoney},
+	  	#{item.afterAmount},
+	  	#{item.billAmount},
+	  	#{item.opertaterId},
+	  	#{item.billTime},
+	  	#{item.orderId},
+	  	#{item.payId},
+	  	#{item.cardBillDesc},
+	  	#{item.shopId}
+  		)
+	 </foreach>
+  </insert>
+</mapper>

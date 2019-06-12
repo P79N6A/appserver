@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idcq.appserver.dto.user.UserFavoriteDto">
+<!-- /*	  `favorite_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID，唯一标识一个收藏',
+	  `user_id` int(10) unsigned NOT NULL COMMENT '用户ID',
+	  `biz_id` int(10) unsigned NOT NULL COMMENT '收藏类型为商铺存shop_id，为商品存goods_id',
+	  `biz_type` tinyint(5) unsigned NOT NULL DEFAULT '0' COMMENT '收藏类型：店铺=0,商品=1,其他=2',
+	  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+	  `favorite_url` varchar(1000) DEFAULT NULL COMMENT '分类链接的URL地址',*/ -->
+	<resultMap type="com.idcq.appserver.dto.user.UserFavoriteDto" id="userFavoriteMap">
+		<id column="favorite_id" property="favoriteId"/>
+		<result column="user_id" property="userId"/>
+		<result column="biz_id" property="bizId"/>
+		<result column="biz_type" property="bizType"/>
+		<result column="create_time" property="createTime"/>
+	    <result column="favorite_url" property="favoriteUrl" />
+	</resultMap>
+	
+    <!-- 增加用户收藏信息 -->
+    <insert id="insertUserFavorite" useGeneratedKeys="true" keyProperty="favoriteId" parameterType="com.idcq.appserver.dto.user.UserFavoriteDto" >
+		INSERT INTO 1dcq_user_favorite(
+			user_id,
+			biz_id,
+			biz_type,
+			create_time,
+			favorite_url
+		)
+		VALUES(
+			#{userId},
+			#{bizId},
+			#{bizType},
+			NOW(),
+			#{favoriteUrl}
+		)
+  	</insert>
+  	<!-- 增加用户收藏历史记录 -->
+    <insert id="insertUserFavoriteHistory" useGeneratedKeys="true" keyProperty="favoriteId" parameterType="com.idcq.appserver.dto.user.UserFavoriteDto" >
+		INSERT INTO 1dcq_user_favorite_history(
+			favorite_id,
+			user_id,
+			biz_id,
+			biz_type,
+			cancel_time,
+			create_time,
+			favorite_url
+		)
+		VALUES(
+			#{favoriteId},
+			#{userId},
+			#{bizId},
+			#{bizType},
+			NOW(),
+			#{createTime},
+			#{favoriteUrl}
+		)
+  	</insert>
+    <!-- 删除用户收藏 -->
+   <delete id="deleteUserFavorite" parameterType="com.idcq.appserver.dto.user.UserFavoriteDto" >
+    DELETE FROM 
+    	1dcq_user_favorite
+  		WHERE 
+  			user_id=#{userId}
+  		AND 	
+  			biz_id=#{bizId}
+  		<if test="bizType!=null">
+  			AND biz_type=#{bizType}
+  		</if>
+    </delete>  
+    <!-- 获取单个收藏信息 -->
+    <select id="getFavoriteInfo"  resultMap="userFavoriteMap" parameterType="com.idcq.appserver.dto.user.UserFavoriteDto">
+  		SELECT
+  			favorite_id,
+  			user_id,
+			biz_id,
+			biz_type,
+			create_time,
+			favorite_url
+  		FROM 
+  			1dcq_user_favorite 
+  		WHERE 
+  			user_id=#{userId}
+  		AND 	
+  			biz_id=#{bizId}
+  		<if test="bizType!=null">
+  			AND biz_type=#{bizType}
+  		</if>
+  		LIMIT 1
+    </select>
+    
+    <!-- 获取我的收藏店铺列表 -->
+    <select id="getMyFavoriteShop"  resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT 
+			s.shop_name as shopName,
+			s.shop_id as shopId,
+			s.star_level_grade as starLevelGrade,
+			s.service_grade as serviceGrade,
+			s.env_grade as envGrade,
+			s.address,
+			s.telephone,
+			s.shop_infrastructure as shopInfrastructure,
+			0 as distance,
+			s.sold_number as soldNumber,
+			uf.favorite_url as favoriteUrl,
+			s.shop_status as shopStatus,
+			s.longitude as longitude,
+			s.latitude as latitude
+		FROM 
+			1dcq_user_favorite uf 
+		LEFT JOIN 
+			1dcq_shop s
+		ON 
+			uf.biz_id = s.shop_id
+		WHERE
+			uf.user_id = #{userId}
+		AND
+			uf.biz_type = 0
+		ORDER BY
+			uf.create_time DESC
+		LIMIT
+			#{skip},#{pSize}
+    </select>
+    
+    <!-- 获取我的收藏店铺列表总数 -->
+    <select id="getMyFavoriteShopCount"  resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT 
+			count(*)
+		FROM 
+			1dcq_user_favorite uf 
+		LEFT JOIN 
+			1dcq_shop s
+		ON 
+			uf.biz_id = s.shop_id
+		WHERE
+			uf.user_id = #{userId}
+		AND
+			uf.biz_type = 0
+    </select>
+    
+    <!-- 获取我的收藏商品列表 -->
+    <select id="getMyFavoriteGoods"  resultType="java.util.Map" resultMap="goodsResultMap">
+		SELECT
+			g.shop_id as shopId,
+			g.goods_id as goodsId,
+			g.goods_name as goodsName,
+			g.goods_logo1 as goodsLogo,
+		    uf.biz_type as bizType,
+			uf.favorite_url as favoriteUrl,
+			g.sold_number as soldNumber,
+			g.zan_number as zanNumber,
+			g.standard_price as standardPrice,
+			g.unit_id as unit,
+			g.goods_status as goodsStatus
+		FROM
+			1dcq_user_favorite uf
+		LEFT JOIN 
+			1dcq_goods g 
+		ON 
+			uf.biz_id = g.goods_id
+		WHERE
+			uf.user_id = #{userId}
+		AND
+			uf.biz_type = 1
+			
+		UNION ALL
+		
+		SELECT
+			g.shop_id as shopId,
+			g.goods_group_id as goodsId,
+			g.goods_name as goodsName,
+			g.goods_logo as goodsLogo,
+			uf.biz_type as bizType,
+			uf.favorite_url as favoriteUrl,
+			g.sold_number as soldNumber,
+			g.zan_number as zanNumber,
+			g.max_price as standardPrice,
+			g.unit_id as unit,
+			g.goods_status as goodsStatus
+		FROM
+			1dcq_user_favorite uf
+		LEFT JOIN 
+			1dcq_goods_group g 
+		ON 
+			uf.biz_id = g.goods_group_id
+		WHERE
+			uf.user_id = #{userId}
+		AND
+			uf.biz_type = 2
+		
+		LIMIT
+			#{skip},#{pSize}
+    </select>
+    
+  <resultMap id="goodsResultMap" type="java.util.HashMap"  >
+    <result column="shopId" property="shopId" />
+    <result column="goodsId" property="goodsId" />
+    <result column="goodsName" property="goodsName" />
+    <result column="goodsLogo" property="goodsLogo"  />
+    <result column="favoriteUrl" property="favoriteUrl"  jdbcType="VARCHAR" />
+    <result column="bizType" property="bizType" jdbcType="INTEGER"  />
+    <result column="soldNumber" property="soldNumber"  />
+    <result column="standardPrice" property="standardPrice" />
+    <result column="zanNumber" property="zanNumber" />
+    <result column="unit" property="unit" />
+    <result column="goodsStatus" property="goodsStatus" />
+  </resultMap>
+    
+    <!-- 获取我的收藏商品列表总数 -->
+    <select id="getMyFavoriteGoodsCount"  resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT 
+					count(*)
+		FROM 
+		(
+		SELECT
+					g.shop_id as shopId,
+					g.goods_id as goodsId,
+					g.goods_name as goodsName,
+					g.goods_logo1 as goodsLogo,
+					uf.favorite_url as favoriteUrl,
+		      uf.biz_type as bizType,
+					g.sold_number as soldNumber,
+					g.zan_number as zanNumber,
+					g.standard_price as standardPrice,
+					g.unit_id as unit,
+					g.goods_status as goodsStatus
+				FROM
+					1dcq_user_favorite uf
+				LEFT JOIN 
+					1dcq_goods g 
+				ON 
+					uf.biz_id = g.goods_id
+				WHERE
+					uf.user_id = #{userId}
+				AND
+					uf.biz_type = 1
+		UNION ALL
+				SELECT
+					g.shop_id as shopId,
+					g.goods_group_id as goodsId,
+					g.goods_name as goodsName,
+					g.goods_logo as goodsLogo,
+					uf.favorite_url as favoriteUrl,
+		            uf.biz_type as bizType,
+					g.sold_number as soldNumber,
+					g.zan_number as zanNumber,
+					g.max_price as standardPrice,
+					g.unit_id as unit,
+					g.goods_status as goodsStatus
+				FROM
+					1dcq_user_favorite uf
+				LEFT JOIN 
+					1dcq_goods_group g 
+				ON 
+					uf.biz_id = g.goods_group_id
+				WHERE
+					uf.user_id = #{userId}
+				AND
+					uf.biz_type = 2
+		) t
+    </select>
+</mapper> 
+   

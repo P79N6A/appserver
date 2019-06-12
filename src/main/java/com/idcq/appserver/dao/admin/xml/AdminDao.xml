@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.admin.AdminDto">
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.admin.AdminDto" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="userstate" property="userState" jdbcType="TINYINT" />
+    <result column="rolestate" property="roleState" jdbcType="TINYINT" />
+    <result column="r_id" property="roleId" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, 
+    userstate, 
+    rolestate,
+    r_id
+  </sql>
+  
+  <select id="id" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from 1dcq_admin
+    where id = #{cashCardBatchId}
+  </select>
+  
+  <select id="getRoleIdByName" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select
+    role_id
+    from 1dcq_role2
+    where role_name = #{roleName}
+  </select>
+</mapper>

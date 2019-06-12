@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.idcq.appserver.dto.order.OrderGoodsDto" >
+  <resultMap id="BaseResultMap" type="com.idcq.appserver.dto.order.OrderGoodsDto" >
+    <id column="order_goods_id" property="id" jdbcType="INTEGER" />
+    <result column="order_id" property="orderId" jdbcType="VARCHAR" />
+    <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="goods_number" property="goodsNumber" jdbcType="DOUBLE" />
+    <result column="goods_index" property="goodsIndex" jdbcType="INTEGER" />
+    <result column="goods_settle_price" property="goodsSettlePrice" jdbcType="DECIMAL" />
+    <result column="standard_price" property="standardPrice" jdbcType="DECIMAL" />
+    <result column="user_remark" property="userRemark" jdbcType="VARCHAR" />
+    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+    <result column="unit_price" property="unitPrice" jdbcType="VARCHAR" />
+    <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+    <result column="goods_img" property="goodsImg" jdbcType="VARCHAR" />
+    <result column="goods_settle_flag" property="goodsSettleFlag"  />
+    <result column="settle_unit_price" property="settleUnitPrice"  />
+    <result column="goods_rebate_flag" property="goodsRebateFlag"  />
+     <result column="order_goods_discount" property="orderGoodsDiscount" jdbcType="DECIMAL" />
+    <result column="goods_required_price" property="goodsRequiredPrice" jdbcType="DECIMAL" />
+    <!-- 20150708 -->
+    <result column="unit_name" property="unitName"  />
+    <result column="biller_id" property="billerId"  />
+    <result column="specs_desc" property="specsDesc" />
+    <result column="is_cancle" property="isCancle" />
+    <result column="avs_specs" property="avsSpecs" />
+    <result column="is_order_discount" property="isOrderDiscount"  />
+    <result column="goods_type" property="goodsType"  />
+    <result column="goods_set_id" property="goodsSetId"  />
+    <result column="set_goods_group" property="setGoodsGroup"  />
+    <result column="is_consume_outer" property="isConsumeOuter"  />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    order_goods_id, order_id, shop_id, goods_id, goods_number, goods_index,goods_settle_price,standard_price,user_remark,
+    settle_unit_price, goods_rebate_flag,is_cancle, is_order_discount,goods_type,goods_set_id,set_goods_group
+  </sql>
+  <sql id="Detail_Column_List" >
+    og.order_goods_id as order_goods_id, 
+    og.order_id as order_id, 
+    og.shop_id as shop_id, 
+    og.goods_id as goods_id, 
+    og.goods_number as goods_number, 
+    og.goods_index as goods_index,
+    og.goods_settle_price as goods_settle_price,
+    og.user_remark as user_remark,
+    og.goods_settle_flag as goods_settle_flag,
+    og.goods_name as goods_name,
+    og.standard_price as unit_price,
+    s.shop_name as shop_name,
+    og.goods_logo_url as goods_img,
+    og.unit_name as unit_name,
+    og.settle_unit_price as settle_unit_price,
+    og.goods_rebate_flag as goods_rebate_flag,
+    og.order_goods_discount,
+    og.goods_required_price,
+    og.goods_settle_flag,
+    og.biller_id,
+    og.specs_desc,
+    og.is_cancle,
+    og.is_order_discount,
+    og.avs_specs,
+    og.goods_type,
+    og.goods_set_id,
+    og.set_goods_group,
+    og.is_consume_outer
+  </sql>
+  <select id="getOrderGoodsListById" parameterType="java.lang.String" resultType="java.util.Map">
+  	select 
+		t1.goods_id as goodsId,
+		t1.standard_price as unitPrice,
+		t1.goods_number as goodsNumber,
+		t1.goods_index as goodsIndex,  
+		t2.goods_name as goodsName,
+		t3.file_url as goodsImg
+		from 1dcq_order_goods t1 
+		inner join 1dcq_goods t2
+		on t1.goods_id = t2.goods_id and t1.order_id = #{orderId}
+		left join 1dcq_attachment t3 on t2.goods_logo1 = t3.attachement_id
+  </select>
+  
+  <select id="getOGoodsListByOrderId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select <include refid="Detail_Column_List" />
+          from 1dcq_order_goods og 
+    inner join 1dcq_shop s on og.shop_id = s.shop_id
+         where og.order_id = #{orderId} 
+      order by og.goods_settle_flag desc, og.goods_index
+  </select>
+  
+  <select id="getOrderGoodsDto" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select
+    <include refid="Base_Column_List" />
+    from 1dcq_order_goods 
+    where order_id = #{orderId}
+    and shop_id=#{shopId}
+    and goods_id=#{goodsId}
+  </select>
+  
+  <select id="queryOrderGoodsDto" resultType="com.idcq.appserver.dto.order.OrderGoodsDto" parameterType="com.idcq.appserver.dto.order.OrderGoodsDto">
+     	SELECT
+		t.goods_name AS goodsName,
+		t.specs_desc AS specsDesc,
+		t.unit_name AS unitName,
+		IFNULL(t.goods_settle_flag, 1) AS goodsSettleFlag,
+		IFNULL(t.goods_rebate_flag, 1) AS goodsRebateFlag,
+		IFNULL(t.is_order_discount, 1) AS isOrderDiscount,
+		t.goods_type AS goodsType
+	FROM
+		1dcq_order_goods t
+	WHERE
+		t.goods_id = #{goodsId}
+	AND t.shop_id = #{shopId}
+	AND t.order_id = #{orderId}
+	LIMIT 1
+  </select>
+  
+  <delete id="delGoodsByOrderId" parameterType="java.lang.String" >
+    delete from 1dcq_order_goods
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </delete>
+  <insert id="saveOrderGoodsBatch" parameterType="java.util.List" >
+    insert into 1dcq_order_goods(
+    	order_id, 
+    	shop_id,
+    	goods_id, 
+    	goods_number, 
+    	goods_settle_price,
+    	goods_required_price,
+    	standard_price,
+    	user_remark,
+    	biller_id,
+    	goods_name,
+    	specs_desc,
+    	unit_name,
+    	goods_rebate_flag,
+    	goods_logo_url,
+        goods_settle_flag,
+        order_goods_discount,
+        settle_unit_price,
+        is_cancle,
+        is_order_discount,
+    	goods_index,
+    	avs_specs,
+    	goods_type,
+    	goods_set_id,
+    	set_goods_group,
+        is_consume_outer
+    )
+    values 
+    <foreach collection="list" item="item" separator="," >  
+    (
+        #{item.orderId}, 
+        #{item.shopId},
+        #{item.goodsId}, 
+        #{item.goodsNumber}, 
+        #{item.goodsSettlePrice},
+        #{item.goodsRequiredPrice},
+        #{item.standardPrice},
+        #{item.userRemark},
+        #{item.billerId},
+        #{item.goodsName},
+        #{item.specsDesc},
+        #{item.unitName},
+        #{item.goodsRebateFlag},
+        #{item.goodsImg},
+        #{item.goodsSettleFlag},
+        #{item.orderGoodsDiscount},
+        #{item.settleUnitPrice},
+        #{item.isCancle},
+        #{item.isOrderDiscount},
+        <if test="item.goodsIndex != null">
+	        #{item.goodsIndex}
+        </if>
+         <if test="item.goodsIndex == null">
+	        1
+        </if>
+        ,#{item.avsSpecs}
+        ,#{item.goodsType}
+        ,#{item.goodsSetId}
+        ,#{item.setGoodsGroup}
+        ,#{item.isConsumeOuter}
+	)
+    </foreach>  
+  </insert>
+  
+  <insert id="saveOrderGoods" parameterType="com.idcq.appserver.dto.order.OrderGoodsDto" >
+    insert into 1dcq_order_goods
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        order_goods_id,
+      </if>
+      <if test="orderId != null" >
+        order_id,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+      <if test="goodsId != null" >
+        goods_id,
+      </if>
+      <if test="goodsNumber != null" >
+        goods_number,
+      </if>
+      <if test="goodsIndex != null" >
+        goods_index,
+      </if>
+      <if test="goodsSettlePrice != null" >
+        goods_settle_price,
+      </if>
+      <if test="goodsRequiredPrice != null" >
+        goods_required_price,
+      </if>
+      <if test="standardPrice != null" >
+        standard_price,
+      </if>
+      <if test="userRemark != null" >
+        user_remark,
+      </if>
+       <if test="billerId != null" >
+          biller_id,
+      </if>
+      <if test="goodsName != null" >
+          goods_name,
+      </if>
+      <if test="specsDesc != null" >
+          specs_desc,
+      </if>
+      <if test="unitName != null" >
+          unit_name,
+      </if>  
+      <if test="goodsRebateFlag != null" >
+          goods_rebate_flag,
+      </if>
+      <if test="goodsImg != null" >
+          goods_logo_url,
+      </if>
+      <if test="goodsSettleFlag != null" >
+          goods_settle_flag,
+      </if>
+      <if test="orderGoodsDiscount != null" >
+          order_goods_discount,
+      </if>
+      <if test="settleUnitPrice != null" >
+          settle_unit_price,
+      </if>
+      <if test="isCancle != null" >
+          is_cancle,
+      </if>
+     <if test="isOrderDiscount != null" >
+          is_order_discount,
+      </if>
+       <if test="avsSpecs != null" >
+          avs_specs,
+      </if>
+      <if test="goodsType != null" >
+          goods_type,
+      </if>
+      <if test="goodsSetId != null" >
+          goods_set_id,
+      </if>
+      <if test="setGoodsGroup != null" >
+          set_goods_group,
+      </if>
+      <if test="isConsumeOuter != null" >
+          is_consume_outer,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="orderId != null" >
+        #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsNumber != null" >
+        #{goodsNumber,jdbcType=DOUBLE},
+      </if>
+      <if test="goodsIndex != null" >
+        #{goodsIndex,jdbcType=INTEGER},
+      </if>
+      <if test="goodsSettlePrice != null" >
+        #{goodsSettlePrice,jdbcType=DECIMAL},
+      </if>
+       <if test="goodsRequiredPrice != null" >
+        #{goodsRequiredPrice},
+      </if>
+      <if test="standardPrice != null" >
+        #{standardPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="userRemark != null" >
+        #{userRemark,jdbcType=VARCHAR},
+      </if>
+       <if test="billerId != null" >
+          #{billerId},
+      </if>
+      <if test="goodsName != null" >
+          #{goodsName},
+      </if>
+        <if test="specsDesc != null" >
+         #{specsDesc},
+      </if>
+      <if test="unitName != null" >
+          #{unitName},
+      </if>  
+      <if test="goodsRebateFlag != null" >
+          #{goodsRebateFlag},
+      </if>
+      <if test="goodsImg != null" >
+          #{goodsImg},
+      </if>
+      <if test="goodsSettleFlag != null" >
+          #{goodsSettleFlag},
+      </if>
+        <if test="orderGoodsDiscount != null" >
+          #{orderGoodsDiscount},
+      </if>
+      <if test="settleUnitPrice != null" >
+           #{settleUnitPrice},
+      </if>
+      <if test="isCancle != null" >
+        #{isCancle},
+      </if>
+       <if test="isOrderDiscount != null" >
+          #{isOrderDiscount},
+      </if>
+      <if test="avsSpecs != null" >
+        #{avsSpecs},
+      </if>
+      <if test="goodsType != null" >
+         #{goodsType},
+      </if>
+      <if test="goodsSetId != null" >
+         #{goodsSetId},
+      </if>
+      <if test="setGoodsGroup != null" >
+          #{setGoodsGroup},
+      </if>
+      <if test="isConsumeOuter != null" >
+          #{isConsumeOuter},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateSettlePrice" >
+  	update 1dcq_order_goods set goods_settle_price = (goods_settle_price * #{ratio}) where order_id = #{orderId}
+  </update>
+  
+    <update id="batchUpdateSettlePriceBy" parameterType="java.util.Map">
+  	update 1dcq_order_goods 
+  	   set goods_settle_price = (goods_settle_price * #{memberDiscount}),
+  	       goods_required_price = (goods_required_price * #{memberDiscount})
+  	 where order_goods_id in 
+  	 <foreach item="orderGoodsIds" index="index" collection="orderGoodsIds" open="(" separator="," close=")">
+  	      #{orderGoodsIds} 
+  	 </foreach>
+  </update>
+  
+  <select id="getOrderGoodsListByIdForLimit" resultType="java.util.Map" parameterType="java.util.Map">
+ 	select
+ 	    g.goods_id as goodsId,
+		g.standard_price as unitPrice,
+		og.goods_number as goodsNumber,
+		og.goods_index as goodsIndex,  
+		og.goods_name as goodsName,
+		og.goods_settle_price as goodsSettlePrice,
+    	og.goods_settle_flag as goodsSettleFlag,
+    	og.unit_name as unitName,
+    	og.is_order_discount as isOrderDiscount
+	from 
+		1dcq_order_goods og
+	inner join 
+		1dcq_goods g
+	on 
+		g.goods_id = og.goods_id
+    where
+    	og.order_id = #{orderId}
+    and og.is_cancle != 1
+    order by og.goods_index
+    limit #{limit}
+  </select>
+</mapper>
